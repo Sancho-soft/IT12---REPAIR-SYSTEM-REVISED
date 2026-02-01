@@ -1,0 +1,45 @@
+<?php
+
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\ServiceReportController;
+use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\ServicePriceController;
+use App\Http\Controllers\ArchiveController;
+use App\Http\Controllers\StaffController;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/', function () {
+    return redirect()->route('login');
+});
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::resource('customers', CustomerController::class);
+    Route::resource('services', ServiceReportController::class);
+    Route::post('/services/{service}/comments', [ServiceReportController::class, 'storeComment'])->name('services.comments.store');
+    Route::get('/services/{service}/print', [ServiceReportController::class, 'print'])->name('services.print');
+
+    Route::resource('inventory', InventoryController::class);
+    Route::resource('transactions', TransactionController::class);
+
+    Route::middleware(['can:admin-only'])->group(function () {
+        Route::resource('prices', ServicePriceController::class);
+        // Archive Routes
+        Route::get('/archive', [ArchiveController::class, 'index'])->name('archive.index');
+        Route::post('/archive/{type}/{id}/restore', [ArchiveController::class, 'restore'])->name('archive.restore');
+        Route::delete('/archive/{type}/{id}/force-delete', [ArchiveController::class, 'destroy'])->name('archive.destroy');
+        Route::resource('staff', StaffController::class);
+    });
+});
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+require __DIR__ . '/auth.php';
