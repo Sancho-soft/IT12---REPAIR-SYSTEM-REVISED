@@ -261,8 +261,11 @@ input[type="search"] {
   border-radius: 50px 0px 0px 50px;
 }
 
-.input-group-append {
+/* BS5 Input Group Fix */
+.input-group .btn {
   margin-left: -1px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
 }
 
 .xp-searchbar .btn {

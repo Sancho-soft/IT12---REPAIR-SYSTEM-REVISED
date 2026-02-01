@@ -39,7 +39,7 @@
                                 <td>{{ $customer->phone_no }}</td>
                                 <td>
                                     <a href="{{ route('customers.edit', $customer) }}" class="edit">
-                                        <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>
+                                        <i class="material-icons" data-bs-toggle="tooltip" title="Edit">&#xE254;</i>
                                     </a>
                                     <form action="{{ route('customers.destroy', $customer) }}" method="POST" class="d-inline"
                                         onsubmit="return confirm('Delete this customer?');">
@@ -47,7 +47,8 @@
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-link p-0 m-0"
                                             style="background:none; border:none; box-shadow:none;">
-                                            <i class="material-icons delete" data-toggle="tooltip" title="Delete">&#xE872;</i>
+                                            <i class="material-icons delete" data-bs-toggle="tooltip"
+                                                title="Delete">&#xE872;</i>
                                         </button>
                                     </form>
                                 </td>

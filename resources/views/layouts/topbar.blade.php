@@ -11,22 +11,20 @@
                     <form>
                         <div class="input-group">
                             <input type="search" class="form-control" placeholder="Search">
-                            <div class="input-group-append">
-                                <button class="btn" type="submit" id="button-addon2">Go</button>
-                            </div>
+                            <button class="btn" type="submit" id="button-addon2">Go</button>
                         </div>
                     </form>
                 </div>
             </div>
             <div class="col-md-5 col-lg-7 order-1 order-md-3">
-                <div class="xp-breadcrumbbar d-flex justify-content-left align-items-center ml-5">
+                <div class="xp-breadcrumbbar d-flex justify-content-start align-items-center ms-5">
                     <h4 class="page-title m-0 text-white">{{ $header ?? '' }}</h4>
                 </div>
             </div>
             <div class="col-md-2 col-lg-1 order-4 order-md-4">
                 <div class="xp-userbar d-flex justify-content-end align-items-center">
                     <div class="d-flex align-items-center text-white">
-                        <span class="material-icons mr-2">account_circle</span>
+                        <span class="material-icons me-2">account_circle</span>
                         <span class="username">{{ Auth::user()->username ?? Auth::user()->name }}</span>
                     </div>
                 </div>

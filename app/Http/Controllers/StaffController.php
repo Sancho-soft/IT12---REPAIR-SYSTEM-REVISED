@@ -14,19 +14,8 @@ class StaffController extends Controller
      */
     public function index()
     {
-        $staff = User::where('usertype', '!=', 'admin')->get(); // Assuming 'usertype' distinguishes admin/staff
-        // If usertype column doesn't exist, we might check by checking if they are NOT the main admin?
-        // Let's assume usertype exists based on previous context or just list all users for now.
-        // Actually, in Breeze migration, it's usually just name, email, password.
-        // I should check migrations or User model to see if 'usertype' or similar exists.
-        // If not, I'll assume all users are staff except the one I'm logged in as?
-        // PROCEEDING with 'usertype' assumption or falling back to 'id' != auth()->id()
-
-        // Checking User model in my mind: I didn't see 'usertype' added in recent history.
-        // But original PHP had it. I should check if I added it.
-        // If not, I'll stick to listing all users.
-
-        $staff = User::all();
+        // Fetch all users who are NOT administrators
+        $staff = User::where('role', '!=', 'Administrator')->get();
 
         return view('staff.index', compact('staff'));
     }
@@ -51,10 +40,12 @@ class StaffController extends Controller
         ]);
 
         User::create([
-            'name' => $request->name,
+            'full_name' => $request->name, // Mapping form 'name' to DB 'full_name'
+            'username' => explode('@', $request->email)[0], // Generating username from email
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'usertype' => 'technician', // Defaulting new users to technician
+            'role' => 'Technician', // Defaulting new users to technician
+            'status' => 'Active',
         ]);
 
         return redirect()->route('staff.index')->with('success', 'Staff member created successfully.');
@@ -79,7 +70,7 @@ class StaffController extends Controller
         ]);
 
         $staff->update([
-            'name' => $request->name,
+            'full_name' => $request->name,
             'email' => $request->email,
         ]);
 

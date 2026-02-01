@@ -53,11 +53,11 @@
                                 <td>{{ $transaction->created_at->format('M d, Y') }}</td>
                                 <td>
                                     <a href="{{ route('transactions.show', $transaction) }}" class="view" title="View"
-                                        data-toggle="tooltip">
+                                        data-bs-toggle="tooltip">
                                         <i class="material-icons text-info">&#xE8F4;</i>
                                     </a>
                                     <a href="{{ route('transactions.edit', $transaction) }}" class="edit" title="Edit"
-                                        data-toggle="tooltip">
+                                        data-bs-toggle="tooltip">
                                         <i class="material-icons">&#xE254;</i>
                                     </a>
                                     <form action="{{ route('transactions.destroy', $transaction) }}" method="POST"
@@ -66,7 +66,8 @@
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-link p-0 m-0"
                                             style="background:none; border:none; box-shadow:none;">
-                                            <i class="material-icons delete" data-toggle="tooltip" title="Delete">&#xE872;</i>
+                                            <i class="material-icons delete" data-bs-toggle="tooltip"
+                                                title="Delete">&#xE872;</i>
                                         </button>
                                     </form>
                                 </td>
