@@ -102,17 +102,17 @@
                             </tr>
                         </thead>
                         <tbody>
-                             @forelse($lowStockParts as $part)
+                            @forelse($lowStockParts as $part)
                                 @php
                                     $stock = $part->quantity_stock;
                                     if ($stock == 0) {
-                                        $statusClass = 'text-danger';
+                                        $statusClass = 'bg-danger';
                                         $statusText = 'Out of Stock';
                                     } elseif ($stock < 5) {
-                                        $statusClass = 'text-danger';
+                                        $statusClass = 'bg-danger';
                                         $statusText = 'Critical';
                                     } else {
-                                        $statusClass = 'text-warning';
+                                        $statusClass = 'bg-warning text-dark';
                                         $statusText = 'Low';
                                     }
                                 @endphp
@@ -151,7 +151,7 @@
                                 <tr>
                                     <td>#{{ $transaction->service_report_id }}</td>
                                     <td>₱{{ number_format($transaction->total_amount, 2) }}</td>
-                                    <td><span class="badge badge-success">{{ $transaction->payment_status }}</span></td>
+                                    <td><span class="badge bg-success">{{ $transaction->payment_status }}</span></td>
                                 </tr>
                             @empty
                                 <tr>
