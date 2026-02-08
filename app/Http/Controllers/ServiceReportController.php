@@ -14,7 +14,8 @@ class ServiceReportController extends Controller
 
     public function create()
     {
-        return view('services.create');
+        $customers = \App\Models\Customer::all();
+        return view('services.create', compact('customers'));
     }
 
     public function store(\Illuminate\Http\Request $request)
@@ -26,6 +27,26 @@ class ServiceReportController extends Controller
             'status' => 'required|string',
             'findings' => 'nullable|string',
         ]);
+
+        // Find customer by full name
+        $customer = \App\Models\Customer::whereRaw("CONCAT(first_name, ' ', last_name) = ?", [$request->customer_name])->first();
+
+        if (!$customer) {
+            return back()->withInput()->with('error', 'Customer not found. Please create the customer profile first or select from the suggestions.');
+        }
+
+        $validated['customer_id'] = $customer->id;
+
+        // Check for duplicate service report
+        $exists = \App\Models\ServiceReport::where('customer_id', $customer->id)
+            ->where('appliance_name', $request->appliance_name)
+            ->where('date_in', $request->date_in)
+            ->where('status', $request->status)
+            ->exists();
+
+        if ($exists) {
+            return back()->withInput()->with('error', 'A duplicate service report already exists for this customer, appliance, and date.');
+        }
 
         \App\Models\ServiceReport::create($validated);
 

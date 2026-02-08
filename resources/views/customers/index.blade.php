@@ -42,13 +42,13 @@
                                         <i class="material-icons" data-bs-toggle="tooltip" title="Edit">&#xE254;</i>
                                     </a>
                                     <form action="{{ route('customers.destroy', $customer) }}" method="POST" class="d-inline"
-                                        onsubmit="return confirm('Delete this customer?');">
+                                        onsubmit="return confirm('Are you sure you want to archive this customer?');">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-link p-0 m-0"
                                             style="background:none; border:none; box-shadow:none;">
                                             <i class="material-icons delete" data-bs-toggle="tooltip"
-                                                title="Delete">&#xE872;</i>
+                                                title="Archive">&#xE872;</i>
                                         </button>
                                     </form>
                                 </td>

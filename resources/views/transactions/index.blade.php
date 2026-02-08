@@ -12,6 +12,11 @@
                             <h2 class="ml-lg-2">Manage Transactions</h2>
                         </div>
                         <div class="col-sm-6 p-0 flex justify-content-lg-end justify-content-center">
+                            <button onclick="window.print()" class="btn btn-info mr-2"
+                                style="color:white; margin-right: 10px;">
+                                <i class="material-icons align-middle">print</i>
+                                <span>Print List</span>
+                            </button>
                             <a href="{{ route('transactions.create') }}" class="btn btn-success">
                                 <i class="material-icons">&#xE147;</i>
                                 <span>New Transaction</span>
@@ -83,3 +88,36 @@
         </div>
     </div>
 @endsection
+
+@push('styles')
+    <style>
+        @media print {
+
+            #sidebar,
+            .xp-menubar,
+            .footer,
+            .btn,
+            .card-header .btn {
+                display: none !important;
+            }
+
+            #content {
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            .main-content {
+                padding: 0 !important;
+            }
+
+            .table-wrapper {
+                box-shadow: none !important;
+            }
+
+            body {
+                background: white !important;
+            }
+        }
+    </style>
+@endpush

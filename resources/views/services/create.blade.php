@@ -16,17 +16,16 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>Customer</label>
-                                    <select name="customer_id"
-                                        class="form-control @error('customer_id') is-invalid @enderror" required>
-                                        <option value="">Select Customer</option>
+                                    <label>Customer Name</label>
+                                    <input type="text" name="customer_name" list="customer_list"
+                                        class="form-control @error('customer_name') is-invalid @enderror"
+                                        value="{{ old('customer_name') }}" required placeholder="Type or select customer">
+                                    <datalist id="customer_list">
                                         @foreach($customers as $customer)
-                                            <option value="{{ $customer->id }}" {{ old('customer_id') == $customer->id ? 'selected' : '' }}>
-                                                {{ $customer->first_name }} {{ $customer->last_name }}
-                                            </option>
+                                            <option value="{{ $customer->first_name }} {{ $customer->last_name }}">
                                         @endforeach
-                                    </select>
-                                    @error('customer_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    </datalist>
+                                    @error('customer_name') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                 </div>
                             </div>
                             <div class="col-md-6">

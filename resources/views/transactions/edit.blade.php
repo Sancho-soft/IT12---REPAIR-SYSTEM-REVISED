@@ -17,7 +17,7 @@
                         <div class="form-group">
                             <label>Service Report</label>
                             <input type="text" class="form-control"
-                                value="{{ $transaction->report_id ? '#' . $transaction->report_id . ' - ' . $transaction->report->customer->first_name : 'N/A' }}"
+                                value="{{ $transaction->report_id ? '#' . $transaction->report_id . ' - ' . ($transaction->report->customer ? $transaction->report->customer->first_name : $transaction->report->customer_name) : 'N/A' }}"
                                 disabled>
                             <small class="form-text text-muted">Service report linkage cannot be changed.</small>
                         </div>
