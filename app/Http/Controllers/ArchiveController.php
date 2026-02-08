@@ -47,7 +47,20 @@ class ArchiveController extends Controller
             $archives = $archives->merge($parts);
         }
 
-        // Add similar logic for Customers and Transactions if needed
+        if ($type === 'all' || $type === 'customers') {
+            $customers = Customer::onlyTrashed()
+                ->when($search, function ($query) use ($search) {
+                    $query->where('first_name', 'like', "%$search%")
+                        ->orWhere('last_name', 'like', "%$search%");
+                })
+                ->get()
+                ->map(function ($item) {
+                    $item->type = 'Customer';
+                    $item->details = $item->first_name . ' ' . $item->last_name . ' - ' . $item->phone_no;
+                    return $item;
+                });
+            $archives = $archives->merge($customers);
+        }
 
         // Pagination (manual)
         $archives = $archives->sortByDesc('deleted_at');
@@ -73,6 +86,9 @@ class ArchiveController extends Controller
             case 'Inventory Part':
                 $item = Part::onlyTrashed()->find($id);
                 break;
+            case 'Customer':
+                $item = Customer::onlyTrashed()->find($id);
+                break;
             default:
                 return back()->with('error', 'Invalid type');
         }
@@ -93,6 +109,9 @@ class ArchiveController extends Controller
                 break;
             case 'Inventory Part':
                 $item = Part::onlyTrashed()->find($id);
+                break;
+            case 'Customer':
+                $item = Customer::onlyTrashed()->find($id);
                 break;
             default:
                 return back()->with('error', 'Invalid type');

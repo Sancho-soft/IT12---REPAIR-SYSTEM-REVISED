@@ -23,7 +23,11 @@ class CustomerController extends Controller
             'first_name' => 'nullable|string|max:255',
             'last_name' => 'nullable|string|max:255',
             'address' => 'nullable|string',
-            'phone_no' => 'nullable|string|max:20',
+            'phone_no' => 'required|numeric|digits_between:7,15',
+        ], [
+            'phone_no.required' => 'The phone number is required.',
+            'phone_no.numeric' => 'The phone number must contain only numbers.',
+            'phone_no.digits_between' => 'The phone number must be between 7 and 15 digits.',
         ]);
 
         \App\Models\Customer::create($request->all());
@@ -47,7 +51,11 @@ class CustomerController extends Controller
             'first_name' => 'nullable|string|max:255',
             'last_name' => 'nullable|string|max:255',
             'address' => 'nullable|string',
-            'phone_no' => 'nullable|string|max:20',
+            'phone_no' => 'required|numeric|digits_between:7,15',
+        ], [
+            'phone_no.required' => 'The phone number is required.',
+            'phone_no.numeric' => 'The phone number must contain only numbers.',
+            'phone_no.digits_between' => 'The phone number must be between 7 and 15 digits.',
         ]);
 
         $customer->update($request->all());

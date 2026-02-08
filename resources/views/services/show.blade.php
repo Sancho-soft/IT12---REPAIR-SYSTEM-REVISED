@@ -20,8 +20,13 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <strong>Customer:</strong> <br>
-                            {{ $service->customer->first_name }} {{ $service->customer->last_name }} <br>
-                            <small class="text-muted">{{ $service->customer->phone_no }}</small>
+                            @if($service->customer)
+                                {{ $service->customer->first_name }} {{ $service->customer->last_name }} <br>
+                                <small class="text-muted">{{ $service->customer->phone_no }}</small>
+                            @else
+                                {{ $service->customer_name }} <br>
+                                <small class="text-muted">No linked profile</small>
+                            @endif
                         </div>
                         <div class="col-md-6 text-md-right">
                             <strong>Date In:</strong> {{ $service->date_in->format('M d, Y') }} <br>

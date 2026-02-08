@@ -9,6 +9,7 @@ class ServiceReport extends Model
 {
     use SoftDeletes;
     protected $fillable = [
+        'customer_id',
         'customer_name',
         'appliance_name',
         'date_in',
@@ -27,6 +28,11 @@ class ServiceReport extends Model
         'dop' => 'date',
         'date_pulled_out' => 'date',
     ];
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
+    }
 
     public function details()
     {
