@@ -22,6 +22,37 @@ class ProfileController extends Controller
     }
 
     /**
+     * Display the user's profile information (Read-only).
+     */
+    public function show(Request $request): View
+    {
+        $user = $request->user();
+
+        // Calculate Stats
+        $customersServed = \App\Models\Customer::count(); // Total customers (simple metric)
+        $servicesCompleted = \App\Models\ServiceReport::where('status', 'Completed')->count();
+        $monthsActive = $user->created_at->diffInMonths(\Carbon\Carbon::now());
+
+        // Mock average rating (you would calculate this if you had ratings)
+        $averageRating = 4.8;
+
+        // Recent Activity (Transactions or Service Reports)
+        $recentActivity = \App\Models\Transaction::with('report.customer')
+            ->latest()
+            ->limit(5)
+            ->get();
+
+        return view('profile.show', compact(
+            'user',
+            'customersServed',
+            'servicesCompleted',
+            'monthsActive',
+            'averageRating',
+            'recentActivity'
+        ));
+    }
+
+    /**
      * Update the user's profile information.
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse

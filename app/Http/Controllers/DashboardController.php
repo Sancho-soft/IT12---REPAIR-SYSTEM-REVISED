@@ -22,8 +22,14 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
-        // Recent Transactions for chart or list
-        $recentTransactions = \App\Models\Transaction::with('report.customer')
+        // Recent Services for activity feed
+        $recentServices = \App\Models\ServiceReport::with('customer')
+            ->latest()
+            ->limit(5)
+            ->get();
+
+        // Recent Transactions (Limit 5)
+        $recentTransactions = \App\Models\Transaction::with(['report.customer'])
             ->latest()
             ->limit(5)
             ->get();
@@ -33,7 +39,8 @@ class DashboardController extends Controller
             'weeklyIncome',
             'weeklyServices',
             'lowStockParts',
-            'recentTransactions'
+            'recentTransactions',
+            'recentServices'
         ));
     }
 }

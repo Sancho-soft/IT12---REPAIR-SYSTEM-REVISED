@@ -21,6 +21,11 @@ class User extends Authenticatable
         'full_name',
         'username',
         'email',
+        'phone',
+        'address',
+        'bio',
+        'avatar',
+        'role_title',
         'password',
         'role',
         'status',
@@ -49,5 +54,10 @@ class User extends Authenticatable
             'password' => 'hashed',
             'last_login' => 'datetime',
         ];
+    }
+
+    public function getNameAttribute()
+    {
+        return $this->full_name;
     }
 }
