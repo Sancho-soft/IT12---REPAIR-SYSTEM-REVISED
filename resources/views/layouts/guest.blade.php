@@ -9,68 +9,27 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap" rel="stylesheet" />
 
-    <!-- Styles -->
-    <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
+    <!-- Scripts -->
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+
     <style>
         body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f4f6f9;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-        }
-
-        .auth-card {
-            width: 100%;
-            max-width: 400px;
-            padding: 15px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .auth-logo {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .auth-logo img {
-            height: 60px;
-            width: auto;
-        }
-
-        .btn-primary {
-            background-color: #4c7cf3;
-            border-color: #4c7cf3;
-        }
-
-        .btn-primary:hover {
-            background-color: #3b6ae1;
-            border-color: #3b6ae1;
+            font-family: 'Inter', sans-serif;
         }
     </style>
 </head>
 
-<body>
-    <div class="auth-card">
-        <div class="auth-logo">
-            <a href="/">
-                <img src="{{ asset('img/Repair.png') }}" alt="Logo">
-            </a>
-            <h4 class="mt-3 text-dark">Repair System</h4>
-        </div>
-
+<body class="font-sans antialiased text-gray-900 bg-gray-50 flex flex-col justify-center items-center min-h-screen">
+    <div class="w-full sm:max-w-md bg-white p-8 rounded-xl shadow-lg border border-gray-100">
         {{ $slot }}
     </div>
 
-    <script src="{{ asset('js/jquery-3.3.1.min.js') }}"></script>
-    <script src="{{ asset('js/bootstrap.min.js') }}"></script>
+    <div class="mt-8 text-center text-sm text-gray-500">
+        &copy; {{ date('Y') }} Repair Shop Service and Records Management System. All rights reserved.
+    </div>
 </body>
 
 </html>

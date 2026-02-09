@@ -1,21 +1,42 @@
-@extends('layouts.admin')
+<x-app-layout>
+    <div class="max-w-2xl mx-auto space-y-6">
+        <!-- Header -->
+        <div class="flex items-center justify-between">
+            <h2 class="text-2xl font-bold text-gray-900">Create New Transaction</h2>
+            @if(request('report_id'))
+                <a href="{{ route('services.show', request('report_id')) }}"
+                    class="text-sm font-medium text-gray-500 hover:text-gray-900 flex items-center transition-colors">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    Back to Service Report
+                </a>
+            @else
+                <a href="{{ route('transactions.index') }}"
+                    class="text-sm font-medium text-gray-500 hover:text-gray-900 flex items-center transition-colors">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    Back to List
+                </a>
+            @endif
+        </div>
 
-@section('title', 'New Transaction')
+        <!-- Form Card -->
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+            <div class="p-6">
+                <form action="{{ route('transactions.store') }}" method="POST" class="space-y-6">
+                    @csrf
 
-@section('content')
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header bg-white">
-                    <h5 class="m-0">Create New Transaction</h5>
-                </div>
-                <div class="card-body">
-                    <form action="{{ route('transactions.store') }}" method="POST">
-                        @csrf
-
-                        <div class="form-group">
-                            <label>Service Report (Optional)</label>
-                            <select name="report_id" class="form-control @error('report_id') is-invalid @enderror">
+                    <div class="space-y-6">
+                        <!-- Service Report -->
+                        <div>
+                            <label for="report_id" class="block text-sm font-medium text-gray-700">Service Report
+                                (Optional)</label>
+                            <select id="report_id" name="report_id"
+                                class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg">
                                 <option value="">Select Service Report</option>
                                 @foreach($reports as $report)
                                     <option value="{{ $report->id }}" {{ (old('report_id') == $report->id || request('report_id') == $report->id) ? 'selected' : '' }}>
@@ -23,44 +44,68 @@
                                     </option>
                                 @endforeach
                             </select>
-                            <small class="form-text text-muted">Select a service report if this payment is linked to a
-                                repair job.</small>
-                            @error('report_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            <p class="mt-2 text-sm text-gray-500">Select a service report if this payment is linked to a
+                                repair job.</p>
+                            @error('report_id')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
 
-                        <!-- TODO: Add Parts Selection Logic later if complex, simpler version for now -->
-
-                        <div class="form-group">
-                            <label>Total Amount</label>
-                            <input type="number" step="0.01" name="total_amount"
-                                class="form-control @error('total_amount') is-invalid @enderror"
-                                value="{{ old('total_amount') }}" required>
-                            @error('total_amount') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        <!-- Total Amount -->
+                        <div>
+                            <label for="total_amount" class="block text-sm font-medium text-gray-700">Total
+                                Amount</label>
+                            <div class="mt-1 relative rounded-md shadow-sm">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span class="text-gray-500 sm:text-sm">₱</span>
+                                </div>
+                                <input type="number" name="total_amount" id="total_amount" step="0.01"
+                                    value="{{ old('total_amount') }}" required
+                                    class="focus:ring-blue-500 focus:border-blue-500 block w-full pl-7 sm:text-sm border-gray-300 rounded-lg"
+                                    placeholder="0.00">
+                            </div>
+                            @error('total_amount')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
 
-                        <div class="form-group">
-                            <label>Payment Status</label>
-                            <select name="payment_status"
-                                class="form-control @error('payment_status') is-invalid @enderror">
+                        <!-- Payment Status -->
+                        <div>
+                            <label for="payment_status" class="block text-sm font-medium text-gray-700">Payment
+                                Status</label>
+                            <select id="payment_status" name="payment_status"
+                                class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg">
                                 <option value="Unpaid" {{ old('payment_status') == 'Unpaid' ? 'selected' : '' }}>Unpaid
                                 </option>
                                 <option value="Paid" {{ old('payment_status') == 'Paid' ? 'selected' : '' }}>Paid</option>
+                                <option value="Partial" {{ old('payment_status') == 'Partial' ? 'selected' : '' }}>Partial
+                                </option>
                             </select>
-                            @error('payment_status') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            @error('payment_status')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
+                    </div>
 
-                        <div class="form-group mt-4 text-right">
-                            @if(request('report_id'))
-                                <a href="{{ route('services.show', request('report_id')) }}"
-                                    class="btn btn-secondary">Cancel</a>
-                            @else
-                                <a href="{{ route('transactions.index') }}" class="btn btn-secondary">Cancel</a>
-                            @endif
-                            <button type="submit" class="btn btn-success">Save Transaction</button>
-                        </div>
-                    </form>
-                </div>
+                    <div class="flex justify-end space-x-3 pt-6 border-t border-gray-100">
+                        @if(request('report_id'))
+                            <a href="{{ route('services.show', request('report_id')) }}"
+                                class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                                Cancel
+                            </a>
+                        @else
+                            <a href="{{ route('transactions.index') }}"
+                                class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                                Cancel
+                            </a>
+                        @endif
+                        <button type="submit"
+                            class="px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors">
+                            Save Transaction
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-@endsection
+</x-app-layout>
