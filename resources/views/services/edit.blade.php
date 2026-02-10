@@ -82,7 +82,7 @@
                             <label for="problem_desc" class="block text-sm font-medium text-gray-700">Problem
                                 Description</label>
                             <textarea id="problem_desc" name="problem_desc" rows="3" required
-                                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">{{ old('problem_desc', $service->problem_desc) }}</textarea>
+                                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">{{ old('problem_desc', $service->details ? $service->details->complaint : '') }}</textarea>
                             @error('problem_desc')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -93,7 +93,7 @@
                             <label for="recommendation" class="block text-sm font-medium text-gray-700">Diagnosis /
                                 Recommendation</label>
                             <textarea id="recommendation" name="recommendation" rows="3"
-                                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">{{ old('recommendation', $service->recommendation) }}</textarea>
+                                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">{{ old('recommendation', $service->findings) }}</textarea>
                             @error('recommendation')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -107,7 +107,7 @@
                                     <span class="text-gray-500 sm:text-sm">₱</span>
                                 </div>
                                 <input type="number" name="labor_cost" id="labor_cost" step="0.01"
-                                    value="{{ old('labor_cost', $service->labor_cost) }}"
+                                    value="{{ old('labor_cost', $service->details ? $service->details->labor : 0) }}"
                                     class="focus:ring-blue-500 focus:border-blue-500 block w-full pl-7 sm:text-sm border-gray-300 rounded-lg">
                             </div>
                             @error('labor_cost')
@@ -115,34 +115,37 @@
                             @enderror
                         </div>
 
-                        <!-- Status -->
-                        <div>
-                            <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
-                            <select id="status" name="status"
-                                class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg">
-                                <option value="Pending" {{ old('status', $service->status) == 'Pending' ? 'selected' : '' }}>Pending</option>
-                                <option value="In Progress" {{ old('status', $service->status) == 'In Progress' ? 'selected' : '' }}>In Progress</option>
-                                <option value="Completed" {{ old('status', $service->status) == 'Completed' ? 'selected' : '' }}>Completed</option>
-                                <option value="Cancelled" {{ old('status', $service->status) == 'Cancelled' ? 'selected' : '' }}>Cancelled</option>
-                            </select>
-                            @error('status')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
                     </div>
 
-                    <div class="flex justify-end space-x-3 pt-6 border-t border-gray-100">
-                        <a href="{{ route('services.index') }}"
-                            class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
-                            Cancel
-                        </a>
-                        <button type="submit"
-                            class="px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
-                            Update Service Report
-                        </button>
+                    <!-- Status -->
+                    <div>
+                        <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+                        <select id="status" name="status"
+                            class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg">
+                            <option value="Pending" {{ old('status', $service->status) == 'Pending' ? 'selected' : '' }}>
+                                Pending</option>
+                            <option value="In Progress" {{ old('status', $service->status) == 'In Progress' ? 'selected' : '' }}>In Progress</option>
+                            <option value="Completed" {{ old('status', $service->status) == 'Completed' ? 'selected' : '' }}>Completed</option>
+                            <option value="Cancelled" {{ old('status', $service->status) == 'Cancelled' ? 'selected' : '' }}>Cancelled</option>
+                        </select>
+                        @error('status')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
                     </div>
-                </form>
             </div>
+
+            <div class="flex justify-end space-x-3 pt-6 border-t border-gray-100">
+                <a href="{{ route('services.index') }}"
+                    class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                    Cancel
+                </a>
+                <button type="submit"
+                    class="px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                    Update Service Report
+                </button>
+            </div>
+            </form>
         </div>
+    </div>
     </div>
 </x-app-layout>

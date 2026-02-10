@@ -14,7 +14,8 @@ class TransactionController extends Controller
 
     public function create()
     {
-        return view('transactions.create');
+        $reports = \App\Models\ServiceReport::with('customer')->latest()->get();
+        return view('transactions.create', compact('reports'));
     }
 
     public function store(\Illuminate\Http\Request $request)
