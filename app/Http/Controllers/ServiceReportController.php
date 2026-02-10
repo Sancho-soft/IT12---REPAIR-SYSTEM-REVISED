@@ -32,7 +32,15 @@ class ServiceReportController extends Controller
         $customer = \App\Models\Customer::whereRaw("CONCAT(first_name, ' ', last_name) = ?", [$request->customer_name])->first();
 
         if (!$customer) {
-            return back()->withInput()->with('error', 'Customer not found. Please create the customer profile first or select from the suggestions.');
+            // Auto-create customer if not found
+            $parts = explode(' ', $request->customer_name, 2);
+            $firstName = $parts[0];
+            $lastName = $parts[1] ?? '';
+
+            $customer = \App\Models\Customer::create([
+                'first_name' => $firstName,
+                'last_name' => $lastName,
+            ]);
         }
 
         $validated['customer_id'] = $customer->id;
@@ -48,7 +56,20 @@ class ServiceReportController extends Controller
             return back()->withInput()->with('error', 'A duplicate service report already exists for this customer, appliance, and date.');
         }
 
-        \App\Models\ServiceReport::create($validated);
+        if ($request->has('brand_model')) {
+            $validated['remarks'] = $request->brand_model;
+        }
+
+        $report = \App\Models\ServiceReport::create($validated);
+
+        // Create initial Service Detail
+        \App\Models\ServiceDetail::create([
+            'report_id' => $report->id,
+            'service_types' => [], // Default empty array as it is required
+            'labor' => $request->labor_cost ?? 0,
+            'total_amount' => $request->labor_cost ?? 0,
+            'complaint' => $request->problem_desc, // Also save problem desc as complaint
+        ]);
 
         return redirect()->route('services.index')->with('success', 'Service Report created successfully.');
     }
@@ -74,7 +95,46 @@ class ServiceReportController extends Controller
             'findings' => 'nullable|string',
         ]);
 
+        // Find customer by full name
+        $customer = \App\Models\Customer::whereRaw("CONCAT(first_name, ' ', last_name) = ?", [$request->customer_name])->first();
+
+        if (!$customer) {
+            // Auto-create customer if not found
+            $parts = explode(' ', $request->customer_name, 2);
+            $firstName = $parts[0];
+            $lastName = $parts[1] ?? '';
+
+            $customer = \App\Models\Customer::create([
+                'first_name' => $firstName,
+                'last_name' => $lastName,
+            ]);
+        }
+
+        $validated['customer_id'] = $customer->id;
+
+        // Map recommendation to findings
+        if ($request->has('recommendation')) {
+            $validated['findings'] = $request->recommendation;
+        }
+
+        // Map brand_model to remarks if accessible
+        if ($request->has('brand_model')) {
+            $validated['remarks'] = $request->brand_model;
+        }
+
         $service->update($validated);
+
+        // Update or Create ServiceDetail
+        \App\Models\ServiceDetail::updateOrCreate(
+            ['report_id' => $service->id],
+            [
+                'complaint' => $request->problem_desc,
+                'labor' => $request->labor_cost ?? 0,
+                'service_types' => $service->details ? $service->details->service_types : [], // Preserve or default
+                // total_amount calculation? For now just use labor or keep existing logic
+                'total_amount' => $request->labor_cost ?? ($service->details ? $service->details->total_amount : 0),
+            ]
+        );
 
         return redirect()->route('services.index')->with('success', 'Service Report updated successfully.');
     }

@@ -28,7 +28,7 @@
     </div>
 
     <div class="mt-8 text-center text-sm text-gray-500">
-        &copy; {{ date('Y') }} Repair Shop Service and Records Management System. All rights reserved.
+        &copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.
     </div>
 </body>
 
