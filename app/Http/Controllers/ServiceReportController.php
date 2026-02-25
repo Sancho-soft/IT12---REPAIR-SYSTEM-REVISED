@@ -3,72 +3,80 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\User;
+use App\Notifications\ServiceReportCreated;
+use App\Notifications\ServiceReportUpdated;
+use Illuminate\Support\Facades\Notification;
 
 class ServiceReportController extends Controller
 {
+    private function checkServiceCreationAccess()
+    {
+        if (auth()->check() && !in_array(auth()->user()->role, ['Administrator', 'Secretary'])) {
+            abort(403, 'Unauthorized. Only Secretaries and Administrators can create or delete Service Reports.');
+        }
+    }
+
     public function index()
     {
-        $services = \App\Models\ServiceReport::orderBy('date_in', 'desc')->get();
+        $services = \App\Models\ServiceReport::with(['customer', 'appliance', 'details'])->latest()->get();
         return view('services.index', compact('services'));
     }
 
     public function create()
     {
-        $customers = \App\Models\Customer::all();
-        return view('services.create', compact('customers'));
+        $this->checkServiceCreationAccess();
+        $customers = \App\Models\Customer::with('appliances')->get();
+        $technicians = User::where('role', 'Technician')->get();
+        return view('services.create', compact('customers', 'technicians'));
     }
 
-    public function store(\Illuminate\Http\Request $request)
+    public function store(Request $request)
     {
+        $this->checkServiceCreationAccess();
         $validated = $request->validate([
-            'customer_name' => 'required|string',
-            'appliance_name' => 'required|string',
+            'customer_id' => 'required|exists:customers,id',
+            'appliance_id' => 'required|exists:appliances,id',
             'date_in' => 'required|date',
             'status' => 'required|string',
             'findings' => 'nullable|string',
+            'problem_desc' => 'required|string',
+            'labor_cost' => 'nullable|numeric',
+            'remarks' => 'nullable|string',
+            'dealer' => 'nullable|string',
+            'dop' => 'nullable|date',
+            'technicians' => 'nullable|array|max:3',
+            'service_types' => 'nullable|array',
+            'used_parts' => 'nullable|string',
         ]);
 
-        // Find customer by full name
-        $customer = \App\Models\Customer::whereRaw("CONCAT(first_name, ' ', last_name) = ?", [$request->customer_name])->first();
-
-        if (!$customer) {
-            // Auto-create customer if not found
-            $parts = explode(' ', $request->customer_name, 2);
-            $firstName = $parts[0];
-            $lastName = $parts[1] ?? '';
-
-            $customer = \App\Models\Customer::create([
-                'first_name' => $firstName,
-                'last_name' => $lastName,
-            ]);
-        }
-
-        $validated['customer_id'] = $customer->id;
+        $customer = \App\Models\Customer::find($validated['customer_id']);
 
         // Check for duplicate service report
         $exists = \App\Models\ServiceReport::where('customer_id', $customer->id)
-            ->where('appliance_name', $request->appliance_name)
-            ->where('date_in', $request->date_in)
-            ->where('status', $request->status)
+            ->where('appliance_id', $validated['appliance_id'])
+            ->where('date_in', $validated['date_in'])
+            ->where('status', $validated['status'])
             ->exists();
 
         if ($exists) {
-            return back()->withInput()->with('error', 'A duplicate service report already exists for this customer, appliance, and date.');
+            return back()->withInput()->with('error', 'A duplicate service report already exists for this appliance and date.');
         }
 
-        if ($request->has('brand_model')) {
-            $validated['remarks'] = $request->brand_model;
-        }
+        $validated['customer_name'] = trim($customer->first_name . ' ' . $customer->last_name);
 
         $report = \App\Models\ServiceReport::create($validated);
 
         // Create initial Service Detail
+        $techs = isset($validated['technicians']) ? implode(', ', $validated['technicians']) : null;
+
         \App\Models\ServiceDetail::create([
             'report_id' => $report->id,
-            'service_types' => [], // Default empty array as it is required
+            'service_types' => $validated['service_types'] ?? [],
             'labor' => $request->labor_cost ?? 0,
             'total_amount' => $request->labor_cost ?? 0,
-            'complaint' => $request->problem_desc, // Also save problem desc as complaint
+            'complaint' => $request->problem_desc,
+            'technician' => $techs,
         ]);
 
         return redirect()->route('services.index')->with('success', 'Service Report created successfully.');
@@ -82,70 +90,101 @@ class ServiceReportController extends Controller
 
     public function edit(\App\Models\ServiceReport $service)
     {
-        return view('services.edit', compact('service'));
+        if (auth()->check() && auth()->user()->role === 'Cashier') {
+            abort(403, 'Cashiers cannot edit Service Reports.');
+        }
+        $customers = \App\Models\Customer::with('appliances')->get();
+        $technicians = User::where('role', 'Technician')->get();
+        return view('services.edit', compact('service', 'customers', 'technicians'));
     }
 
-    public function update(\Illuminate\Http\Request $request, \App\Models\ServiceReport $service)
+    public function update(Request $request, \App\Models\ServiceReport $service)
     {
-        $validated = $request->validate([
-            'customer_name' => 'required|string',
-            'appliance_name' => 'required|string',
+        if (auth()->user()->role === 'Cashier') {
+            abort(403, 'Cashiers cannot edit Service Reports.');
+        }
+
+        $userRole = auth()->user()->role;
+        $rules = [
+            'customer_id' => 'required|exists:customers,id',
+            'appliance_id' => 'required|exists:appliances,id',
             'date_in' => 'required|date',
             'status' => 'required|string',
             'findings' => 'nullable|string',
-        ]);
+            'problem_desc' => 'required|string',
+            'labor_cost' => 'nullable|numeric',
+            'remarks' => 'nullable|string',
+            'dealer' => 'nullable|string',
+            'dop' => 'nullable|date',
+            'technicians' => 'nullable|array|max:3',
+            'service_types' => 'nullable|array',
+            'used_parts' => 'nullable|string',
+        ];
 
-        // Find customer by full name
-        $customer = \App\Models\Customer::whereRaw("CONCAT(first_name, ' ', last_name) = ?", [$request->customer_name])->first();
-
-        if (!$customer) {
-            // Auto-create customer if not found
-            $parts = explode(' ', $request->customer_name, 2);
-            $firstName = $parts[0];
-            $lastName = $parts[1] ?? '';
-
-            $customer = \App\Models\Customer::create([
-                'first_name' => $firstName,
-                'last_name' => $lastName,
-            ]);
+        if ($userRole === 'Technician') {
+            $ignores = ['customer_id', 'appliance_id', 'date_in', 'problem_desc', 'labor_cost', 'dealer', 'dop', 'technicians', 'service_types'];
+            foreach ($ignores as $ignore)
+                unset($rules[$ignore]);
+        } elseif ($userRole === 'Secretary') {
+            $ignores = ['status', 'findings', 'remarks', 'used_parts'];
+            foreach ($ignores as $ignore)
+                unset($rules[$ignore]);
         }
 
-        $validated['customer_id'] = $customer->id;
+        $validated = $request->validate($rules);
 
-        // Map recommendation to findings
-        if ($request->has('recommendation')) {
-            $validated['findings'] = $request->recommendation;
+        // Preserve missing attributes for disabled HTML form fields
+        if ($userRole === 'Technician') {
+            $validated['customer_id'] = $service->customer_id;
+            $validated['appliance_id'] = $service->appliance_id;
+            $validated['date_in'] = $service->date_in;
+            $validated['problem_desc'] = $service->details ? $service->details->complaint : '';
+            $validated['labor_cost'] = $service->details ? $service->details->labor : 0;
+            $validated['dealer'] = $service->dealer;
+            $validated['dop'] = $service->dop;
+            $validated['service_types'] = $service->details ? $service->details->service_types : [];
+            $validated['technicians'] = $service->details ? explode(', ', $service->details->technician) : [];
+        } elseif ($userRole === 'Secretary') {
+            $validated['status'] = $service->status;
+            $validated['findings'] = $service->findings;
+            $validated['remarks'] = $service->remarks;
+            $validated['used_parts'] = $service->used_parts;
         }
 
-        // Map brand_model to remarks if accessible
-        if ($request->has('brand_model')) {
-            $validated['remarks'] = $request->brand_model;
-        }
+        $customer = \App\Models\Customer::find($validated['customer_id']);
+        $validated['customer_name'] = trim($customer->first_name . ' ' . $customer->last_name);
 
         $service->update($validated);
 
         // Update or Create ServiceDetail
+        $techs = isset($validated['technicians']) ? implode(', ', $validated['technicians']) : null;
+
         \App\Models\ServiceDetail::updateOrCreate(
             ['report_id' => $service->id],
             [
                 'complaint' => $request->problem_desc,
                 'labor' => $request->labor_cost ?? 0,
-                'service_types' => $service->details ? $service->details->service_types : [], // Preserve or default
-                // total_amount calculation? For now just use labor or keep existing logic
+                'service_types' => $validated['service_types'] ?? [],
                 'total_amount' => $request->labor_cost ?? ($service->details ? $service->details->total_amount : 0),
+                'technician' => $techs,
             ]
         );
+
+        // Trigger Notification to all users
+        $users = User::all();
+        Notification::send($users, new ServiceReportUpdated($service->id, $service->customer_name));
 
         return redirect()->route('services.index')->with('success', 'Service Report updated successfully.');
     }
 
     public function destroy(\App\Models\ServiceReport $service)
     {
+        $this->checkServiceCreationAccess();
         $service->delete();
         return redirect()->route('services.index')->with('success', 'Service Report deleted successfully.');
     }
 
-    public function storeComment(\Illuminate\Http\Request $request, \App\Models\ServiceReport $service)
+    public function storeComment(Request $request, \App\Models\ServiceReport $service)
     {
         $request->validate([
             'comment_text' => 'required|string',

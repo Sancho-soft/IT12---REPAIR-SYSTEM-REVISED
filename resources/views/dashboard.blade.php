@@ -9,7 +9,8 @@
         <!-- Stats Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <!-- Weekly Customers -->
-            <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-between">
+            <a href="{{ route('customers.index') }}"
+                class="block bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
                 <div class="flex justify-between items-start">
                     <div class="p-3 bg-blue-50 rounded-lg text-blue-600">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -27,10 +28,11 @@
                     <h3 class="text-3xl font-bold text-gray-900">{{ $weeklyCustomers }}</h3>
                     <p class="text-sm text-gray-500 mt-1">Weekly Customers</p>
                 </div>
-            </div>
+            </a>
 
             <!-- Weekly Income -->
-            <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-between">
+            <a href="{{ route('transactions.index') }}"
+                class="block bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
                 <div class="flex justify-between items-start">
                     <div class="p-3 bg-green-50 rounded-lg text-green-600">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -48,10 +50,11 @@
                     <h3 class="text-3xl font-bold text-gray-900">₱{{ number_format($weeklyIncome, 2) }}</h3>
                     <p class="text-sm text-gray-500 mt-1">Weekly Service Income</p>
                 </div>
-            </div>
+            </a>
 
             <!-- Weekly Services -->
-            <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-between">
+            <a href="{{ route('services.index') }}"
+                class="block bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
                 <div class="flex justify-between items-start">
                     <div class="p-3 bg-purple-50 rounded-lg text-purple-600">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -71,7 +74,7 @@
                     <h3 class="text-3xl font-bold text-gray-900">{{ $weeklyServices }}</h3>
                     <p class="text-sm text-gray-500 mt-1">Weekly Total Services</p>
                 </div>
-            </div>
+            </a>
 
             <!-- Growth Rate -->
             <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-between">
@@ -134,7 +137,7 @@
                                                 <h4 class="text-sm font-semibold text-gray-900">{{ $service->customer_name }}</h4>
                                                 <span
                                                     class="px-2 py-0.5 text-xs rounded-full 
-                                                        {{ $service->status === 'Completed' ? 'bg-green-100 text-green-800' :
+                                                                        {{ $service->status === 'Completed' ? 'bg-green-100 text-green-800' :
                         ($service->status === 'Pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800') }}">
                                                     {{ $service->status }}
                                                 </span>

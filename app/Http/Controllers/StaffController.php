@@ -34,21 +34,26 @@ class StaffController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
+            'username' => ['required', 'string', 'max:255', 'unique:' . User::class],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'role' => ['required', 'string', 'in:Administrator,Secretary,Technician,Cashier'],
+            'status' => ['required', 'string', 'in:Active,Inactive'],
         ]);
 
         User::create([
-            'full_name' => $request->name, // Mapping form 'name' to DB 'full_name'
-            'username' => explode('@', $request->email)[0], // Generating username from email
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'Technician', // Defaulting new users to technician
-            'status' => 'Active',
+            'role' => $request->role,
+            'status' => $request->status,
         ]);
 
-        return redirect()->route('staff.index')->with('success', 'Staff member created successfully.');
+        return redirect()->route('staff.index')->with('success', 'User created successfully.');
     }
 
     /**
@@ -65,13 +70,21 @@ class StaffController extends Controller
     public function update(Request $request, User $staff)
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
+            'username' => ['required', 'string', 'max:255', 'unique:users,username,' . $staff->id],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email,' . $staff->id],
+            'role' => ['required', 'string', 'in:Administrator,Secretary,Technician,Cashier'],
+            'status' => ['required', 'string', 'in:Active,Inactive'],
         ]);
 
         $staff->update([
-            'full_name' => $request->name,
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'username' => $request->username,
             'email' => $request->email,
+            'role' => $request->role,
+            'status' => $request->status,
         ]);
 
         if ($request->filled('password')) {

@@ -2,7 +2,7 @@
     <div class="max-w-2xl mx-auto space-y-6">
         <!-- Header -->
         <div class="flex items-center justify-between">
-            <h2 class="text-2xl font-bold text-gray-900">Add New Staff Member</h2>
+            <h2 class="text-2xl font-bold text-gray-900">Add New User</h2>
             <a href="{{ route('staff.index') }}"
                 class="text-sm font-medium text-gray-500 hover:text-gray-900 flex items-center transition-colors">
                 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -28,7 +28,7 @@
                         </div>
                         <div class="ml-3">
                             <p class="text-sm text-blue-700">
-                                New staff members will be created with the <strong>Technician</strong> role by default.
+                                Please fill out the user details below.
                             </p>
                         </div>
                     </div>
@@ -38,13 +38,40 @@
                     @csrf
 
                     <div class="space-y-6">
-                        <!-- Name -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <!-- First Name -->
+                            <div>
+                                <label for="first_name" class="block text-sm font-medium text-gray-700">First
+                                    Name</label>
+                                <input type="text" name="first_name" id="first_name" value="{{ old('first_name') }}"
+                                    required
+                                    class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                    placeholder="John">
+                                @error('first_name')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Last Name -->
+                            <div>
+                                <label for="last_name" class="block text-sm font-medium text-gray-700">Last Name</label>
+                                <input type="text" name="last_name" id="last_name" value="{{ old('last_name') }}"
+                                    required
+                                    class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                    placeholder="Doe">
+                                @error('last_name')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <!-- Username -->
                         <div>
-                            <label for="name" class="block text-sm font-medium text-gray-700">Full Name</label>
-                            <input type="text" name="name" id="name" value="{{ old('name') }}" required
+                            <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+                            <input type="text" name="username" id="username" value="{{ old('username') }}" required
                                 class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                placeholder="John Doe">
-                            @error('name')
+                                placeholder="johndoe123">
+                            @error('username')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
@@ -54,8 +81,41 @@
                             <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
                             <input type="email" name="email" id="email" value="{{ old('email') }}" required
                                 class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                placeholder="john@example.com">
+                                placeholder="user@example.com">
                             @error('email')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Role -->
+                        <div>
+                            <label for="role" class="block text-sm font-medium text-gray-700">Role</label>
+                            <select id="role" name="role" required
+                                class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg">
+                                <option value="Technician" {{ old('role') == 'Technician' ? 'selected' : '' }}>Technician
+                                </option>
+                                <option value="Administrator" {{ old('role') == 'Administrator' ? 'selected' : '' }}>
+                                    Administrator</option>
+                                <option value="Secretary" {{ old('role') == 'Secretary' ? 'selected' : '' }}>Secretary
+                                </option>
+                                <option value="Cashier" {{ old('role') == 'Cashier' ? 'selected' : '' }}>Cashier</option>
+                            </select>
+                            @error('role')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Status -->
+                        <div>
+                            <label for="status" class="block text-sm font-medium text-gray-700">Account Status</label>
+                            <select id="status" name="status" required
+                                class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg">
+                                <option value="Active" {{ old('status', 'Active') == 'Active' ? 'selected' : '' }}>Active
+                                </option>
+                                <option value="Inactive" {{ old('status') == 'Inactive' ? 'selected' : '' }}>
+                                    Inactive</option>
+                            </select>
+                            @error('status')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>

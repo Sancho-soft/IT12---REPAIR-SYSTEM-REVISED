@@ -17,7 +17,7 @@ class InventoryController extends Controller
         return view('inventory.create');
     }
 
-    public function store(\Illuminate\Http\Request $request)
+    public function store(Request $request)
     {
         $request->validate([
             'part_no' => 'required|string',
@@ -39,6 +39,20 @@ class InventoryController extends Controller
         // But model is Part.
         // I'll assume I can type hint Part but param might be $inventory.
         return view('inventory.edit', ['part' => $inventory]);
+    }
+
+    public function update(Request $request, \App\Models\Part $inventory)
+    {
+        $validated = $request->validate([
+            'part_no' => 'required|string',
+            'description' => 'required|string',
+            'price' => 'required|numeric',
+            'quantity_stock' => 'required|integer',
+        ]);
+
+        $inventory->update($validated);
+
+        return redirect()->route('inventory.index')->with('success', 'Part updated successfully.');
     }
 
     // Changing method signature to rely on Laravel's implicit binding resolution

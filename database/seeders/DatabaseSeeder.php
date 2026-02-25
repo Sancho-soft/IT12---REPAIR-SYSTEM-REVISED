@@ -17,7 +17,8 @@ class DatabaseSeeder extends Seeder
     {
         // Create an Admin User
         User::create([
-            'full_name' => 'Admin User',
+            'first_name' => 'Admin',
+            'last_name' => 'User',
             'username' => 'admin',
             'email' => 'admin@example.com',
             'password' => \Illuminate\Support\Facades\Hash::make('password'),
@@ -28,7 +29,8 @@ class DatabaseSeeder extends Seeder
 
         // Create a Technician User
         User::create([
-            'full_name' => 'John Tech',
+            'first_name' => 'John',
+            'last_name' => 'Tech',
             'username' => 'technician',
             'email' => 'tech@example.com',
             'password' => \Illuminate\Support\Facades\Hash::make('password'),
@@ -55,22 +57,33 @@ class DatabaseSeeder extends Seeder
         // Create Sample Inventory Parts
         \App\Models\Part::create([
             'part_no' => 'P-001',
-            'description' => 'Compressor Motor',
+            'name' => 'Compressor Motor',
             'price' => 2500.00,
             'quantity_stock' => 5,
         ]);
 
         \App\Models\Part::create([
             'part_no' => 'P-002',
-            'description' => 'Fan Blade',
+            'name' => 'Fan Blade',
             'price' => 450.00,
             'quantity_stock' => 12,
+        ]);
+
+        // Create Sample Appliance
+        $appliance = \App\Models\Appliance::create([
+            'customer_id' => $customer1->id,
+            'brand' => 'Samsung',
+            'category' => 'Cooling',
+            'product' => 'Refrigerator',
+            'model_no' => 'SAM-REF-123',
+            'date_in' => now(),
         ]);
 
         // Create Sample Service Report
         \App\Models\ServiceReport::create([
             'customer_name' => $customer1->first_name . ' ' . $customer1->last_name,
-            'appliance_name' => 'Samsung Refrigerator',
+            'customer_id' => $customer1->id,
+            'appliance_id' => $appliance->id,
             'date_in' => now(),
             'status' => 'Pending',
             'findings' => 'Cooling issue reported.',

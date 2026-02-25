@@ -3,7 +3,7 @@
         <!-- Header -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <h2 class="text-2xl font-bold text-gray-900">Staff Management</h2>
+                <h2 class="text-2xl font-bold text-gray-900">User Management</h2>
                 <p class="mt-1 text-sm text-gray-500">Manage team members and their roles</p>
             </div>
             <a href="{{ route('staff.create') }}"
@@ -11,7 +11,7 @@
                 <svg class="w-5 h-5 mr-2 -ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                 </svg>
-                Add Staff
+                Add User
             </a>
         </div>
 
@@ -26,7 +26,7 @@
                 </div>
                 <input type="text" id="searchInput"
                     class="block w-full pl-10 pr-3 py-2 border border-gray-200 rounded-lg leading-5 bg-white placeholder-gray-400 focus:outline-none focus:placeholder-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out"
-                    placeholder="Search staff members...">
+                    placeholder="Search users...">
             </div>
         </div>
 
@@ -51,6 +51,10 @@
                             <th scope="col"
                                 class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                 Role
+                            </th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                Status
                             </th>
                             <th scope="col"
                                 class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
@@ -92,6 +96,19 @@
                                         {{ $member->role }}
                                     </span>
                                 </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    @if($member->status == 'Active')
+                                        <span
+                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                            Active
+                                        </span>
+                                    @else
+                                        <span
+                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                            Inactive
+                                        </span>
+                                    @endif
+                                </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <div class="flex justify-end space-x-3">
                                         <a href="{{ route('staff.edit', $member) }}"
@@ -128,7 +145,7 @@
                                                 d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
                                             </path>
                                         </svg>
-                                        <p>No staff members found.</p>
+                                        <p>No users found.</p>
                                     </div>
                                 </td>
                             </tr>

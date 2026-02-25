@@ -1,4 +1,7 @@
 <section>
+    @php
+        /** @var \App\Models\User $user */
+    @endphp
     <header>
         <h2 class="text-lg font-bold text-gray-900 dark:text-white">
             {{ __('Profile Information') }}
@@ -19,11 +22,11 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Name -->
             <div>
-                <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
-                <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}" required autofocus
-                    autocomplete="name"
+                <label for="full_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
+                <input type="text" name="full_name" id="full_name" value="{{ old('full_name', $user->full_name) }}"
+                    required autofocus autocomplete="name"
                     class="mt-1 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
-                @error('name')
+                @error('full_name')
                     <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                 @enderror
             </div>
