@@ -31,15 +31,17 @@
                     </svg>
                     Print
                 </a>
-                <a href="{{ route('services.edit', $service) }}"
-                    class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
-                    <svg class="w-5 h-5 mr-2 -ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
-                        </path>
-                    </svg>
-                    Edit Report
-                </a>
+                @if(auth()->user()->role !== 'Cashier')
+                    <a href="{{ route('services.edit', $service) }}"
+                        class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                        <svg class="w-5 h-5 mr-2 -ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                            </path>
+                        </svg>
+                        Edit Report
+                    </a>
+                @endif
             </div>
         </div>
 
@@ -54,11 +56,16 @@
                     <div class="p-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <div>
                             <dt class="text-sm font-medium text-gray-500">Appliance</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ $service->appliance_name }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900">
+                                {{ $service->appliance ? $service->appliance->product . ' (' . $service->appliance->brand . ')' : 'N/A' }}
+                            </dd>
                         </div>
                         <div>
-                            <dt class="text-sm font-medium text-gray-500">Brand/Model</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ $service->brand_model ?? 'N/A' }}</dd>
+                            <dt class="text-sm font-medium text-gray-500">Model No. / Dealer</dt>
+                            <dd class="mt-1 text-sm text-gray-900">
+                                {{ $service->appliance && $service->appliance->model_no ? $service->appliance->model_no : 'N/A' }}
+                                {{ $service->dealer ? ' / ' . $service->dealer : '' }}
+                            </dd>
                         </div>
                         <div class="sm:col-span-2">
                             <dt class="text-sm font-medium text-gray-500">Problem Description</dt>
@@ -66,14 +73,51 @@
                                 {{ $service->problem_desc }}
                             </dd>
                         </div>
-                        @if($service->recommendation)
+                        @if($service->findings)
                             <div class="sm:col-span-2">
-                                <dt class="text-sm font-medium text-gray-500">Diagnosis / Recommendation</dt>
-                                <dd class="mt-1 text-sm text-gray-900 bg-gray-50 p-3 rounded-lg border border-gray-100">
-                                    {{ $service->recommendation }}
+                                <dt class="text-sm font-medium text-gray-500">Findings</dt>
+                                <dd
+                                    class="mt-1 text-sm text-gray-900 bg-gray-50 p-3 rounded-lg border border-gray-100 whitespace-pre-line">
+                                    {{ $service->findings }}
                                 </dd>
                             </div>
                         @endif
+                        @if($service->remarks)
+                            <div class="sm:col-span-2">
+                                <dt class="text-sm font-medium text-gray-500">Remarks</dt>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $service->remarks }}</dd>
+                            </div>
+                        @endif
+                        @if($service->used_parts)
+                            <div class="sm:col-span-2">
+                                <dt class="text-sm font-medium text-gray-500">Used Parts</dt>
+                                <dd
+                                    class="mt-1 text-sm text-gray-900 bg-gray-50 p-3 rounded-lg border border-gray-100 whitespace-pre-line">
+                                    {{ $service->used_parts }}
+                                </dd>
+                            </div>
+                        @endif
+                        <div class="sm:col-span-2">
+                            <dt class="text-sm font-medium text-gray-500">Assigned Technician(s)</dt>
+                            <dd class="mt-1 text-sm text-gray-900">
+                                {{ $service->details && $service->details->technician ? $service->details->technician : 'None Assigned' }}
+                            </dd>
+                        </div>
+                        <div class="sm:col-span-2">
+                            <dt class="text-sm font-medium text-gray-500">Service Types</dt>
+                            <dd class="mt-1 text-sm text-gray-900">
+                                @if($service->details && $service->details->service_types)
+                                    @foreach($service->details->service_types as $type)
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mr-2">
+                                            {{ $type }}
+                                        </span>
+                                    @endforeach
+                                @else
+                                    N/A
+                                @endif
+                            </dd>
+                        </div>
                         <div class="sm:col-span-2">
                             <dt class="text-sm font-medium text-gray-500">Initial Labor Cost</dt>
                             <dd class="mt-1 text-lg font-bold text-gray-900">
@@ -100,7 +144,8 @@
                                     <div class="flex-1 bg-gray-50 p-3 rounded-lg rounded-tl-none">
                                         <div class="flex items-center justify-between">
                                             <h4 class="text-sm font-bold text-gray-900">
-                                                {{ $comment->user->name ?? 'Unknown' }}</h4>
+                                                {{ $comment->user->name ?? 'Unknown' }}
+                                            </h4>
                                             <span
                                                 class="text-xs text-gray-500">{{ $comment->created_at->format('M d, Y h:i A') }}</span>
                                         </div>
@@ -149,7 +194,8 @@
                                 </div>
                                 <div>
                                     <h4 class="text-sm font-bold text-gray-900">{{ $service->customer->first_name }}
-                                        {{ $service->customer->last_name }}</h4>
+                                        {{ $service->customer->last_name }}
+                                    </h4>
                                     <p class="text-xs text-gray-500">Customer ID: #{{ $service->customer->id }}</p>
                                 </div>
                             </div>
@@ -190,10 +236,22 @@
                 <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
                     <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
                         <h3 class="text-lg font-medium text-gray-900">Payments</h3>
-                        <a href="{{ route('transactions.create', ['report_id' => $service->id]) }}"
-                            class="text-xs font-medium text-blue-600 hover:text-blue-500 hover:underline">
-                            + Add
-                        </a>
+                        @if(in_array(auth()->user()->role, ['Administrator', 'Cashier']))
+                            @if($service->status === 'Completed')
+                                @if($service->transactions->count() == 0)
+                                    <a href="{{ route('transactions.create', ['report_id' => $service->id]) }}"
+                                        class="text-xs font-medium text-blue-600 hover:text-blue-500 hover:underline">
+                                        + Add Payment
+                                    </a>
+                                @endif
+                            @else
+                                <span
+                                    class="text-xs font-medium text-gray-400 cursor-not-allowed border-b border-dashed border-gray-400 pb-0.5"
+                                    title="Report must be Completed first">
+                                    Payment Restricted
+                                </span>
+                            @endif
+                        @endif
                     </div>
                     <div class="p-0">
                         @if($service->transactions->count() > 0)

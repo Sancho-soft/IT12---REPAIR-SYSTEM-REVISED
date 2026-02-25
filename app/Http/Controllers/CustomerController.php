@@ -6,6 +6,13 @@ use Illuminate\Http\Request;
 
 class CustomerController extends Controller
 {
+    private function checkCustomerAccess()
+    {
+        if (auth()->check() && !in_array(auth()->user()->role, ['Administrator', 'Secretary'])) {
+            abort(403, 'Unauthorized. Only Secretaries and Administrators can manage Customers.');
+        }
+    }
+
     public function index()
     {
         $customers = \App\Models\Customer::all();
@@ -14,11 +21,13 @@ class CustomerController extends Controller
 
     public function create()
     {
+        $this->checkCustomerAccess();
         return view('customers.create');
     }
 
-    public function store(\Illuminate\Http\Request $request)
+    public function store(Request $request)
     {
+        $this->checkCustomerAccess();
         $request->validate([
             'first_name' => 'nullable|string|max:255',
             'last_name' => 'nullable|string|max:255',
@@ -42,11 +51,13 @@ class CustomerController extends Controller
 
     public function edit(\App\Models\Customer $customer)
     {
+        $this->checkCustomerAccess();
         return view('customers.edit', compact('customer'));
     }
 
-    public function update(\Illuminate\Http\Request $request, \App\Models\Customer $customer)
+    public function update(Request $request, \App\Models\Customer $customer)
     {
+        $this->checkCustomerAccess();
         $request->validate([
             'first_name' => 'nullable|string|max:255',
             'last_name' => 'nullable|string|max:255',
@@ -65,6 +76,7 @@ class CustomerController extends Controller
 
     public function destroy(\App\Models\Customer $customer)
     {
+        $this->checkCustomerAccess();
         $customer->delete();
         return redirect()->route('customers.index')->with('success', 'Customer deleted successfully.');
     }

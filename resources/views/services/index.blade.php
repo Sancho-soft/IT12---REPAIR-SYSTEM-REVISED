@@ -82,7 +82,7 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {{ $service->appliance_name }}
+                                    {{ $service->appliance ? $service->appliance->product . ' - ' . $service->appliance->brand : 'N/A' }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                     {{ $service->date_in ? $service->date_in->format('M d, Y') : '-' }}

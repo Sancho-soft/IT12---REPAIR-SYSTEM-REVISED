@@ -11,7 +11,7 @@ class ServiceReport extends Model
     protected $fillable = [
         'customer_id',
         'customer_name',
-        'appliance_name',
+        'appliance_id',
         'date_in',
         'status',
         'dealer',
@@ -19,7 +19,8 @@ class ServiceReport extends Model
         'date_pulled_out',
         'findings',
         'remarks',
-        'location'
+        'location',
+        'used_parts'
     ];
 
     protected $casts = [
@@ -32,6 +33,11 @@ class ServiceReport extends Model
     public function customer()
     {
         return $this->belongsTo(Customer::class);
+    }
+
+    public function appliance()
+    {
+        return $this->belongsTo(Appliance::class);
     }
 
     public function details()

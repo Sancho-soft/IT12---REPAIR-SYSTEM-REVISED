@@ -55,6 +55,23 @@
                             @enderror
                         </div>
 
+                        <!-- Email -->
+                        <div class="md:col-span-2">
+                            <label for="email" class="block text-sm font-medium text-gray-700">Email Address (Optional)</label>
+                            <input type="email" name="email" id="email" value="{{ old('email', $customer->email) }}"
+                                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                placeholder="customer@example.com">
+                            @error('email')
+                                <p class="mt-1 text-sm text-red-600 flex items-center">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
                         <!-- Phone Number -->
                         <div class="md:col-span-2">
                             <label for="phone_no" class="block text-sm font-medium text-gray-700">Phone Number</label>
@@ -112,6 +129,101 @@
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+
+        <!-- Appliance Information Card -->
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden mt-6">
+            <div class="p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Customer Appliances</h3>
+                
+                <!-- Existing Appliances List -->
+                @if($customer->appliances->count() > 0)
+                    <div class="overflow-x-auto mb-6">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Appliance Type</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Brand</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Model No</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Serial No</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date Received</th>
+                                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                @foreach($customer->appliances as $app)
+                                    <tr>
+                                        <td class="px-4 py-3 text-sm text-gray-900">{{ $app->product }}</td>
+                                        <td class="px-4 py-3 text-sm text-gray-500">{{ $app->brand }}</td>
+                                        <td class="px-4 py-3 text-sm text-gray-500">{{ $app->category }}</td>
+                                        <td class="px-4 py-3 text-sm text-gray-500">{{ $app->model_no }}</td>
+                                        <td class="px-4 py-3 text-sm text-gray-500">{{ $app->serial_no }}</td>
+                                        <td class="px-4 py-3 text-sm text-gray-500">{{ $app->date_in ? \Carbon\Carbon::parse($app->date_in)->format('M d, Y') : '' }}</td>
+                                        <td class="px-4 py-3 text-right text-sm">
+                                            <form action="{{ route('appliances.destroy', $app) }}" method="POST" onsubmit="return confirm('Remove this appliance?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="text-red-600 hover:text-red-900">Remove</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @else
+                    <p class="text-sm text-gray-500 mb-6 italic">No appliances linked to this customer yet.</p>
+                @endif
+
+                <!-- Add New Appliance Form -->
+                <div class="bg-gray-50 rounded-lg p-5 border border-gray-200">
+                    <h4 class="text-md font-medium text-gray-900 mb-4">Add New Appliance</h4>
+                    
+                    <form action="{{ route('customers.appliances.store', $customer) }}" method="POST">
+                        @csrf
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-700">Appliance Type</label>
+                                <input type="text" name="product" placeholder="e.g. Refrigerator" required
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-700">Brand</label>
+                                <input type="text" name="brand" placeholder="e.g. Panasonic" required
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-700">Category</label>
+                                <input type="text" name="category" placeholder="e.g. Cooling System"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-700">Model No.</label>
+                                <input type="text" name="model_no" placeholder="Optional"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-700">Serial No.</label>
+                                <input type="text" name="serial_no" placeholder="Optional"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-700">Date Received</label>
+                                <input type="date" name="date_in" value="{{ date('Y-m-d') }}" required
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-end">
+                            <button type="submit"
+                                class="px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                                Add Appliance
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

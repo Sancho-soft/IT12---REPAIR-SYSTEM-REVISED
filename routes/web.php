@@ -9,6 +9,8 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\ServicePriceController;
 use App\Http\Controllers\ArchiveController;
 use App\Http\Controllers\StaffController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ApplianceController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -19,6 +21,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::resource('customers', CustomerController::class);
+    Route::post('/customers/{customer}/appliances', [ApplianceController::class, 'store'])->name('customers.appliances.store');
+    Route::delete('/appliances/{appliance}', [ApplianceController::class, 'destroy'])->name('appliances.destroy');
+
     Route::resource('services', ServiceReportController::class);
     Route::post('/services/{service}/comments', [ServiceReportController::class, 'storeComment'])->name('services.comments.store');
     Route::get('/services/{service}/print', [ServiceReportController::class, 'print'])->name('services.print');
@@ -41,6 +46,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Notifications Route
+    Route::post('/notifications/mark-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markRead');
 });
 
 require __DIR__ . '/auth.php';

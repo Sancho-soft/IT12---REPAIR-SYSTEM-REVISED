@@ -1,0 +1,34 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Appliance;
+use App\Models\Customer;
+use Illuminate\Http\Request;
+
+class ApplianceController extends Controller
+{
+    public function store(Request $request, Customer $customer)
+    {
+        $validated = $request->validate([
+            'brand' => 'nullable|string|max:255',
+            'category' => 'nullable|string|max:255',
+            'product' => 'nullable|string|max:255', // Appliance Type
+            'model_no' => 'nullable|string|max:255',
+            'serial_no' => 'nullable|string|max:255',
+            'date_in' => 'nullable|date',
+        ]);
+
+        $validated['customer_id'] = $customer->id;
+
+        Appliance::create($validated);
+
+        return back()->with('success', 'Appliance added successfully.');
+    }
+
+    public function destroy(Appliance $appliance)
+    {
+        $appliance->delete();
+        return back()->with('success', 'Appliance removed.');
+    }
+}

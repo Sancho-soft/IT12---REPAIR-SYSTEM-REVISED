@@ -37,6 +37,10 @@
                         class="px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ $type == 'inventory' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
                         Inventory
                     </a>
+                    <a href="{{ route('archive.index', ['type' => 'customers', 'search' => $search]) }}"
+                        class="px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ $type == 'customers' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
+                        Customers
+                    </a>
                 </div>
             </form>
         </div>
