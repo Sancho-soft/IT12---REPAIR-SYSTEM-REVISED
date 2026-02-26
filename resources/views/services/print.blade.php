@@ -137,9 +137,13 @@
             <div class="section-title">Appliance Information</div>
             <div class="row">
                 <div class="col">
-                    <p><span class="label">Appliance:</span> {{ $service->appliance_name }}</p>
-                    <p><span class="label">Brand/Model:</span> {{ $service->brand ?? 'N/A' }} /
-                        {{ $service->model ?? 'N/A' }}</p>
+                    <p><span class="label">Appliance:</span>
+                        {{ $service->appliance ? $service->appliance->product : 'N/A' }}</p>
+                    <p><span class="label">Brand/Model:</span>
+                        {{ $service->appliance ? $service->appliance->brand : 'N/A' }} /
+                        {{ $service->appliance ? $service->appliance->model_no : 'N/A' }}
+                    </p>
+                    {{ $service->model ?? 'N/A' }}</p>
                 </div>
                 <div class="col">
                     <p><span class="label">Serial No:</span> {{ $service->serial_no ?? 'N/A' }}</p>
@@ -155,14 +159,67 @@
             </div>
         </div>
 
-        @if($service->transactions->isNotEmpty())
+        @if($service->parts && $service->parts->count() > 0)
             <div class="section">
-                <div class="section-title">Transactions & Charges</div>
+                <div class="section-title">Parts Installed / Used</div>
                 <table class="table">
                     <thead>
                         <tr>
+                            <th>Part No.</th>
                             <th>Description</th>
-                            <th>Amount</th>
+                            <th style="text-align:center;">Qty</th>
+                            <th style="text-align:right;">Price</th>
+                            <th style="text-align:right;">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($service->parts as $part)
+                            <tr>
+                                <td>{{ $part->part_no }}</td>
+                                <td>{{ $part->name }}</td>
+                                <td style="text-align:center;">{{ $part->pivot->quantity }}</td>
+                                <td style="text-align:right;">{{ number_format($part->pivot->price, 2) }}</td>
+                                <td style="text-align:right;">
+                                    {{ number_format($part->pivot->quantity * $part->pivot->price, 2) }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @endif
+
+        <div class="section">
+            <div class="section-title">Cost Breakdown & Summary</div>
+            <table class="table" style="width: 50%; float: right; border: none;">
+                <tr>
+                    <td style="border: none; text-align: right; padding-right: 20px;"><strong>Labor Cost:</strong></td>
+                    <td style="border: none; text-align: right; width: 100px;">Php
+                        {{ number_format($service->details ? $service->details->labor : 0, 2) }}</td>
+                </tr>
+                <tr>
+                    <td style="border: none; text-align: right; padding-right: 20px;"><strong>Parts Total:</strong></td>
+                    <td style="border: none; text-align: right;">Php
+                        {{ number_format($service->details ? $service->details->parts_total_charge : 0, 2) }}</td>
+                </tr>
+                <tr>
+                    <td style="border: none; text-align: right; padding-right: 20px; font-size: 16px;"><strong>TOTAL
+                            AMOUNT:</strong></td>
+                    <td style="border: none; text-align: right; font-size: 16px;"><strong>Php
+                            {{ number_format($service->details ? $service->details->total_amount : 0, 2) }}</strong>
+                    </td>
+                </tr>
+            </table>
+            <div style="clear: both;"></div>
+        </div>
+
+        @if($service->transactions->isNotEmpty())
+            <div class="section">
+                <div class="section-title">Payment History</div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Receipt / Ref</th>
+                            <th>Amount Paid</th>
                             <th>Status</th>
                             <th>Date</th>
                         </tr>
@@ -170,8 +227,8 @@
                     <tbody>
                         @foreach($service->transactions as $trans)
                             <tr>
-                                <td>Service Charge</td>
-                                <td>{{ number_format($trans->total_amount, 2) }}</td>
+                                <td>{{ $trans->receipt_no ?? 'N/A' }}</td>
+                                <td>Php {{ number_format($trans->total_amount, 2) }}</td>
                                 <td>{{ $trans->payment_status }}</td>
                                 <td>{{ $trans->created_at->format('M d, Y') }}</td>
                             </tr>

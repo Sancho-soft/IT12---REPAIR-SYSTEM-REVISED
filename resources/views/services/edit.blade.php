@@ -1,13 +1,45 @@
 <x-app-layout>
-    <div class="max-w-4xl mx-auto space-y-6" x-data="{
+    <div class="w-full mx-auto space-y-6" x-data="{
         customers: {{ Js::from($customers) }},
+        parts: {{ Js::from($parts) }},
         selectedCustomerId: '{{ old('customer_id', $service->customer_id) }}',
         selectedApplianceId: '{{ old('appliance_id', $service->appliance_id) }}',
+        selectedParts: [],
+        selectedPartId: '',
+        partQuantity: 1,
         get currentCustomer() {
             return this.customers.find(c => c.id == this.selectedCustomerId) || null;
         },
         get customerAppliances() {
             return this.currentCustomer ? this.currentCustomer.appliances : [];
+        },
+        get totalPartsCost() {
+            return this.selectedParts.reduce((total, part) => total + (part.price * part.quantity), 0);
+        },
+        addPart() {
+            if (!this.selectedPartId || this.partQuantity < 1) return;
+            const partIndex = this.parts.findIndex(p => p.id == this.selectedPartId);
+            if (partIndex === -1) return;
+            const part = this.parts[partIndex];
+            
+            // Check if already in list
+            const existingIndex = this.selectedParts.findIndex(p => p.id === part.id);
+            if (existingIndex !== -1) {
+                this.selectedParts[existingIndex].quantity += parseInt(this.partQuantity);
+            } else {
+                this.selectedParts.push({
+                    id: part.id,
+                    name: part.name,
+                    part_no: part.part_no,
+                    price: parseFloat(part.price),
+                    quantity: parseInt(this.partQuantity)
+                });
+            }
+            this.selectedPartId = '';
+            this.partQuantity = 1;
+        },
+        removePart(id) {
+            this.selectedParts = this.selectedParts.filter(p => p.id !== id);
         },
         init() {
             this.$watch('selectedCustomerId', (newVal, oldVal) => {
@@ -15,6 +47,23 @@
                     this.selectedApplianceId = ''; // Only reset if specifically changed by user, not initial load
                 }
             });
+            
+            // Re-populate selectedParts from old input or existing service parts
+            let oldParts = @json(old('parts', $service->parts ?: []));
+            if (oldParts.length > 0) {
+                oldParts.forEach(oldPart => {
+                    const p = this.parts.find(px => px.id == oldPart.id);
+                    if (p) {
+                         this.selectedParts.push({
+                            id: p.id,
+                            name: p.name,
+                            part_no: p.part_no,
+                            price: parseFloat(oldPart.pivot ? oldPart.pivot.price : (oldPart.price || p.price)),
+                            quantity: parseInt(oldPart.pivot ? oldPart.pivot.quantity : oldPart.quantity)
+                        });
+                    }
+                });
+            }
         }
     }">
         <!-- Header -->
@@ -193,16 +242,84 @@
                             @enderror
                         </div>
 
-                        <!-- Used Parts -->
-                        <div class="md:col-span-2">
-                            <label for="used_parts" class="block text-sm font-medium text-gray-700">Optional Parts Input
-                                (Used Parts)</label>
-                            <textarea id="used_parts" name="used_parts" rows="2" {{ $secDisabled }}
-                                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
-                                placeholder="List any parts used here...">{{ old('used_parts', $service->used_parts) }}</textarea>
-                            @error('used_parts')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
+                        <!-- Dynamic Used Parts -->
+                        <div class="md:col-span-2 bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <h3 class="text-sm font-medium text-gray-900 mb-3">Parts Used (Inventory)</h3>
+                            
+                            <div class="flex items-end gap-3 mb-4">
+                                <div class="flex-1">
+                                    <label class="block text-xs font-medium text-gray-700">Select Part</label>
+                                    <select x-model="selectedPartId" {{ $secDisabled }} class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm disabled:bg-gray-100 disabled:cursor-not-allowed">
+                                        <option value="">-- Choose Part --</option>
+                                        <template x-for="part in parts" :key="part.id">
+                                            <option :value="part.id" x-text="part.part_no + ' - ' + part.name + ' (₱' + part.price + ') - Stock: ' + part.quantity_stock"></option>
+                                        </template>
+                                    </select>
+                                </div>
+                                <div class="w-24">
+                                    <label class="block text-xs font-medium text-gray-700">Qty</label>
+                                    <input type="number" x-model="partQuantity" min="1" {{ $secDisabled }} class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm disabled:bg-gray-100 disabled:cursor-not-allowed">
+                                </div>
+                                <button type="button" @click="addPart" {{ $secDisabled }} class="mb-px px-4 py-2 bg-gray-800 text-white text-sm font-medium rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 disabled:opacity-50 disabled:cursor-not-allowed">
+                                    Add Part
+                                </button>
+                            </div>
+
+                            <!-- Parts Table -->
+                            <div x-show="selectedParts.length > 0" class="mt-4 border border-gray-200 rounded-md overflow-hidden bg-white">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Part No.</th>
+                                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Name</th>
+                                            <th class="px-4 py-2 text-right text-xs font-medium text-gray-500">Price</th>
+                                            <th class="px-4 py-2 text-center text-xs font-medium text-gray-500">Qty</th>
+                                            <th class="px-4 py-2 text-right text-xs font-medium text-gray-500">Subtotal</th>
+                                            <th class="px-4 py-2 text-center text-xs font-medium text-gray-500">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        <template x-for="(part, index) in selectedParts" :key="part.id">
+                                            <tr>
+                                                <td class="px-4 py-2 text-sm text-gray-900" x-text="part.part_no"></td>
+                                                <td class="px-4 py-2 text-sm text-gray-900" x-text="part.name"></td>
+                                                <td class="px-4 py-2 text-sm text-right text-gray-900" x-text="'₱' + part.price.toFixed(2)"></td>
+                                                <td class="px-4 py-2 text-sm text-center text-gray-900">
+                                                    <input type="number" x-model.number="part.quantity" min="1" {{ $secDisabled }} class="w-16 p-1 text-center text-sm border-gray-300 rounded disabled:bg-gray-100 disabled:cursor-not-allowed" @change="$dispatch('input')">
+                                                </td>
+                                                <td class="px-4 py-2 text-sm text-right text-gray-900" x-text="'₱' + (part.price * part.quantity).toFixed(2)"></td>
+                                                <td class="px-4 py-2 text-sm text-center">
+                                                    <button type="button" @click="removePart(part.id)" {{ $secDisabled }} class="text-red-500 hover:text-red-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                                                        <svg class="h-4 w-4 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                        </svg>
+                                                    </button>
+                                                </td>
+                                                
+                                                <!-- Hidden inputs to submit array -->
+                                                <td class="hidden">
+                                                    <input type="hidden" :name="'parts['+index+'][id]'" :value="part.id" {{ $secDisabled }}>
+                                                    <input type="hidden" :name="'parts['+index+'][quantity]'" :value="part.quantity" {{ $secDisabled }}>
+                                                    <input type="hidden" :name="'parts['+index+'][price]'" :value="part.price" {{ $secDisabled }}>
+                                                </td>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+                                    <tfoot class="bg-gray-50 font-semibold">
+                                        <tr>
+                                            <td colspan="4" class="px-4 py-3 text-right text-sm text-gray-900">Parts Total:</td>
+                                            <td class="px-4 py-3 text-right text-sm text-blue-700" x-text="'₱' + totalPartsCost.toFixed(2)"></td>
+                                            <td></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            
+                            <!-- Optional manual text just in case they need to write something else that is not in inventory -->
+                            <div class="mt-4">
+                                <label for="used_parts" class="block text-xs font-medium text-gray-700">Additional Notes / Miscellaneous Not In Inventory</label>
+                                <textarea id="used_parts" name="used_parts" rows="1" {{ $secDisabled }} class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm disabled:bg-gray-100 disabled:cursor-not-allowed" placeholder="Any screws, tapes, manual items used...">{{ old('used_parts', $service->used_parts) }}</textarea>
+                            </div>
                         </div>
 
                         <!-- Initial Cost -->

@@ -1,41 +1,37 @@
 <x-app-layout>
-    <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 space-y-6">
+    <div class="w-full mx-auto py-6 sm:px-6 lg:px-8 space-y-6">
         <!-- Header Section -->
         <div class="bg-white dark:bg-gray-800 shadow sm:rounded-tl-xl sm:rounded-tr-xl overflow-hidden">
-            <div class="relative h-32 bg-blue-600">
-                <div class="absolute -bottom-12 left-8">
+            <div class="h-32 bg-blue-600"></div>
+            <div class="px-8 flex flex-col sm:flex-row sm:items-end justify-between -mt-12 pb-6">
+                <div class="flex flex-col sm:flex-row sm:items-start gap-5">
                     <div
-                        class="h-24 w-24 rounded-full border-4 border-white dark:border-gray-800 bg-white flex items-center justify-center text-blue-600 text-3xl font-bold uppercase shadow-md">
+                        class="h-24 w-24 shrink-0 rounded-full border-4 border-white dark:border-gray-800 bg-white flex items-center justify-center text-blue-600 text-3xl font-bold uppercase shadow-md overflow-hidden">
                         @if($user->avatar)
-                            <img src="{{ $user->avatar }}" alt="{{ $user->name }}"
-                                class="h-full w-full rounded-full object-cover">
+                            <img src="{{ asset('storage/' . $user->avatar) }}" alt="{{ $user->name }}"
+                                class="h-full w-full object-cover">
                         @else
                             {{ substr($user->name, 0, 1) }}
                         @endif
                     </div>
-                </div>
-            </div>
-            <div class="pt-16 pb-6 px-8 flex justify-between items-start">
-                <div>
-                    <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ $user->name }}</h1>
-                    <div class="flex items-center gap-2 mt-1">
-                        <span
-                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-                            {{ $user->role_title ?? $user->role }}
-                        </span>
+                    <div class="mt-4 sm:mt-12 sm:ml-2 flex flex-col pt-1">
+                        <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ $user->name }}</h1>
+
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400 max-w-xl">
+                            {{ $user->bio ?? 'Experienced professional managing operations.' }}
+                        </p>
                     </div>
-                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400 max-w-xl">
-                        {{ $user->bio ?? 'Experienced administrator managing repair services and team operations.' }}
-                    </p>
                 </div>
-                <a href="{{ route('profile.edit') }}"
-                    class="inline-flex items-center px-4 py-2 border border-blue-600 rounded-lg shadow-sm text-sm font-medium text-blue-600 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-blue-400 dark:border-gray-600 dark:hover:bg-gray-600 transition-colors">
-                    <svg class="-ml-1 mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                    </svg>
-                    Edit Profile
-                </a>
+                <div class="mt-4 sm:mt-0 mb-1">
+                    <a href="{{ route('profile.edit') }}"
+                        class="inline-flex items-center px-4 py-2 border border-blue-600 rounded-lg shadow-sm text-sm font-medium text-blue-600 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-blue-400 dark:border-gray-600 dark:hover:bg-gray-600 transition-colors">
+                        <svg class="-ml-1 mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                        </svg>
+                        Edit Profile
+                    </a>
+                </div>
             </div>
         </div>
 
@@ -56,12 +52,14 @@
                     <div>
                         <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Phone Number</dt>
                         <dd class="mt-1 text-sm text-gray-900 dark:text-gray-200">
-                            {{ $user->phone ?? '+1 234 567 8900' }}</dd>
+                            {{ $user->phone ?? '+1 234 567 8900' }}
+                        </dd>
                     </div>
                     <div>
                         <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Address</dt>
                         <dd class="mt-1 text-sm text-gray-900 dark:text-gray-200">
-                            {{ $user->address ?? '123 Business Street, Tech City, TC 12345' }}</dd>
+                            {{ $user->address ?? '123 Business Street, Tech City, TC 12345' }}
+                        </dd>
                     </div>
                 </dl>
             </div>
@@ -80,7 +78,8 @@
                     <div>
                         <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Member Since</dt>
                         <dd class="mt-1 text-sm text-gray-900 dark:text-gray-200">
-                            {{ $user->created_at->format('F j, Y') }}</dd>
+                            {{ $user->created_at->format('F j, Y') }}
+                        </dd>
                     </div>
                     <div>
                         <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Bio</dt>

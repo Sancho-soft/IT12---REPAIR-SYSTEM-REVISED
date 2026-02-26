@@ -16,6 +16,7 @@ class Appliance extends Model
         'warranty_end',
         'category',
         'status',
+        'appliance_size',
     ];
 
     public function customer()

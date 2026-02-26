@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="max-w-2xl mx-auto space-y-6">
+    <div class="w-full mx-auto space-y-6">
         <!-- Header -->
         <div class="flex items-center justify-between">
             <h2 class="text-2xl font-bold text-gray-900">Create New Transaction</h2>
@@ -73,9 +73,9 @@
                     <div class="space-y-6">
                         <!-- Service Report -->
                         <div>
-                            <label for="report_id" class="block text-sm font-medium text-gray-700">Service Report
-                                (Optional)</label>
-                            <select id="report_id" name="report_id" x-model="selectedReportId"
+                            <label for="report_id" class="block text-sm font-medium text-gray-700">Service
+                                Report</label>
+                            <select id="report_id" name="report_id" x-model="selectedReportId" required
                                 class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg">
                                 <option value="">Select Service Report</option>
                                 @foreach($reports as $report)

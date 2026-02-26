@@ -90,10 +90,37 @@
                         @endif
                         @if($service->used_parts)
                             <div class="sm:col-span-2">
-                                <dt class="text-sm font-medium text-gray-500">Used Parts</dt>
+                                <dt class="text-sm font-medium text-gray-500">Miscellaneous Notes (Not in Inventory)</dt>
                                 <dd
                                     class="mt-1 text-sm text-gray-900 bg-gray-50 p-3 rounded-lg border border-gray-100 whitespace-pre-line">
                                     {{ $service->used_parts }}
+                                </dd>
+                            </div>
+                        @endif
+                        @if($service->parts && $service->parts->count() > 0)
+                            <div class="sm:col-span-2">
+                                <dt class="text-sm font-medium text-gray-500">Inventory Parts Used</dt>
+                                <dd class="mt-1 border border-gray-200 rounded-md overflow-hidden bg-white">
+                                    <table class="min-w-full divide-y divide-gray-200">
+                                        <thead class="bg-gray-50">
+                                            <tr>
+                                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Part No. / Name</th>
+                                                <th class="px-4 py-2 text-center text-xs font-medium text-gray-500">Qty</th>
+                                                <th class="px-4 py-2 text-right text-xs font-medium text-gray-500">Price</th>
+                                                <th class="px-4 py-2 text-right text-xs font-medium text-gray-500">Subtotal</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-gray-200">
+                                            @foreach($service->parts as $part)
+                                                <tr>
+                                                    <td class="px-4 py-2 text-sm text-gray-900">{{ $part->part_no }} - {{ $part->name }}</td>
+                                                    <td class="px-4 py-2 text-sm text-center text-gray-900">{{ $part->pivot->quantity }}</td>
+                                                    <td class="px-4 py-2 text-sm text-right text-gray-900">₱{{ number_format($part->pivot->price, 2) }}</td>
+                                                    <td class="px-4 py-2 text-sm text-right text-gray-900">₱{{ number_format($part->pivot->quantity * $part->pivot->price, 2) }}</td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
                                 </dd>
                             </div>
                         @endif
@@ -118,10 +145,22 @@
                                 @endif
                             </dd>
                         </div>
-                        <div class="sm:col-span-2">
-                            <dt class="text-sm font-medium text-gray-500">Initial Labor Cost</dt>
-                            <dd class="mt-1 text-lg font-bold text-gray-900">
-                                ₱{{ number_format($service->labor_cost, 2) }}</dd>
+                        <div class="sm:col-span-2 bg-blue-50 p-4 rounded-lg">
+                            <dt class="text-sm font-bold text-gray-700 mb-2">Cost Breakdown</dt>
+                            <dd class="mt-1 grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+                                <div>
+                                    <span class="text-gray-500 block">Labor Cost</span>
+                                    <span class="font-semibold text-gray-900">₱{{ number_format($service->details ? $service->details->labor : 0, 2) }}</span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-500 block">Parts Total</span>
+                                    <span class="font-semibold text-gray-900">₱{{ number_format($service->details ? $service->details->parts_total_charge : 0, 2) }}</span>
+                                </div>
+                                <div class="sm:border-l sm:border-blue-200 sm:pl-4">
+                                    <span class="text-gray-500 block">Total Estimated</span>
+                                    <span class="font-bold text-blue-900 text-lg">₱{{ number_format($service->details ? $service->details->total_amount : 0, 2) }}</span>
+                                </div>
+                            </dd>
                         </div>
                     </div>
                 </div>
@@ -137,8 +176,13 @@
                                 <div class="flex space-x-3">
                                     <div class="flex-shrink-0">
                                         <div
-                                            class="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xs font-bold">
-                                            {{ substr($comment->user->name ?? 'U', 0, 1) }}
+                                            class="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xs font-bold overflow-hidden border border-gray-200">
+                                            @if($comment->user && $comment->user->avatar)
+                                                <img src="{{ asset('storage/' . $comment->user->avatar) }}"
+                                                    alt="{{ $comment->user->name }}" class="h-full w-full object-cover">
+                                            @else
+                                                {{ substr($comment->user->name ?? 'U', 0, 1) }}
+                                            @endif
                                         </div>
                                     </div>
                                     <div class="flex-1 bg-gray-50 p-3 rounded-lg rounded-tl-none">

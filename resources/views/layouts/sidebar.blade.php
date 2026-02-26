@@ -24,16 +24,18 @@
         </a>
 
         <!-- Customers -->
-        <a href="{{ route('customers.index') }}"
-            class="flex items-center px-3 py-2.5 rounded-lg group {{ request()->routeIs('customers.*') ? 'bg-blue-600 text-white shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-            <svg class="w-5 h-5 mr-3 {{ request()->routeIs('customers.*') ? 'text-white' : 'text-slate-400 group-hover:text-slate-300' }}"
-                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
-                </path>
-            </svg>
-            <span class="font-medium">Customers</span>
-        </a>
+        @if(in_array(auth()->user()->role, ['Administrator', 'Secretary', 'Cashier']))
+            <a href="{{ route('customers.index') }}"
+                class="flex items-center px-3 py-2.5 rounded-lg group {{ request()->routeIs('customers.*') ? 'bg-blue-600 text-white shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                <svg class="w-5 h-5 mr-3 {{ request()->routeIs('customers.*') ? 'text-white' : 'text-slate-400 group-hover:text-slate-300' }}"
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                    </path>
+                </svg>
+                <span class="font-medium">Customers</span>
+            </a>
+        @endif
 
         <!-- Service Reports -->
         <a href="{{ route('services.index') }}"
@@ -48,28 +50,32 @@
         </a>
 
         <!-- Transactions -->
-        <a href="{{ route('transactions.index') }}"
-            class="flex items-center px-3 py-2.5 rounded-lg group {{ request()->routeIs('transactions.*') ? 'bg-blue-600 text-white shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-            <svg class="w-5 h-5 mr-3 {{ request()->routeIs('transactions.*') ? 'text-white' : 'text-slate-400 group-hover:text-slate-300' }}"
-                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
-            </svg>
-            <span class="font-medium">Transactions</span>
-        </a>
+        @if(in_array(auth()->user()->role, ['Administrator', 'Cashier']))
+            <a href="{{ route('transactions.index') }}"
+                class="flex items-center px-3 py-2.5 rounded-lg group {{ request()->routeIs('transactions.*') ? 'bg-blue-600 text-white shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                <svg class="w-5 h-5 mr-3 {{ request()->routeIs('transactions.*') ? 'text-white' : 'text-slate-400 group-hover:text-slate-300' }}"
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                </svg>
+                <span class="font-medium">Transactions</span>
+            </a>
+        @endif
 
         <!-- Parts -->
-        <a href="{{ route('inventory.index') }}"
-            class="flex items-center px-3 py-2.5 rounded-lg group {{ request()->routeIs('inventory.*') ? 'bg-blue-600 text-white shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-            <svg class="w-5 h-5 mr-3 {{ request()->routeIs('inventory.*') ? 'text-white' : 'text-slate-400 group-hover:text-slate-300' }}"
-                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-            </svg>
-            <span class="font-medium">Parts</span>
-        </a>
+        @if(in_array(auth()->user()->role, ['Administrator', 'Secretary']))
+            <a href="{{ route('inventory.index') }}"
+                class="flex items-center px-3 py-2.5 rounded-lg group {{ request()->routeIs('inventory.*') ? 'bg-blue-600 text-white shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                <svg class="w-5 h-5 mr-3 {{ request()->routeIs('inventory.*') ? 'text-white' : 'text-slate-400 group-hover:text-slate-300' }}"
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                </svg>
+                <span class="font-medium">Parts</span>
+            </a>
+        @endif
 
-        @can('admin-only')
+        @if(auth()->user()->role === 'Administrator')
             <!-- Users (formerly Staff) -->
             <a href="{{ route('staff.index') }}"
                 class="flex items-center px-3 py-2.5 rounded-lg group {{ request()->routeIs('staff.*') ? 'bg-blue-600 text-white shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
@@ -79,17 +85,6 @@
                         d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                 </svg>
                 <span class="font-medium">Users</span>
-            </a>
-
-            <!-- Archive -->
-            <a href="{{ route('archive.index') }}"
-                class="flex items-center px-3 py-2.5 rounded-lg group {{ request()->routeIs('archive.*') ? 'bg-blue-600 text-white shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                <svg class="w-5 h-5 mr-3 {{ request()->routeIs('archive.*') ? 'text-white' : 'text-slate-400 group-hover:text-slate-300' }}"
-                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
-                </svg>
-                <span class="font-medium">Archive</span>
             </a>
 
             <!-- Service Prices -->
@@ -103,7 +98,18 @@
                 </svg>
                 <span class="font-medium">Service Prices</span>
             </a>
-        @endcan
+
+            <!-- Archive -->
+            <a href="{{ route('archive.index') }}"
+                class="flex items-center px-3 py-2.5 rounded-lg group {{ request()->routeIs('archive.*') ? 'bg-blue-600 text-white shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                <svg class="w-5 h-5 mr-3 {{ request()->routeIs('archive.*') ? 'text-white' : 'text-slate-400 group-hover:text-slate-300' }}"
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
+                </svg>
+                <span class="font-medium">Archive</span>
+            </a>
+        @endif
     </nav>
 
 

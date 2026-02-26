@@ -9,4 +9,11 @@ class Part extends Model
 {
     use SoftDeletes;
     protected $fillable = ['part_no', 'name', 'price', 'quantity_stock'];
+
+    public function serviceReports()
+    {
+        return $this->belongsToMany(ServiceReport::class)
+            ->withPivot('quantity', 'price')
+            ->withTimestamps();
+    }
 }

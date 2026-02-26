@@ -15,18 +15,55 @@
         @csrf
     </form>
 
-    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
+    <form method="post" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="mt-6 space-y-6">
         @csrf
         @method('patch')
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Avatar -->
+            <div class="md:col-span-2">
+                <label for="avatar" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Profile
+                    Photo</label>
+                <div class="mt-1 flex items-center gap-4">
+                    <div
+                        class="h-16 w-16 overflow-hidden rounded-full border-2 border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800">
+                        @if($user->avatar)
+                            <img src="{{ asset('storage/' . $user->avatar) }}" alt="{{ $user->name }}"
+                                class="h-full w-full object-cover">
+                        @else
+                            <svg class="h-full w-full text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+                            </svg>
+                        @endif
+                    </div>
+                    <input type="file" name="avatar" id="avatar" accept="image/*"
+                        class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-gray-700 dark:file:text-gray-300 dark:text-gray-400 cursor-pointer">
+                </div>
+                @error('avatar')
+                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                @enderror
+            </div>
+
             <!-- Name -->
             <div>
-                <label for="full_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
-                <input type="text" name="full_name" id="full_name" value="{{ old('full_name', $user->full_name) }}"
-                    required autofocus autocomplete="name"
+                <label for="first_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">First
+                    Name</label>
+                <input type="text" name="first_name" id="first_name" value="{{ old('first_name', $user->first_name) }}"
+                    required autofocus autocomplete="given-name"
                     class="mt-1 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
-                @error('full_name')
+                @error('first_name')
+                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div>
+                <label for="last_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Last
+                    Name</label>
+                <input type="text" name="last_name" id="last_name" value="{{ old('last_name', $user->last_name) }}"
+                    required autocomplete="family-name"
+                    class="mt-1 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                @error('last_name')
                     <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                 @enderror
             </div>

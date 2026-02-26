@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="max-w-2xl mx-auto space-y-6">
+    <div class="w-full mx-auto space-y-6">
         <!-- Header -->
         <div class="flex items-center justify-between">
             <h2 class="text-2xl font-bold text-gray-900">Edit User</h2>
@@ -102,30 +102,6 @@
                             @enderror
                         </div>
 
-                        <div class="border-t border-gray-100 pt-6 mt-6">
-                            <h3 class="text-md font-medium text-gray-900 mb-4">Change Password</h3>
-                            <p class="text-sm text-gray-500 mb-4">Leave blank if you don't want to change the password.
-                            </p>
-
-                            <!-- Password -->
-                            <div class="mb-4">
-                                <label for="password" class="block text-sm font-medium text-gray-700">New
-                                    Password</label>
-                                <input type="password" name="password" id="password"
-                                    class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
-                                @error('password')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <!-- Confirm Password -->
-                            <div>
-                                <label for="password_confirmation"
-                                    class="block text-sm font-medium text-gray-700">Confirm New Password</label>
-                                <input type="password" name="password_confirmation" id="password_confirmation"
-                                    class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
-                            </div>
-                        </div>
                     </div>
 
                     <div class="flex justify-end space-x-3 pt-6 border-t border-gray-100">

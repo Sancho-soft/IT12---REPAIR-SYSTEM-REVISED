@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="max-w-xl mx-auto space-y-6">
+    <div class="w-full mx-auto space-y-6">
         <!-- Header -->
         <div class="flex items-center justify-between">
             <h2 class="text-2xl font-bold text-gray-900">Add Service Price</h2>

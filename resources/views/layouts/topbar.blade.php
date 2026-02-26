@@ -96,8 +96,13 @@
                     <div class="text-xs text-blue-200">{{ Auth::user()->email }}</div>
                 </div>
                 <div
-                    class="h-10 w-10 rounded-full bg-blue-500 border-2 border-white flex items-center justify-center text-white font-bold transition-transform transform hover:scale-105">
-                    {{ substr(Auth::user()->name, 0, 1) }}
+                    class="h-10 w-10 rounded-full bg-blue-500 border-2 border-white flex items-center justify-center text-white font-bold transition-transform transform hover:scale-105 overflow-hidden">
+                    @if(Auth::user()->avatar)
+                        <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="{{ Auth::user()->name }}"
+                            class="h-full w-full object-cover">
+                    @else
+                        {{ substr(Auth::user()->name, 0, 1) }}
+                    @endif
                 </div>
                 <svg class="w-4 h-4 text-blue-200 transition-transform duration-200" :class="{'rotate-180': open}"
                     fill="none" stroke="currentColor" viewBox="0 0 24 24">

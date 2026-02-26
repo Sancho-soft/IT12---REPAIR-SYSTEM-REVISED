@@ -13,6 +13,30 @@ class TransactionController extends Controller
         }
     }
 
+    private function applyWarrantyIfPaid(\App\Models\Transaction $transaction)
+    {
+        if ($transaction->payment_status === 'Paid') {
+            $report = clone $transaction->report;
+            if ($report && $report->appliance) {
+                // Determine duration based on size (1, 3, or 6 months)
+                $months = 0;
+                $size = $report->appliance->appliance_size;
+                if ($size === 'Small')
+                    $months = 1;
+                elseif ($size === 'Medium')
+                    $months = 3;
+                elseif ($size === 'Large')
+                    $months = 6;
+
+                if ($months > 0) {
+                    $report->appliance->update([
+                        'warranty_end' => now()->addMonths($months)
+                    ]);
+                }
+            }
+        }
+    }
+
     public function index()
     {
         $this->checkTransactionAccess();
@@ -61,7 +85,7 @@ class TransactionController extends Controller
         );
 
         // Create transaction
-        \App\Models\Transaction::create([
+        $transaction = \App\Models\Transaction::create([
             'report_id' => $report->id,
             'parts_total' => $validated['materials'],
             'labor_total' => $validated['labor'],
@@ -70,6 +94,8 @@ class TransactionController extends Controller
             'payment_date' => $validated['payment_status'] == 'Paid' ? now() : null,
             'received_by' => auth()->user() ? auth()->user()->first_name . ' ' . auth()->user()->last_name : 'System',
         ]);
+
+        $this->applyWarrantyIfPaid($transaction);
 
         return redirect()->route('transactions.index')->with('success', 'Transaction recorded successfully.');
     }
@@ -95,6 +121,13 @@ class TransactionController extends Controller
         ]);
 
         $transaction->update($validated);
+
+        if (isset($validated['payment_status'])) {
+            if ($validated['payment_status'] === 'Paid' && !$transaction->payment_date) {
+                $transaction->update(['payment_date' => now()]);
+            }
+            $this->applyWarrantyIfPaid($transaction);
+        }
 
         return redirect()->route('transactions.index')->with('success', 'Transaction updated successfully.');
     }

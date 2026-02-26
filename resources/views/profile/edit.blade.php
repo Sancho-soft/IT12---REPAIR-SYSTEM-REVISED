@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 space-y-6" x-data="{ tab: 'account' }">
+    <div class="w-full mx-auto py-6 sm:px-6 lg:px-8 space-y-6" x-data="{ tab: 'account' }">
         <!-- Header -->
         <div class="md:flex md:items-center md:justify-between px-4 sm:px-0">
             <div class="flex-1 min-w-0">
@@ -72,9 +72,20 @@
         <!-- SECURITY TAB -->
         <div x-show="tab === 'security'" style="display: none;" class="space-y-6">
             <!-- Update Password -->
-            <div class="bg-white dark:bg-gray-800 shadow sm:rounded-xl border border-gray-100 dark:border-gray-700 p-6">
-                @include('profile.partials.update-password-form')
-            </div>
+            @if(auth()->user()->role !== 'Administrator')
+                <div class="bg-white dark:bg-gray-800 shadow sm:rounded-xl border border-gray-100 dark:border-gray-700 p-6">
+                    @include('profile.partials.update-password-form')
+                </div>
+            @else
+                <div class="bg-white dark:bg-gray-800 shadow sm:rounded-xl border border-gray-100 dark:border-gray-700 p-6">
+                    <header class="mb-4">
+                        <h2 class="text-lg font-bold text-gray-900 dark:text-white">Update Password</h2>
+                        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                            Administrators are not permitted to change their password via the profile settings.
+                        </p>
+                    </header>
+                </div>
+            @endif
 
             <!-- Two-Factor Auth (Placeholder) -->
             <div class="bg-white dark:bg-gray-800 shadow sm:rounded-xl border border-gray-100 dark:border-gray-700 p-6">

@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="max-w-3xl mx-auto space-y-6">
+    <div class="w-full mx-auto space-y-6">
         <!-- Header -->
         <div class="flex items-center justify-between">
             <h2 class="text-2xl font-bold text-gray-900">Edit Customer</h2>
@@ -148,7 +148,9 @@
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Model No</th>
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Serial No</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Size</th>
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date Received</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Warranty</th>
                                     <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
                                 </tr>
                             </thead>
@@ -160,7 +162,23 @@
                                         <td class="px-4 py-3 text-sm text-gray-500">{{ $app->category }}</td>
                                         <td class="px-4 py-3 text-sm text-gray-500">{{ $app->model_no }}</td>
                                         <td class="px-4 py-3 text-sm text-gray-500">{{ $app->serial_no }}</td>
+                                        <td class="px-4 py-3 text-sm text-gray-500">{{ $app->appliance_size ?? '-' }}</td>
                                         <td class="px-4 py-3 text-sm text-gray-500">{{ $app->date_in ? \Carbon\Carbon::parse($app->date_in)->format('M d, Y') : '' }}</td>
+                                        <td class="px-4 py-3 text-sm">
+                                            @if($app->warranty_end)
+                                                @if(\Carbon\Carbon::parse($app->warranty_end)->isPast())
+                                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
+                                                        Expired ({{ \Carbon\Carbon::parse($app->warranty_end)->format('M d, Y') }})
+                                                    </span>
+                                                @else
+                                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                                        Active until {{ \Carbon\Carbon::parse($app->warranty_end)->format('M d, Y') }}
+                                                    </span>
+                                                @endif
+                                            @else
+                                                <span class="text-gray-400 text-xs">No Warranty</span>
+                                            @endif
+                                        </td>
                                         <td class="px-4 py-3 text-right text-sm">
                                             <form action="{{ route('appliances.destroy', $app) }}" method="POST" onsubmit="return confirm('Remove this appliance?');">
                                                 @csrf
@@ -208,6 +226,15 @@
                                 <label class="block text-xs font-medium text-gray-700">Serial No.</label>
                                 <input type="text" name="serial_no" placeholder="Optional"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-700">Appliance Size</label>
+                                <select name="appliance_size" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                    <option value="">Select Size</option>
+                                    <option value="Small">Small (1mo Warranty)</option>
+                                    <option value="Medium">Medium (3mo Warranty)</option>
+                                    <option value="Large">Large (6mo Warranty)</option>
+                                </select>
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-gray-700">Date Received</label>

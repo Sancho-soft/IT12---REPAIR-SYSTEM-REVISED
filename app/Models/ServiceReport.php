@@ -53,4 +53,11 @@ class ServiceReport extends Model
     {
         return $this->hasMany(ServiceProgressComment::class, 'report_id')->orderBy('created_at', 'asc');
     }
+
+    public function parts()
+    {
+        return $this->belongsToMany(Part::class)
+            ->withPivot('quantity', 'price')
+            ->withTimestamps();
+    }
 }

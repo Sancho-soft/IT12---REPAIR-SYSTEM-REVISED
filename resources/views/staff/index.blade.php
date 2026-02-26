@@ -71,8 +71,13 @@
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center">
                                         <div
-                                            class="h-10 w-10 rounded-full bg-orange-500 flex items-center justify-center text-white font-bold text-sm">
-                                            {{ substr($member->full_name, 0, 1) }}
+                                            class="h-10 w-10 rounded-full bg-orange-500 flex items-center justify-center text-white font-bold text-sm overflow-hidden border border-gray-200">
+                                            @if($member->avatar)
+                                                <img src="{{ asset('storage/' . $member->avatar) }}"
+                                                    alt="{{ $member->full_name }}" class="h-full w-full object-cover">
+                                            @else
+                                                {{ substr($member->full_name, 0, 1) }}
+                                            @endif
                                         </div>
                                         <div class="ml-4">
                                             <div class="text-sm font-medium text-gray-900">{{ $member->full_name }}</div>

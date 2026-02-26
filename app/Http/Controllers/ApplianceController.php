@@ -17,6 +17,7 @@ class ApplianceController extends Controller
             'model_no' => 'nullable|string|max:255',
             'serial_no' => 'nullable|string|max:255',
             'date_in' => 'nullable|date',
+            'appliance_size' => 'nullable|in:Small,Medium,Large',
         ]);
 
         $validated['customer_id'] = $customer->id;
