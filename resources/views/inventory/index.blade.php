@@ -42,7 +42,7 @@
                             </th>
                             <th scope="col"
                                 class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                Description
+                                Part Name
                             </th>
                             <th scope="col"
                                 class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
@@ -77,7 +77,7 @@
                                                     </div>
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    {{ $part->description }}
+                                                    {{ $part->name }}
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-green-600">
                                                     ₱{{ number_format($part->price, 2) }}
@@ -85,7 +85,7 @@
                                                 <td class="px-6 py-4 whitespace-nowrap">
                                                     <span
                                                         class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                            {{ $part->quantity_stock < 5 ? 'bg-red-100 text-red-800' :
+                                                                                {{ $part->quantity_stock < 5 ? 'bg-red-100 text-red-800' :
                             ($part->quantity_stock < 10 ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800') }}">
                                                         {{ $part->quantity_stock }} units
                                                     </span>

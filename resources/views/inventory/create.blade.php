@@ -23,20 +23,18 @@
                         <!-- Part Number -->
                         <div>
                             <label for="part_no" class="block text-sm font-medium text-gray-700">Part Number</label>
-                            <input type="text" name="part_no" id="part_no" value="{{ old('part_no') }}" required
-                                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
-                            @error('part_no')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
+                            <input type="text" name="part_no" id="part_no" value="Generated Automatically" readonly
+                                class="mt-1 block w-full rounded-lg border-gray-300 bg-gray-50 text-gray-500 shadow-sm sm:text-sm">
+                            <p class="mt-1 text-xs text-gray-500">The system will automatically assign the next
+                                available part number (e.g. P-003).</p>
                         </div>
 
-                        <!-- Description -->
+                        <!-- Part Name -->
                         <div>
-                            <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
-                            <input type="text" name="description" id="description" value="{{ old('description') }}"
-                                required
+                            <label for="name" class="block text-sm font-medium text-gray-700">Part Name</label>
+                            <input type="text" name="name" id="name" value="{{ old('name') }}" required
                                 class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
-                            @error('description')
+                            @error('name')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>

@@ -32,13 +32,12 @@
                             @enderror
                         </div>
 
-                        <!-- Description -->
+                        <!-- Part Name -->
                         <div>
-                            <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
-                            <input type="text" name="description" id="description"
-                                value="{{ old('description', $part->description) }}" required
+                            <label for="name" class="block text-sm font-medium text-gray-700">Part Name</label>
+                            <input type="text" name="name" id="name" value="{{ old('name', $part->name) }}" required
                                 class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
-                            @error('description')
+                            @error('name')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>

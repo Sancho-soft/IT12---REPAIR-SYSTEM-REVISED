@@ -102,7 +102,8 @@
                                         <span class="text-gray-500 sm:text-sm">₱</span>
                                     </div>
                                     <input type="number" name="labor" id="labor" step="0.01" x-model="labor" required
-                                        class="focus:ring-blue-500 focus:border-blue-500 block w-full pl-7 sm:text-sm border-gray-300 rounded-lg"
+                                        readonly
+                                        class="bg-gray-50 focus:ring-blue-500 focus:border-blue-500 block w-full pl-7 sm:text-sm border-gray-300 rounded-lg cursor-not-allowed"
                                         placeholder="0.00">
                                 </div>
                                 @error('labor')
@@ -119,8 +120,8 @@
                                         <span class="text-gray-500 sm:text-sm">₱</span>
                                     </div>
                                     <input type="number" name="materials" id="materials" step="0.01" x-model="materials"
-                                        required
-                                        class="focus:ring-blue-500 focus:border-blue-500 block w-full pl-7 sm:text-sm border-gray-300 rounded-lg"
+                                        required readonly
+                                        class="bg-gray-50 focus:ring-blue-500 focus:border-blue-500 block w-full pl-7 sm:text-sm border-gray-300 rounded-lg cursor-not-allowed"
                                         placeholder="0.00">
                                 </div>
                                 @error('materials')
@@ -137,8 +138,8 @@
                                         <span class="text-gray-500 sm:text-sm">₱</span>
                                     </div>
                                     <input type="number" name="delivery" id="delivery" step="0.01" x-model="delivery"
-                                        required
-                                        class="focus:ring-blue-500 focus:border-blue-500 block w-full pl-7 sm:text-sm border-gray-300 rounded-lg"
+                                        required readonly
+                                        class="bg-gray-50 focus:ring-blue-500 focus:border-blue-500 block w-full pl-7 sm:text-sm border-gray-300 rounded-lg cursor-not-allowed"
                                         placeholder="0.00">
                                 </div>
                                 @error('delivery')

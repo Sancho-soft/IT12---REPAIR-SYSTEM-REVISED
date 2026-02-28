@@ -68,6 +68,35 @@
                             @enderror
                         </div>
 
+                        <!-- Update Password (Optional) -->
+                        <div class="bg-gray-50 border border-gray-100 rounded-lg p-4 mb-4">
+                            <h3 class="text-sm font-medium text-gray-700 mb-4">Reset Password (Optional)</h3>
+                            <p class="text-xs text-gray-500 mb-4">Leave these fields blank if you do not want to change
+                                the user's current password.</p>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="password" class="block text-sm font-medium text-gray-700">New
+                                        Password</label>
+                                    <input type="password" name="password" id="password"
+                                        class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                        placeholder="••••••••">
+                                    @error('password')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <!-- Confirm New Password -->
+                                <div>
+                                    <label for="password_confirmation"
+                                        class="block text-sm font-medium text-gray-700">Confirm New Password</label>
+                                    <input type="password" name="password_confirmation" id="password_confirmation"
+                                        class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                        placeholder="••••••••">
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Role -->
                         <div>
                             <label for="role" class="block text-sm font-medium text-gray-700">Role</label>

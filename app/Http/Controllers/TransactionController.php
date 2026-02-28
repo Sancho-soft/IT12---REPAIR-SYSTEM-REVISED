@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class TransactionController extends Controller
 {
@@ -95,9 +96,73 @@ class TransactionController extends Controller
             'received_by' => auth()->user() ? auth()->user()->first_name . ' ' . auth()->user()->last_name : 'System',
         ]);
 
+        // Create PayMongo Payment Link if total >= 100 and not Paid
+        if ($validated['payment_status'] !== 'Paid' && $totalAmount >= 100) {
+            try {
+                $response = Http::withBasicAuth(env('PAYMONGO_SECRET_KEY'), '')
+                    ->withHeaders([
+                        'accept' => 'application/json',
+                        'content-type' => 'application/json',
+                    ])
+                    ->post('https://api.paymongo.com/v1/links', [
+                        'data' => [
+                            'attributes' => [
+                                'amount' => intval($totalAmount * 100),
+                                'description' => 'Repair Service Payment for Report #' . $report->id,
+                                'remarks' => 'Transaction #' . $transaction->id
+                            ]
+                        ]
+                    ]);
+
+                if ($response->successful()) {
+                    $paymongoData = $response->json()['data'];
+                    $transaction->update([
+                        'paymongo_link_id' => $paymongoData['id'],
+                        'payment_url' => $paymongoData['attributes']['checkout_url']
+                    ]);
+                }
+            } catch (\Exception $e) {
+                // Log error or ignore to prevent breaking the flow
+                \Log::error('PayMongo Link Creation Failed: ' . $e->getMessage());
+            }
+        }
+
         $this->applyWarrantyIfPaid($transaction);
 
         return redirect()->route('transactions.index')->with('success', 'Transaction recorded successfully.');
+    }
+
+    public function paymongoWebhook(Request $request)
+    {
+        $payload = $request->all();
+
+        // Check if this is a payment paid event from PayMongo
+        if (isset($payload['data']['type']) && $payload['data']['type'] === 'event' && $payload['data']['attributes']['type'] === 'link.payment.paid') {
+
+            // Extract the link ID that was just paid 
+            $linkId = $payload['data']['attributes']['data']['attributes']['link_id'] ?? null;
+
+            if ($linkId) {
+                // Find our transaction matching this exact PayMongo Link
+                $transaction = \App\Models\Transaction::where('paymongo_link_id', $linkId)->first();
+
+                if ($transaction && $transaction->payment_status !== 'Paid') {
+                    $transaction->update([
+                        'payment_status' => 'Paid',
+                        'payment_date' => now(),
+                        // Could record 'amount' from payload if needed, but we trust the link generated.
+                    ]);
+
+                    // Trigger the warranty logic if applicable
+                    $this->applyWarrantyIfPaid($transaction);
+
+                    \Log::info("Webhook Success: Transaction #{$transaction->id} automatically marked as Paid.");
+                }
+            }
+        }
+
+        // Always return 200 OK so PayMongo knows we received it
+        return response()->json(['status' => 'success']);
     }
 
     public function show(\App\Models\Transaction $transaction)

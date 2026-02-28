@@ -113,7 +113,7 @@
                                         <tbody class="divide-y divide-gray-200">
                                             @foreach($service->parts as $part)
                                                 <tr>
-                                                    <td class="px-4 py-2 text-sm text-gray-900">{{ $part->part_no }} - {{ $part->name }}</td>
+                                                    <td class="px-4 py-2 text-sm text-gray-900">{{ $part->part_no }} - {{ $part->description }}</td>
                                                     <td class="px-4 py-2 text-sm text-center text-gray-900">{{ $part->pivot->quantity }}</td>
                                                     <td class="px-4 py-2 text-sm text-right text-gray-900">₱{{ number_format($part->pivot->price, 2) }}</td>
                                                     <td class="px-4 py-2 text-sm text-right text-gray-900">₱{{ number_format($part->pivot->quantity * $part->pivot->price, 2) }}</td>

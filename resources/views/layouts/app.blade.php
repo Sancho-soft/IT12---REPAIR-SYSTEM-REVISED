@@ -12,20 +12,8 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap" rel="stylesheet" />
 
-    <!-- Scripts -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                },
-            },
-        }
-    </script>
+    <!-- Scripts & Styles (Offline TailWind via Vite) -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script>
         // Force Light Mode cleanup
         document.documentElement.classList.remove('dark');

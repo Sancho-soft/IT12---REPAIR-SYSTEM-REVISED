@@ -38,6 +38,7 @@ class StaffController extends Controller
             'last_name' => ['required', 'string', 'max:255'],
             'username' => ['required', 'string', 'max:255', 'unique:' . User::class],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
             'role' => ['required', 'string', 'in:Administrator,Secretary,Technician,Cashier'],
             'status' => ['required', 'string', 'in:Active,Inactive'],
         ]);
@@ -47,14 +48,9 @@ class StaffController extends Controller
             'last_name' => $request->last_name,
             'username' => $request->username,
             'email' => $request->email,
-            'password' => Hash::make('temp_password'), // Temporary, will be updated immediately
+            'password' => Hash::make($request->password), // Hash the custom user provided password
             'role' => $request->role,
             'status' => $request->status,
-        ]);
-
-        // Implement ID + "password" logic
-        $user->update([
-            'password' => Hash::make($user->id . 'password')
         ]);
 
         return redirect()->route('staff.index')->with('success', 'User created successfully.');
@@ -78,18 +74,26 @@ class StaffController extends Controller
             'last_name' => ['required', 'string', 'max:255'],
             'username' => ['required', 'string', 'max:255', 'unique:users,username,' . $staff->id],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email,' . $staff->id],
+            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
             'role' => ['required', 'string', 'in:Administrator,Secretary,Technician,Cashier'],
             'status' => ['required', 'string', 'in:Active,Inactive'],
         ]);
 
-        $staff->update([
+        $data = [
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'username' => $request->username,
             'email' => $request->email,
             'role' => $request->role,
             'status' => $request->status,
-        ]);
+        ];
+
+        // Only update password if a new one was provided
+        if ($request->filled('password')) {
+            $data['password'] = Hash::make($request->password);
+        }
+
+        $staff->update($data);
 
 
 

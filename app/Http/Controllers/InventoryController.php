@@ -20,13 +20,25 @@ class InventoryController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'part_no' => 'required|string',
-            'description' => 'nullable|string',
+            'name' => 'required|string',
             'price' => 'numeric',
             'quantity_stock' => 'integer',
         ]);
 
-        \App\Models\Part::create($request->all());
+        // Auto-generate Part Number (P-001, P-002, etc.)
+        $latestPart = \App\Models\Part::orderBy('id', 'desc')->first();
+        if ($latestPart && preg_match('/^P-(\d+)$/', $latestPart->part_no, $matches)) {
+            $nextNumber = intval($matches[1]) + 1;
+        } else {
+            // Fallback: count total parts if the latest doesn't match the format
+            $nextNumber = \App\Models\Part::count() + 1;
+        }
+        $generatedPartNo = 'P-' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+
+        $data = $request->all();
+        $data['part_no'] = $generatedPartNo;
+
+        \App\Models\Part::create($data);
 
         return redirect()->route('inventory.index')->with('success', 'Part added successfully.');
     }
@@ -45,7 +57,7 @@ class InventoryController extends Controller
     {
         $validated = $request->validate([
             'part_no' => 'required|string',
-            'description' => 'required|string',
+            'name' => 'required|string',
             'price' => 'required|numeric',
             'quantity_stock' => 'required|integer',
         ]);

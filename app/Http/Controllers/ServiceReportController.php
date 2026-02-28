@@ -179,10 +179,6 @@ class ServiceReportController extends Controller
             $ignores = ['customer_id', 'appliance_id', 'date_in', 'problem_desc', 'labor_cost', 'dealer', 'dop', 'technicians', 'service_types'];
             foreach ($ignores as $ignore)
                 unset($rules[$ignore]);
-        } elseif ($userRole === 'Secretary') {
-            $ignores = ['status', 'findings', 'remarks', 'used_parts'];
-            foreach ($ignores as $ignore)
-                unset($rules[$ignore]);
         }
 
         $validated = $request->validate($rules);
@@ -198,11 +194,6 @@ class ServiceReportController extends Controller
             $validated['dop'] = $service->dop;
             $validated['service_types'] = $service->details ? $service->details->service_types : [];
             $validated['technicians'] = $service->details ? explode(', ', $service->details->technician) : [];
-        } elseif ($userRole === 'Secretary') {
-            $validated['status'] = $service->status;
-            $validated['findings'] = $service->findings;
-            $validated['remarks'] = $service->remarks;
-            $validated['used_parts'] = $service->used_parts;
         }
 
         $customer = \App\Models\Customer::find($validated['customer_id']);
@@ -210,12 +201,10 @@ class ServiceReportController extends Controller
 
         $service->update($validated);
 
-        // Process Parts & Inventory Sync (Ignore for Secretaries, who can't edit parts)
+        // Process Parts & Inventory Sync
         $partsTotalCost = $service->details ? $service->details->parts_total_charge : 0;
-        if ($userRole !== 'Secretary') {
-            $partsInput = $request->input('parts', []);
-            $partsTotalCost = $this->processParts($service, $partsInput, false);
-        }
+        $partsInput = $request->input('parts', []);
+        $partsTotalCost = $this->processParts($service, $partsInput, false);
 
         // Update or Create ServiceDetail
         $techs = isset($validated['technicians']) ? implode(', ', $validated['technicians']) : null;

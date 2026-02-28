@@ -176,11 +176,12 @@
                         @foreach($service->parts as $part)
                             <tr>
                                 <td>{{ $part->part_no }}</td>
-                                <td>{{ $part->name }}</td>
+                                <td>{{ $part->description }}</td>
                                 <td style="text-align:center;">{{ $part->pivot->quantity }}</td>
                                 <td style="text-align:right;">{{ number_format($part->pivot->price, 2) }}</td>
                                 <td style="text-align:right;">
-                                    {{ number_format($part->pivot->quantity * $part->pivot->price, 2) }}</td>
+                                    {{ number_format($part->pivot->quantity * $part->pivot->price, 2) }}
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -194,12 +195,14 @@
                 <tr>
                     <td style="border: none; text-align: right; padding-right: 20px;"><strong>Labor Cost:</strong></td>
                     <td style="border: none; text-align: right; width: 100px;">Php
-                        {{ number_format($service->details ? $service->details->labor : 0, 2) }}</td>
+                        {{ number_format($service->details ? $service->details->labor : 0, 2) }}
+                    </td>
                 </tr>
                 <tr>
                     <td style="border: none; text-align: right; padding-right: 20px;"><strong>Parts Total:</strong></td>
                     <td style="border: none; text-align: right;">Php
-                        {{ number_format($service->details ? $service->details->parts_total_charge : 0, 2) }}</td>
+                        {{ number_format($service->details ? $service->details->parts_total_charge : 0, 2) }}
+                    </td>
                 </tr>
                 <tr>
                     <td style="border: none; text-align: right; padding-right: 20px; font-size: 16px;"><strong>TOTAL

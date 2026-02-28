@@ -259,7 +259,8 @@
                                         <tr>
                                             <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Part No.
                                             </th>
-                                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Name</th>
+                                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">
+                                                Description</th>
                                             <th class="px-4 py-2 text-right text-xs font-medium text-gray-500">Price
                                             </th>
                                             <th class="px-4 py-2 text-center text-xs font-medium text-gray-500">Qty</th>

@@ -15,7 +15,9 @@ class Transaction extends Model
         'total_amount',
         'payment_status',
         'payment_date',
-        'received_by'
+        'received_by',
+        'paymongo_link_id',
+        'payment_url'
     ];
 
     protected $casts = ['payment_date' => 'date'];
