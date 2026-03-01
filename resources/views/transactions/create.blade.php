@@ -38,8 +38,9 @@
             labor: {{ old('labor', 0) }},
             materials: {{ old('materials', 0) }},
             delivery: {{ old('delivery', 0) }},
-            get totalAmount() {
-                return (parseFloat(this.labor) || 0) + (parseFloat(this.materials) || 0) + (parseFloat(this.delivery) || 0);
+            total_amount: 0,
+            calculateTotal() {
+                this.total_amount = ((parseFloat(this.labor) || 0) + (parseFloat(this.materials) || 0) + (parseFloat(this.delivery) || 0)).toFixed(2);
             },
             init() {
                 this.$watch('selectedReportId', (value) => {
@@ -53,7 +54,12 @@
                         this.materials = 0;
                         this.delivery = 0;
                     }
+                    this.calculateTotal();
                 });
+                
+                this.$watch('labor', () => this.calculateTotal());
+                this.$watch('materials', () => this.calculateTotal());
+                this.$watch('delivery', () => this.calculateTotal());
                 
                 // Trigger initial load if report_id exists
                 if(this.selectedReportId && !{{ old('labor') ? 'true' : 'false' }}) {
@@ -64,6 +70,7 @@
                         this.delivery = report.delivery;
                     }
                 }
+                this.calculateTotal();
             }
         }">
             <div class="p-6">
@@ -102,8 +109,7 @@
                                         <span class="text-gray-500 sm:text-sm">₱</span>
                                     </div>
                                     <input type="number" name="labor" id="labor" step="0.01" x-model="labor" required
-                                        readonly
-                                        class="bg-gray-50 focus:ring-blue-500 focus:border-blue-500 block w-full pl-7 sm:text-sm border-gray-300 rounded-lg cursor-not-allowed"
+                                        class="focus:ring-blue-500 focus:border-blue-500 block w-full pl-7 sm:text-sm border-gray-300 rounded-lg"
                                         placeholder="0.00">
                                 </div>
                                 @error('labor')
@@ -120,8 +126,8 @@
                                         <span class="text-gray-500 sm:text-sm">₱</span>
                                     </div>
                                     <input type="number" name="materials" id="materials" step="0.01" x-model="materials"
-                                        required readonly
-                                        class="bg-gray-50 focus:ring-blue-500 focus:border-blue-500 block w-full pl-7 sm:text-sm border-gray-300 rounded-lg cursor-not-allowed"
+                                        required
+                                        class="focus:ring-blue-500 focus:border-blue-500 block w-full pl-7 sm:text-sm border-gray-300 rounded-lg"
                                         placeholder="0.00">
                                 </div>
                                 @error('materials')
@@ -138,8 +144,8 @@
                                         <span class="text-gray-500 sm:text-sm">₱</span>
                                     </div>
                                     <input type="number" name="delivery" id="delivery" step="0.01" x-model="delivery"
-                                        required readonly
-                                        class="bg-gray-50 focus:ring-blue-500 focus:border-blue-500 block w-full pl-7 sm:text-sm border-gray-300 rounded-lg cursor-not-allowed"
+                                        required
+                                        class="focus:ring-blue-500 focus:border-blue-500 block w-full pl-7 sm:text-sm border-gray-300 rounded-lg"
                                         placeholder="0.00">
                                 </div>
                                 @error('delivery')
@@ -157,8 +163,8 @@
                                     <span class="text-gray-500 sm:text-sm overflow-visible font-bold">₱</span>
                                 </div>
                                 <input type="number" name="total_amount" id="total_amount" step="0.01"
-                                    x-bind:value="totalAmount.toFixed(2)" readonly
-                                    class="bg-gray-50 font-bold focus:ring-blue-500 focus:border-blue-500 block w-full pl-7 sm:text-sm border-gray-300 rounded-lg"
+                                    x-model="total_amount" required
+                                    class="font-bold focus:ring-blue-500 focus:border-blue-500 block w-full pl-7 sm:text-sm border-gray-300 rounded-lg"
                                     placeholder="0.00">
                             </div>
                             @error('total_amount')

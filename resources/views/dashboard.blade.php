@@ -10,7 +10,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <!-- Weekly Customers -->
             <a href="{{ route('customers.index') }}"
-                class="block bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+                class="block bg-blue-50/50 p-6 rounded-xl border border-blue-100 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
                 <div class="flex justify-between items-start">
                     <div class="p-3 bg-blue-50 rounded-lg text-blue-600">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -32,9 +32,9 @@
 
             <!-- Weekly Income -->
             <a href="{{ route('transactions.index') }}"
-                class="block bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+                class="block bg-green-50/50 p-6 rounded-xl border border-green-100 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
                 <div class="flex justify-between items-start">
-                    <div class="p-3 bg-green-50 rounded-lg text-green-600">
+                    <div class="p-3 bg-green-100 rounded-lg text-green-700">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
@@ -54,9 +54,9 @@
 
             <!-- Weekly Services -->
             <a href="{{ route('services.index') }}"
-                class="block bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+                class="block bg-purple-50/50 p-6 rounded-xl border border-purple-100 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
                 <div class="flex justify-between items-start">
-                    <div class="p-3 bg-purple-50 rounded-lg text-purple-600">
+                    <div class="p-3 bg-purple-100 rounded-lg text-purple-700">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
@@ -77,9 +77,10 @@
             </a>
 
             <!-- Growth Rate -->
-            <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-between">
+            <a href="#"
+                class="block bg-orange-50/50 p-6 rounded-xl border border-orange-100 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
                 <div class="flex justify-between items-start">
-                    <div class="p-3 bg-orange-50 rounded-lg text-orange-600">
+                    <div class="p-3 bg-orange-100 rounded-lg text-orange-700">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
@@ -94,64 +95,70 @@
                     <h3 class="text-3xl font-bold text-gray-900">+15%</h3>
                     <p class="text-sm text-gray-500 mt-1">Growth Rate</p>
                 </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Charts & Activity Row -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Popular Service Types -->
+        <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">Popular Service Types</h3>
+            <div class="h-64 flex items-center justify-center relative">
+                <canvas id="serviceTypesChart"></canvas>
+                <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none mt-2">
+                    <span class="text-3xl font-bold text-gray-900" id="popularServicePercentage">50%</span>
+                    <span class="text-xs text-gray-500 font-medium uppercase tracking-wider"
+                        id="popularServiceLabel">MAINTENANCE</span>
+                </div>
+            </div>
+            <div class="mt-4 flex justify-center space-x-6">
+                <div class="flex items-center">
+                    <span class="w-3 h-3 rounded-full bg-orange-500 mr-2"></span>
+                    <span class="text-sm text-gray-500">Installation</span>
+                </div>
+                <div class="flex items-center">
+                    <span class="w-3 h-3 rounded-full bg-green-500 mr-2"></span>
+                    <span class="text-sm text-gray-500">Maintenance</span>
+                </div>
+                <div class="flex items-center">
+                    <span class="w-3 h-3 rounded-full bg-blue-500 mr-2"></span>
+                    <span class="text-sm text-gray-500">Repair</span>
+                </div>
             </div>
         </div>
 
-        <!-- Charts & Activity Row -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Popular Service Types -->
-            <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-                <h3 class="text-lg font-bold text-gray-900 mb-4">Popular Service Types</h3>
-                <div class="h-64 flex items-center justify-center">
-                    <canvas id="serviceTypesChart"></canvas>
-                </div>
-                <div class="mt-4 flex justify-center space-x-6">
-                    <div class="flex items-center">
-                        <span class="w-3 h-3 rounded-full bg-orange-500 mr-2"></span>
-                        <span class="text-sm text-gray-500">Installation</span>
-                    </div>
-                    <div class="flex items-center">
-                        <span class="w-3 h-3 rounded-full bg-green-500 mr-2"></span>
-                        <span class="text-sm text-gray-500">Maintenance</span>
-                    </div>
-                    <div class="flex items-center">
-                        <span class="w-3 h-3 rounded-full bg-blue-500 mr-2"></span>
-                        <span class="text-sm text-gray-500">Repair</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Recent Activity -->
-            <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-                <h3 class="text-lg font-bold text-gray-900 mb-4">Recent Activity</h3>
-                <div class="space-y-4">
-                    @forelse($recentServices as $service)
-                                    <div
-                                        class="flex items-center p-3 hover:bg-gray-50 rounded-lg transition-colors border border-transparent hover:border-gray-100">
-                                        <div
-                                            class="h-10 w-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm shrink-0">
-                                            {{ substr($service->customer_name ?? 'U', 0, 1) }}
-                                        </div>
-                                        <div class="ml-4 flex-1">
-                                            <div class="flex justify-between items-start">
-                                                <h4 class="text-sm font-semibold text-gray-900">{{ $service->customer_name }}</h4>
-                                                <span
-                                                    class="px-2 py-0.5 text-xs rounded-full 
-                                                                        {{ $service->status === 'Completed' ? 'bg-green-100 text-green-800' :
-                        ($service->status === 'Pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800') }}">
-                                                    {{ $service->status }}
-                                                </span>
-                                            </div>
-                                            <p class="text-sm text-gray-500">{{ $service->appliance_name }}</p>
-                                            <p class="text-xs text-gray-400 mt-1">{{ $service->created_at->diffForHumans() }}</p>
-                                        </div>
+        <!-- Recent Activity -->
+        <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">Recent Activity</h3>
+            <div class="space-y-4">
+                @forelse($recentServices as $service)
+                            <a href="{{ route('services.show', $service->id) }}"
+                                class="flex items-center p-3 hover:bg-gray-50 rounded-lg transition-colors border border-transparent hover:border-gray-100">
+                                <div
+                                    class="h-10 w-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm shrink-0">
+                                    {{ substr($service->customer_name ?? 'U', 0, 1) }}
+                                </div>
+                                <div class="ml-4 flex-1">
+                                    <div class="flex justify-between items-start">
+                                        <h4 class="text-sm font-semibold text-gray-900">{{ $service->customer_name }}</h4>
+                                        <span
+                                            class="px-2 py-0.5 text-xs rounded-full 
+                                                                                    {{ $service->status === 'Completed' ? 'bg-green-100 text-green-800' :
+                    ($service->status === 'Pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800') }}">
+                                            {{ $service->status }}
+                                        </span>
                                     </div>
-                    @empty
-                        <div class="text-center py-4 text-gray-500 text-sm">No recent activity</div>
-                    @endforelse
-                </div>
+                                    <p class="text-sm text-gray-500">{{ $service->appliance_name }}</p>
+                                    <p class="text-xs text-gray-400 mt-1">{{ $service->created_at->diffForHumans() }}</p>
+                                </div>
+                            </a>
+                @empty
+                    <div class="text-center py-4 text-gray-500 text-sm">No recent activity</div>
+                @endforelse
             </div>
         </div>
+    </div>
     </div>
 
     <!-- Chart.js Script -->
@@ -177,9 +184,25 @@
                         plugins: {
                             legend: {
                                 display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        return context.label + ': ' + context.raw + '%';
+                                    }
+                                }
                             }
                         },
-                        cutout: '70%'
+                        cutout: '75%',
+                        onHover: function (event, activeElements) {
+                            if (activeElements.length > 0) {
+                                const index = activeElements[0].index;
+                                const data = this.data.datasets[0].data[index];
+                                const label = this.data.labels[index];
+                                document.getElementById('popularServicePercentage').textContent = data + '%';
+                                document.getElementById('popularServiceLabel').textContent = label.toUpperCase();
+                            }
+                        }
                     }
                 });
             }
