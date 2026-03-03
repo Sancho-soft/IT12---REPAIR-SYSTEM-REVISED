@@ -6,7 +6,7 @@
             <div class="px-8 flex flex-col sm:flex-row sm:items-end justify-between -mt-12 pb-6">
                 <div class="flex flex-col sm:flex-row sm:items-start gap-5">
                     <div
-                        class="h-24 w-24 shrink-0 rounded-full border-4 border-white dark:border-gray-800 bg-white flex items-center justify-center text-blue-600 text-3xl font-bold uppercase shadow-md overflow-hidden">
+                        class="h-24 w-24 shrink-0 rounded-full border-4 border-white dark:border-gray-800 bg-white dark:bg-slate-800 flex items-center justify-center text-blue-600 dark:text-blue-400 text-3xl font-bold uppercase shadow-md overflow-hidden">
                         @if($user->avatar)
                             <img src="{{ asset('storage/' . $user->avatar) }}" alt="{{ $user->name }}"
                                 class="h-full w-full object-cover">
@@ -24,7 +24,7 @@
                 </div>
                 <div class="mt-4 sm:mt-0 mb-1">
                     <a href="{{ route('profile.edit') }}"
-                        class="inline-flex items-center px-4 py-2 border border-blue-600 rounded-lg shadow-sm text-sm font-medium text-blue-600 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-blue-400 dark:border-gray-600 dark:hover:bg-gray-600 transition-colors">
+                        class="inline-flex items-center px-4 py-2 border border-blue-600 rounded-lg shadow-sm text-sm font-medium text-blue-600 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:bg-slate-700/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-blue-400 dark:border-gray-600 dark:hover:bg-gray-600 transition-colors">
                         <svg class="-ml-1 mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />

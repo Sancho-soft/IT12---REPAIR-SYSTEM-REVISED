@@ -61,10 +61,13 @@ class TransactionController extends Controller
         $this->checkTransactionAccess();
         $validated = $request->validate([
             'report_id' => 'required|exists:service_reports,id',
-            'labor' => 'required|numeric|min:0',
+            'labor' => 'required|numeric|min:300',
             'materials' => 'required|numeric|min:0',
-            'delivery' => 'required|numeric|min:0',
+            'delivery' => 'required|numeric|min:300',
             'payment_status' => 'required|string|in:Paid,Unpaid,Partial',
+        ], [
+            'labor.min' => 'Labor cost must be at least ₱300.',
+            'delivery.min' => 'Delivery cost must be at least ₱300.',
         ]);
 
         $report = \App\Models\ServiceReport::find($validated['report_id']);
@@ -76,13 +79,13 @@ class TransactionController extends Controller
 
         // Update ServiceDetail
         \App\Models\ServiceDetail::updateOrCreate(
-            ['report_id' => $report->id],
-            [
-                'labor' => $validated['labor'],
-                'parts_total_charge' => $validated['materials'],
-                'pullout_delivery' => $validated['delivery'],
-                'total_amount' => $totalAmount,
-            ]
+        ['report_id' => $report->id],
+        [
+            'labor' => $validated['labor'],
+            'parts_total_charge' => $validated['materials'],
+            'pullout_delivery' => $validated['delivery'],
+            'total_amount' => $totalAmount,
+        ]
         );
 
         // Create transaction
@@ -101,18 +104,18 @@ class TransactionController extends Controller
             try {
                 $response = Http::withBasicAuth(env('PAYMONGO_SECRET_KEY'), '')
                     ->withHeaders([
-                        'accept' => 'application/json',
-                        'content-type' => 'application/json',
-                    ])
+                    'accept' => 'application/json',
+                    'content-type' => 'application/json',
+                ])
                     ->post('https://api.paymongo.com/v1/links', [
-                        'data' => [
-                            'attributes' => [
-                                'amount' => intval($totalAmount * 100),
-                                'description' => 'Repair Service Payment for Report #' . $report->id,
-                                'remarks' => 'Transaction #' . $transaction->id
-                            ]
+                    'data' => [
+                        'attributes' => [
+                            'amount' => intval($totalAmount * 100),
+                            'description' => 'Repair Service Payment for Report #' . $report->id,
+                            'remarks' => 'Transaction #' . $transaction->id
                         ]
-                    ]);
+                    ]
+                ]);
 
                 if ($response->successful()) {
                     $paymongoData = $response->json()['data'];
@@ -121,7 +124,8 @@ class TransactionController extends Controller
                         'payment_url' => $paymongoData['attributes']['checkout_url']
                     ]);
                 }
-            } catch (\Exception $e) {
+            }
+            catch (\Exception $e) {
                 // Log error or ignore to prevent breaking the flow
                 \Log::error('PayMongo Link Creation Failed: ' . $e->getMessage());
             }

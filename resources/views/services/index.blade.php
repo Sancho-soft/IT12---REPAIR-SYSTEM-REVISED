@@ -3,8 +3,8 @@
         <!-- Header -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <h2 class="text-2xl font-bold text-gray-900">Service Reports</h2>
-                <p class="mt-1 text-sm text-gray-500">Track and manage all service requests</p>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Service Reports</h2>
+                <p class="mt-1 text-sm text-gray-500 dark:text-slate-400">Track and manage all service requests</p>
             </div>
             @if(in_array(auth()->user()->role, ['Administrator', 'Secretary']))
             <a href="{{ route('services.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors">
@@ -17,17 +17,17 @@
         </div>
 
         <!-- Search & Filter -->
-        <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex flex-col sm:flex-row gap-4">
+        <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm flex flex-col sm:flex-row gap-4">
             <div class="relative flex-1">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
                 </div>
-                <input type="text" id="searchInput" class="block w-full pl-10 pr-3 py-2 border border-gray-200 rounded-lg leading-5 bg-white placeholder-gray-400 focus:outline-none focus:placeholder-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out" placeholder="Search services...">
+                <input type="text" id="searchInput" class="block w-full pl-10 pr-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg leading-5 bg-white dark:bg-slate-800 placeholder-gray-400 focus:outline-none focus:placeholder-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out" placeholder="Search services...">
             </div>
             <div class="w-full sm:w-48">
-                <select id="statusFilter" class="block w-full pl-3 pr-10 py-2 text-base border-gray-200 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg">
+                <select id="statusFilter" class="block w-full pl-3 pr-10 py-2 text-base border-gray-200 dark:border-slate-600 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg">
                     <option value="">All Status</option>
                     <option value="In Progress">In Progress</option>
                     <option value="Completed">Completed</option>
@@ -38,35 +38,36 @@
         </div>
 
         <!-- Table -->
-        <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+        <div class="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
+                    <thead class="bg-gray-50 dark:bg-slate-700/50">
                         <tr>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                 ID
                             </th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                 Customer
                             </th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                 Appliance
                             </th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                 Date In
                             </th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                 Status
                             </th>
-                            <th scope="col" class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                            <th scope="col" class="px-6 py-3 text-right text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                 Actions
                             </th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-gray-200" id="servicesTableBody">
-                        @forelse($services as $service)
-                            <tr class="hover:bg-gray-50 transition-colors" data-status="{{ $service->status }}">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <tbody class="bg-white dark:bg-slate-800 divide-y divide-gray-200" id="servicesTableBody">
+                        @if(count($services) > 0)
+                            @foreach($services as $service)
+                            <tr class="hover:bg-gray-50 dark:bg-slate-700/50 transition-colors" data-status="{{ $service->status }}">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-slate-400">
                                     #{{ $service->id }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
@@ -77,16 +78,16 @@
                                             </div>
                                         </div>
                                         <div class="ml-3">
-                                            <div class="text-sm font-medium text-gray-900">
+                                            <div class="text-sm font-medium text-gray-900 dark:text-white">
                                                 {{ $service->customer_name }}
                                             </div>
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-slate-400">
                                     {{ $service->appliance ? $service->appliance->product . ' - ' . $service->appliance->brand : 'N/A' }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-slate-400">
                                     {{ $service->date_in ? $service->date_in->format('M d, Y') : '-' }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
@@ -96,7 +97,7 @@
                                             'Pending' => 'bg-yellow-100 text-yellow-800',
                                             'In Progress' => 'bg-blue-100 text-blue-800',
                                             'Cancelled' => 'bg-red-100 text-red-800',
-                                            default => 'bg-gray-100 text-gray-800',
+                                            default => 'bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-slate-100',
                                         };
                                     @endphp
                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $statusClass }}">
@@ -105,13 +106,13 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <div class="flex justify-end space-x-3">
-                                        <a href="{{ route('services.show', $service) }}" class="text-gray-400 hover:text-blue-600 transition-colors" title="View">
+                                        <a href="{{ route('services.show', $service) }}" class="text-gray-400 hover:text-blue-600 dark:text-blue-400 transition-colors" title="View">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                                             </svg>
                                         </a>
-                                        <a href="{{ route('services.edit', $service) }}" class="text-blue-600 hover:text-blue-900 transition-colors" title="Edit">
+                                        <a href="{{ route('services.edit', $service) }}" class="text-blue-600 dark:text-blue-400 hover:text-blue-900 transition-colors" title="Edit">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                             </svg>
@@ -128,9 +129,10 @@
                                     </div>
                                 </td>
                             </tr>
-                        @empty
+                            @endforeach
+                        @else
                             <tr>
-                                <td colspan="6" class="px-6 py-10 text-center text-gray-500">
+                                <td colspan="6" class="px-6 py-10 text-center text-gray-500 dark:text-slate-400">
                                     <div class="flex flex-col items-center justify-center">
                                         <svg class="w-12 h-12 text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
@@ -139,13 +141,13 @@
                                     </div>
                                 </td>
                             </tr>
-                        @endforelse
+                        @endif
                     </tbody>
                 </table>
             </div>
             
-             <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 flex items-center justify-between">
-                 <div class="text-sm text-gray-500">
+             <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 dark:bg-slate-700/50 flex items-center justify-between">
+                 <div class="text-sm text-gray-500 dark:text-slate-400">
                     Showing <span class="font-medium">{{ $services->count() }}</span> entries
                  </div>
             </div>

@@ -2,9 +2,9 @@
     <div class="w-full mx-auto space-y-6">
         <!-- Header -->
         <div class="flex items-center justify-between">
-            <h2 class="text-2xl font-bold text-gray-900">Add New Customer</h2>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Add New Customer</h2>
             <a href="{{ route('customers.index') }}"
-                class="text-sm font-medium text-gray-500 hover:text-gray-900 flex items-center transition-colors">
+                class="text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-white flex items-center transition-colors">
                 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
@@ -14,7 +14,7 @@
         </div>
 
         <!-- Form Card -->
-        <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+        <div class="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm overflow-hidden">
             <div class="p-6">
                 <form action="{{ route('customers.store') }}" method="POST" class="space-y-6">
                     @csrf
@@ -22,10 +22,10 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- First Name -->
                         <div>
-                            <label for="first_name" class="block text-sm font-medium text-gray-700">First Name</label>
+                            <label for="first_name" class="block text-sm font-medium text-gray-700 dark:text-slate-200">First Name</label>
                             <input type="text" name="first_name" id="first_name" value="{{ old('first_name') }}"
                                 required
-                                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                class="mt-1 block w-full rounded-lg border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
                             @error('first_name')
                                 <p class="mt-1 text-sm text-red-600 flex items-center">
                                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -39,9 +39,9 @@
 
                         <!-- Last Name -->
                         <div>
-                            <label for="last_name" class="block text-sm font-medium text-gray-700">Last Name</label>
+                            <label for="last_name" class="block text-sm font-medium text-gray-700 dark:text-slate-200">Last Name</label>
                             <input type="text" name="last_name" id="last_name" value="{{ old('last_name') }}" required
-                                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                class="mt-1 block w-full rounded-lg border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
                             @error('last_name')
                                 <p class="mt-1 text-sm text-red-600 flex items-center">
                                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -55,10 +55,10 @@
 
                         <!-- Email -->
                         <div class="md:col-span-2">
-                            <label for="email" class="block text-sm font-medium text-gray-700">Email Address
+                            <label for="email" class="block text-sm font-medium text-gray-700 dark:text-slate-200">Email Address
                                 (Optional)</label>
                             <input type="email" name="email" id="email" value="{{ old('email') }}"
-                                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                class="mt-1 block w-full rounded-lg border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                                 placeholder="customer@example.com">
                             @error('email')
                                 <p class="mt-1 text-sm text-red-600 flex items-center">
@@ -73,7 +73,7 @@
 
                         <!-- Phone Number -->
                         <div class="md:col-span-2">
-                            <label for="phone_no" class="block text-sm font-medium text-gray-700">Phone Number</label>
+                            <label for="phone_no" class="block text-sm font-medium text-gray-700 dark:text-slate-200">Phone Number</label>
                             <div class="mt-1 relative rounded-md shadow-sm">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor"
@@ -84,7 +84,7 @@
                                     </svg>
                                 </div>
                                 <input type="text" name="phone_no" id="phone_no" value="{{ old('phone_no') }}" required
-                                    class="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-lg"
+                                    class="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 sm:text-sm border-gray-300 dark:border-slate-500 rounded-lg"
                                     placeholder="09xxxxxxxxx">
                             </div>
                             @error('phone_no')
@@ -100,10 +100,10 @@
 
                         <!-- Address -->
                         <div class="md:col-span-2">
-                            <label for="address" class="block text-sm font-medium text-gray-700">Address</label>
+                            <label for="address" class="block text-sm font-medium text-gray-700 dark:text-slate-200">Address</label>
                             <div class="mt-1">
                                 <textarea id="address" name="address" rows="3"
-                                    class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-lg">{{ old('address') }}</textarea>
+                                    class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 dark:border-slate-500 rounded-lg">{{ old('address') }}</textarea>
                             </div>
                             @error('address')
                                 <p class="mt-1 text-sm text-red-600 flex items-center">
@@ -117,9 +117,9 @@
                         </div>
                     </div>
 
-                    <div class="flex justify-end space-x-3 pt-6 border-t border-gray-100">
+                    <div class="flex justify-end space-x-3 pt-6 border-t border-gray-100 dark:border-slate-700">
                         <a href="{{ route('customers.index') }}"
-                            class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                            class="px-4 py-2 border border-gray-300 dark:border-slate-500 rounded-lg text-sm font-medium text-gray-700 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:bg-slate-700/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
                             Cancel
                         </a>
                         <button type="submit"

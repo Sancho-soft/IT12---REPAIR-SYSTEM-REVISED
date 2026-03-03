@@ -2,11 +2,18 @@
     <div class="w-full mx-auto space-y-6" x-data="{
         customers: {{ Js::from($customers) }},
         parts: {{ Js::from($parts) }},
+        servicePrices: {{ Js::from($servicePrices) }},
+        techniciansList: {{ Js::from($technicians) }},
+        searchTech: '',
+        filterTech: '',
+        selectedTechs: @json(old('technicians', [])),
         selectedCustomerId: '{{ old('customer_id') }}',
         selectedApplianceId: '{{ old('appliance_id') }}',
         selectedParts: [],
         selectedPartId: '',
         partQuantity: 1,
+        laborBase: {{ old('labor_cost', 0) }},
+        checkedTypes: @json(old('service_types', [])),
         get currentCustomer() {
             return this.customers.find(c => c.id == this.selectedCustomerId) || null;
         },
@@ -16,13 +23,59 @@
         get totalPartsCost() {
             return this.selectedParts.reduce((total, part) => total + (part.price * part.quantity), 0);
         },
+        get computedLabor() {
+            let base = 300;
+            this.servicePrices.forEach(sp => {
+                if (this.checkedTypes.includes(sp.service_name)) {
+                    base += parseFloat(sp.service_price);
+                }
+            });
+            return base;
+        },
+        toggleServiceType(name) {
+            const idx = this.checkedTypes.indexOf(name);
+            if (idx === -1) {
+                this.checkedTypes.push(name);
+            } else {
+                this.checkedTypes.splice(idx, 1);
+            }
+        },
+        get filteredTechnicians() {
+            let filtered = this.techniciansList;
+            if (this.filterTech !== '') {
+                filtered = filtered.filter(t => (t.status || '').toLowerCase() === this.filterTech.toLowerCase());
+            }
+            if (this.searchTech.trim() !== '') {
+                let s = this.searchTech.toLowerCase();
+                filtered = filtered.filter(t => 
+                    ((t.first_name || '') + ' ' + (t.last_name || '')).toLowerCase().includes(s) || 
+                    (t.role_title || '').toLowerCase().includes(s)
+                );
+            }
+            return filtered;
+        },
+        toggleTech(name) {
+            let idx = this.selectedTechs.indexOf(name);
+            if (idx === -1) {
+                if (this.selectedTechs.length < 3) {
+                    this.selectedTechs.push(name);
+                } else {
+                    alert('You can only assign a maximum of 3 technicians.');
+                }
+            } else {
+                this.selectedTechs.splice(idx, 1);
+            }
+        },
+        getInitials(firstName, lastName) {
+            let f = (firstName || '').charAt(0);
+            let l = (lastName || '').charAt(0);
+            return (f + l).toUpperCase() || '?';
+        },
         addPart() {
             if (!this.selectedPartId || this.partQuantity < 1) return;
             const partIndex = this.parts.findIndex(p => p.id == this.selectedPartId);
             if (partIndex === -1) return;
             const part = this.parts[partIndex];
-            
-            // Check if already in list
             const existingIndex = this.selectedParts.findIndex(p => p.id === part.id);
             if (existingIndex !== -1) {
                 this.selectedParts[existingIndex].quantity += parseInt(this.partQuantity);
@@ -45,7 +98,6 @@
             this.$watch('selectedCustomerId', () => {
                 this.selectedApplianceId = '';
             });
-            
             // Re-populate selectedParts from old input if validation fails
             let oldParts = @json(old('parts', []));
             if (oldParts.length > 0) {
@@ -66,9 +118,9 @@
     }">
         <!-- Header -->
         <div class="flex items-center justify-between">
-            <h2 class="text-2xl font-bold text-gray-900">Create New Service Report</h2>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Create New Service Report</h2>
             <a href="{{ route('services.index') }}"
-                class="text-sm font-medium text-gray-500 hover:text-gray-900 flex items-center transition-colors">
+                class="text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-white flex items-center transition-colors">
                 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
@@ -78,18 +130,18 @@
         </div>
 
         <!-- Form Card -->
-        <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+        <div class="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm overflow-hidden">
             <div class="p-6">
-                <form action="{{ route('services.store') }}" method="POST" class="space-y-6">
+                <form action="{{ route('services.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                     @csrf
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                         <!-- Customer -->
                         <div>
-                            <label for="customer_id" class="block text-sm font-medium text-gray-700">Customer</label>
+                            <label for="customer_id" class="block text-sm font-medium text-gray-700 dark:text-slate-200">Customer</label>
                             <select name="customer_id" id="customer_id" x-model="selectedCustomerId" required
-                                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                class="mt-1 block w-full rounded-lg border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
                                 <option value="">-- Select Customer --</option>
                                 <template x-for="customer in customers" :key="customer.id">
                                     <option :value="customer.id"
@@ -104,10 +156,10 @@
 
                         <!-- Date Received -> Repair Date -->
                         <div>
-                            <label for="date_in" class="block text-sm font-medium text-gray-700">Repair Date</label>
+                            <label for="date_in" class="block text-sm font-medium text-gray-700 dark:text-slate-200">Repair Date</label>
                             <input type="date" name="date_in" id="date_in" value="{{ old('date_in', date('Y-m-d')) }}"
                                 required
-                                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                class="mt-1 block w-full rounded-lg border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
                             @error('date_in')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -115,9 +167,9 @@
 
                         <!-- Appliance -->
                         <div>
-                            <label for="appliance_id" class="block text-sm font-medium text-gray-700">Appliance</label>
+                            <label for="appliance_id" class="block text-sm font-medium text-gray-700 dark:text-slate-200">Appliance</label>
                             <select name="appliance_id" id="appliance_id" x-model="selectedApplianceId" required
-                                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                class="mt-1 block w-full rounded-lg border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                                 :disabled="!customerAppliances.length">
                                 <option value="">-- Select Appliance --</option>
                                 <template x-for="app in customerAppliances" :key="app.id">
@@ -136,9 +188,9 @@
 
                         <!-- Dealer -->
                         <div>
-                            <label for="dealer" class="block text-sm font-medium text-gray-700">Dealer</label>
+                            <label for="dealer" class="block text-sm font-medium text-gray-700 dark:text-slate-200">Dealer</label>
                             <input type="text" name="dealer" id="dealer" value="{{ old('dealer') }}"
-                                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                class="mt-1 block w-full rounded-lg border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                                 placeholder="e.g. SM Appliance">
                             @error('dealer')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -147,57 +199,120 @@
 
                         <!-- Date of Purchase -->
                         <div>
-                            <label for="dop" class="block text-sm font-medium text-gray-700">Date of Purchase</label>
+                            <label for="dop" class="block text-sm font-medium text-gray-700 dark:text-slate-200">Date of Purchase</label>
                             <input type="date" name="dop" id="dop" value="{{ old('dop') }}"
-                                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                class="mt-1 block w-full rounded-lg border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
                             @error('dop')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <!-- Assigned Technicians -->
-                        <div class="md:col-span-2">
-                            <label for="technicians" class="block text-sm font-medium text-gray-700">Assigned
-                                Technicians (1-3 max)</label>
-                            <select id="technicians" name="technicians[]" multiple
-                                class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg"
-                                size="3">
-                                @foreach($technicians as $tech)
-                                    <option value="{{ $tech->full_name }}" {{ collect(old('technicians'))->contains($tech->full_name) ? 'selected' : '' }}>
-                                        {{ $tech->full_name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <p class="text-xs text-gray-500 mt-1">Hold CTRL/Command to select multiple technicians.</p>
+                        <div class="md:col-span-2 mt-4">
+                            <div class="flex items-center justify-between mb-3">
+                                <label class="block text-sm font-medium text-gray-700 dark:text-slate-200">
+                                    Assigned Technicians (<span x-text="selectedTechs.length"></span>/3)
+                                </label>
+                                
+                                <!-- Search & Filter Controls -->
+                                <div class="flex items-center gap-3">
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
+                                            <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                        </div>
+                                        <input type="text" x-model="searchTech" placeholder="Search technician..." 
+                                            class="block w-full pl-8 pr-3 py-1.5 border border-gray-300 dark:border-slate-500 rounded-md text-sm shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-700 dark:text-white placeholder-gray-400 dark:placeholder-slate-400">
+                                    </div>
+                                    <select x-model="filterTech" class="block pl-3 pr-8 py-1.5 border border-gray-300 dark:border-slate-500 rounded-md text-sm shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-700 dark:text-white">
+                                        <option value="">All Statuses</option>
+                                        <option value="Available">Available</option>
+                                        <option value="Busy">Busy</option>
+                                        <option value="Off-Duty">Off-Duty</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- Grid of Technicians -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-80 overflow-y-auto p-1">
+                                <template x-for="tech in filteredTechnicians" :key="tech.id">
+                                    <label class="relative flex items-start p-4 rounded-xl border cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors"
+                                        :class="selectedTechs.includes((tech.first_name + ' ' + (tech.last_name || '')).trim()) ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-800'">
+                                        
+                                        <!-- Hidden Input Array for Form Submission and Interaction -->
+                                        <input type="checkbox" name="technicians[]" :value="(tech.first_name + ' ' + (tech.last_name || '')).trim()"
+                                            class="mt-1 h-4 w-4 text-blue-600 border-gray-300 dark:border-slate-500 rounded focus:ring-blue-500 cursor-pointer"
+                                            :checked="selectedTechs.includes((tech.first_name + ' ' + (tech.last_name || '')).trim())"
+                                            @click.prevent="toggleTech((tech.first_name + ' ' + (tech.last_name || '')).trim())"
+                                            :disabled="!selectedTechs.includes((tech.first_name + ' ' + (tech.last_name || '')).trim()) && selectedTechs.length >= 3" />
+                                            
+                                        <!-- Tech Info Profile -->
+                                        <div class="ml-3 flex-1 flex flex-col justify-center">
+                                            <div class="flex items-center gap-3">
+                                                <div class="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center flex-shrink-0">
+                                                    <span class="text-xs font-semibold text-blue-700 dark:text-blue-300" x-text="getInitials(tech.first_name, tech.last_name)"></span>
+                                                </div>
+                                                <div>
+                                                    <div class="text-sm font-semibold text-gray-900 dark:text-white" x-text="(tech.first_name + ' ' + (tech.last_name || '')).trim()"></div>
+                                                    <div class="flex items-center gap-2 mt-0.5">
+                                                        <span class="text-xs text-gray-500 dark:text-slate-400" x-text="tech.role_title || 'Technician'"></span>
+                                                        
+                                                        <!-- Status Badges -->
+                                                        <span x-show="(tech.status || '').toLowerCase() === 'available'" class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 border border-green-200 dark:border-green-800/50">
+                                                            Available
+                                                        </span>
+                                                        <span x-show="(tech.status || '').toLowerCase() === 'busy'" class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-800/50">
+                                                            Busy
+                                                        </span>
+                                                        <span x-show="(tech.status || '').toLowerCase() === 'off-duty'" class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-800 dark:bg-gray-700/50 dark:text-gray-300 border border-gray-200 dark:border-gray-600">
+                                                            Off-Duty
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </label>
+                                </template>
+                            </div>
+                            <!-- Fallback empty state -->
+                            <div x-show="filteredTechnicians.length === 0" class="py-4 text-center text-sm text-gray-500 dark:text-slate-400 italic">
+                                No technicians match your search filters.
+                            </div>
+                            
                             @error('technicians')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <!-- Service Types -->
+                        <!-- Service Types (connected to Service Prices) -->
                         <div class="md:col-span-2 mt-2">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Service Types</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-1">Service Types <span class="text-red-500">*</span></label>
+                            <p class="text-xs text-gray-500 dark:text-slate-400 mb-2">Each checked service type adds its configured price to the labor cost.</p>
                             <div class="flex flex-wrap gap-4">
-                                @foreach(['Repair', 'Cleaning', 'Installation', 'Check-up'] as $type)
-                                    <label class="inline-flex items-center">
-                                        <input type="checkbox" name="service_types[]" value="{{ $type }}"
-                                            class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                                            {{ collect(old('service_types'))->contains($type) ? 'checked' : '' }}>
-                                        <span class="ml-2 text-sm text-gray-600">{{ $type }}</span>
+                                @foreach($servicePrices as $sp)
+                                    <label class="inline-flex items-center cursor-pointer select-none">
+                                        <input type="checkbox" name="service_types[]" value="{{ $sp->service_name }}"
+                                            class="rounded border-gray-300 dark:border-slate-500 text-blue-600 dark:text-blue-400 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                                            {{ collect(old('service_types'))->contains($sp->service_name) ? 'checked' : '' }}
+                                            @change="toggleServiceType('{{ $sp->service_name }}')">
+                                        <span class="ml-2 text-sm text-gray-700 dark:text-slate-200">{{ $sp->service_name }}</span>
+                                        <span class="ml-1 text-xs text-green-700 font-medium">(+₱{{ number_format($sp->service_price, 2) }})</span>
                                     </label>
                                 @endforeach
+                                @if($servicePrices->isEmpty())
+                                    <p class="text-sm text-gray-400 italic">No service prices configured yet. <a href="{{ route('prices.create') }}" class="text-blue-600 dark:text-blue-400 underline">Add service prices</a>.</p>
+                                @endif
                             </div>
                             @error('service_types')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <!-- Problem Description (Complaint) -->
+                        <!-- Problem Description (Complaint - Optional) -->
                         <div class="md:col-span-2">
-                            <label for="problem_desc" class="block text-sm font-medium text-gray-700">Problem
-                                Description (Complaint)</label>
-                            <textarea id="problem_desc" name="problem_desc" rows="3" required
-                                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">{{ old('problem_desc') }}</textarea>
+                            <label for="problem_desc" class="block text-sm font-medium text-gray-700 dark:text-slate-200">Problem
+                                Description (Complaint) <span class="text-gray-400 text-xs font-normal">Optional</span></label>
+                            <textarea id="problem_desc" name="problem_desc" rows="3"
+                                class="mt-1 block w-full rounded-lg border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">{{ old('problem_desc') }}</textarea>
                             @error('problem_desc')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -205,9 +320,9 @@
 
                         <!-- Findings -->
                         <div class="md:col-span-2">
-                            <label for="findings" class="block text-sm font-medium text-gray-700">Findings</label>
-                            <textarea id="findings" name="findings" rows="3"
-                                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">{{ old('findings') }}</textarea>
+                            <label for="findings" class="block text-sm font-medium text-gray-700 dark:text-slate-200">Findings <span class="text-red-500">*</span></label>
+                            <textarea id="findings" name="findings" rows="3" required
+                                class="mt-1 block w-full rounded-lg border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">{{ old('findings') }}</textarea>
                             @error('findings')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -215,23 +330,43 @@
 
                         <!-- Remarks -->
                         <div class="md:col-span-2">
-                            <label for="remarks" class="block text-sm font-medium text-gray-700">Remarks</label>
-                            <textarea id="remarks" name="remarks" rows="2"
-                                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">{{ old('remarks') }}</textarea>
+                            <label for="remarks" class="block text-sm font-medium text-gray-700 dark:text-slate-200">Remarks <span class="text-red-500">*</span></label>
+                            <textarea id="remarks" name="remarks" rows="2" required
+                                class="mt-1 block w-full rounded-lg border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">{{ old('remarks') }}</textarea>
                             @error('remarks')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
 
+                        <!-- Attachments Upload -->
+                        <div class="md:col-span-2">
+                            <label for="attachments" class="block text-sm font-medium text-gray-700 dark:text-slate-200">Attachments <span class="text-gray-400 text-xs font-normal">Optional (Images, PDFs - Max 10MB each)</span></label>
+                            <input type="file" name="attachments[]" id="attachments" multiple accept="image/*,.pdf,.doc,.docx"
+                                class="mt-1 block w-full text-sm text-gray-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 dark:blue-600 hover:file:bg-blue-100 cursor-pointer border border-gray-200 dark:border-slate-600 rounded-lg p-2">
+                            @error('attachments.*')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Attachments Upload -->
+                        <div class="md:col-span-2">
+                            <label for="attachments" class="block text-sm font-medium text-gray-700 dark:text-slate-200">Attachments <span class="text-gray-400 text-xs font-normal">Optional (Images, PDFs - Max 10MB each)</span></label>
+                            <input type="file" name="attachments[]" id="attachments" multiple accept="image/*,.pdf,.doc,.docx"
+                                class="mt-1 block w-full text-sm text-gray-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 dark:blue-600 hover:file:bg-blue-100 cursor-pointer border border-gray-200 dark:border-slate-600 rounded-lg p-2">
+                            @error('attachments.*')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
                         <!-- Dynamic Used Parts -->
-                        <div class="md:col-span-2 bg-gray-50 p-4 rounded-lg border border-gray-200">
-                            <h3 class="text-sm font-medium text-gray-900 mb-3">Parts Used (Inventory)</h3>
+                        <div class="md:col-span-2 bg-gray-50 dark:bg-slate-700/50 p-4 rounded-lg border border-gray-200 dark:border-slate-600">
+                            <h3 class="text-sm font-medium text-gray-900 dark:text-white mb-3">Parts Used (Inventory)</h3>
 
                             <div class="flex items-end gap-3 mb-4">
                                 <div class="flex-1">
-                                    <label class="block text-xs font-medium text-gray-700">Select Part</label>
+                                    <label class="block text-xs font-medium text-gray-700 dark:text-slate-200">Select Part</label>
                                     <select x-model="selectedPartId"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                        class="mt-1 block w-full rounded-md border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
                                         <option value="">-- Choose Part --</option>
                                         <template x-for="part in parts" :key="part.id">
                                             <option :value="part.id"
@@ -241,9 +376,9 @@
                                     </select>
                                 </div>
                                 <div class="w-24">
-                                    <label class="block text-xs font-medium text-gray-700">Qty</label>
+                                    <label class="block text-xs font-medium text-gray-700 dark:text-slate-200">Qty</label>
                                     <input type="number" x-model="partQuantity" min="1"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                        class="mt-1 block w-full rounded-md border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
                                 </div>
                                 <button type="button" @click="addPart"
                                     class="mb-px px-4 py-2 bg-gray-800 text-white text-sm font-medium rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900">
@@ -253,36 +388,36 @@
 
                             <!-- Parts Table -->
                             <div x-show="selectedParts.length > 0"
-                                class="mt-4 border border-gray-200 rounded-md overflow-hidden bg-white">
+                                class="mt-4 border border-gray-200 dark:border-slate-600 rounded-md overflow-hidden bg-white dark:bg-slate-800">
                                 <table class="min-w-full divide-y divide-gray-200">
-                                    <thead class="bg-gray-50">
+                                    <thead class="bg-gray-50 dark:bg-slate-700/50">
                                         <tr>
-                                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Part No.
+                                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-slate-400">Part No.
                                             </th>
-                                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">
+                                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-slate-400">
                                                 Description</th>
-                                            <th class="px-4 py-2 text-right text-xs font-medium text-gray-500">Price
+                                            <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 dark:text-slate-400">Price
                                             </th>
-                                            <th class="px-4 py-2 text-center text-xs font-medium text-gray-500">Qty</th>
-                                            <th class="px-4 py-2 text-right text-xs font-medium text-gray-500">Subtotal
+                                            <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 dark:text-slate-400">Qty</th>
+                                            <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 dark:text-slate-400">Subtotal
                                             </th>
-                                            <th class="px-4 py-2 text-center text-xs font-medium text-gray-500">Action
+                                            <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 dark:text-slate-400">Action
                                             </th>
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-gray-200">
                                         <template x-for="(part, index) in selectedParts" :key="part.id">
                                             <tr>
-                                                <td class="px-4 py-2 text-sm text-gray-900" x-text="part.part_no"></td>
-                                                <td class="px-4 py-2 text-sm text-gray-900" x-text="part.name"></td>
-                                                <td class="px-4 py-2 text-sm text-right text-gray-900"
+                                                <td class="px-4 py-2 text-sm text-gray-900 dark:text-white" x-text="part.part_no"></td>
+                                                <td class="px-4 py-2 text-sm text-gray-900 dark:text-white" x-text="part.name"></td>
+                                                <td class="px-4 py-2 text-sm text-right text-gray-900 dark:text-white"
                                                     x-text="'₱' + part.price.toFixed(2)"></td>
-                                                <td class="px-4 py-2 text-sm text-center text-gray-900">
+                                                <td class="px-4 py-2 text-sm text-center text-gray-900 dark:text-white">
                                                     <input type="number" x-model.number="part.quantity" min="1"
-                                                        class="w-16 p-1 text-center text-sm border-gray-300 rounded"
+                                                        class="w-16 p-1 text-center text-sm border-gray-300 dark:border-slate-500 rounded"
                                                         @change="$dispatch('input')">
                                                 </td>
-                                                <td class="px-4 py-2 text-sm text-right text-gray-900"
+                                                <td class="px-4 py-2 text-sm text-right text-gray-900 dark:text-white"
                                                     x-text="'₱' + (part.price * part.quantity).toFixed(2)"></td>
                                                 <td class="px-4 py-2 text-sm text-center">
                                                     <button type="button" @click="removePart(part.id)"
@@ -308,11 +443,11 @@
                                             </tr>
                                         </template>
                                     </tbody>
-                                    <tfoot class="bg-gray-50 font-semibold">
+                                    <tfoot class="bg-gray-50 dark:bg-slate-700/50 font-semibold">
                                         <tr>
-                                            <td colspan="4" class="px-4 py-3 text-right text-sm text-gray-900">Parts
+                                            <td colspan="4" class="px-4 py-3 text-right text-sm text-gray-900 dark:text-white">Parts
                                                 Total:</td>
-                                            <td class="px-4 py-3 text-right text-sm text-blue-700"
+                                            <td class="px-4 py-3 text-right text-sm text-blue-700 dark:blue-600"
                                                 x-text="'₱' + totalPartsCost.toFixed(2)"></td>
                                             <td></td>
                                         </tr>
@@ -322,26 +457,31 @@
 
                             <!-- Optional manual text just in case they need to write something else that is not in inventory -->
                             <div class="mt-4">
-                                <label for="used_parts" class="block text-xs font-medium text-gray-700">Additional Notes
+                                <label for="used_parts" class="block text-xs font-medium text-gray-700 dark:text-slate-200">Additional Notes
                                     / Miscellaneous Not In Inventory</label>
                                 <textarea id="used_parts" name="used_parts" rows="1"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                                     placeholder="Any screws, tapes, manual items used...">{{ old('used_parts') }}</textarea>
                             </div>
                         </div>
 
-                        <!-- Initial Cost -->
+                        <!-- Labor Cost (auto-computed from service types) -->
                         <div>
-                            <label for="labor_cost" class="block text-sm font-medium text-gray-700">Initial Cost
-                                (Labor)</label>
+                            <label for="labor_cost" class="block text-sm font-medium text-gray-700 dark:text-slate-200">
+                                Labor Cost <span class="text-red-500">*</span>
+                                <span class="text-xs text-gray-400 font-normal ml-1">(auto-calculated from service types, min ₱300)</span>
+                            </label>
                             <div class="mt-1 relative rounded-md shadow-sm">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <span class="text-gray-500 sm:text-sm">₱</span>
+                                    <span class="text-gray-500 dark:text-slate-400 sm:text-sm">₱</span>
                                 </div>
-                                <input type="number" name="labor_cost" id="labor_cost" step="0.01"
-                                    value="{{ old('labor_cost', 0) }}"
-                                    class="focus:ring-blue-500 focus:border-blue-500 block w-full pl-7 sm:text-sm border-gray-300 rounded-lg">
+                                <input type="number" name="labor_cost" id="labor_cost" step="0.01" min="300" required
+                                    :value="computedLabor"
+                                    x-bind:value="computedLabor"
+                                    class="focus:ring-blue-500 focus:border-blue-500 block w-full pl-7 sm:text-sm border-gray-300 rounded-lg bg-gray-50 dark:bg-slate-700/50"
+                                    placeholder="300.00" readonly>
                             </div>
+                            <p class="text-xs text-gray-500 dark:text-slate-400 mt-1">Base ₱300 + selected service prices</p>
                             @error('labor_cost')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -349,9 +489,9 @@
 
                         <!-- Status -->
                         <div>
-                            <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+                            <label for="status" class="block text-sm font-medium text-gray-700 dark:text-slate-200">Status</label>
                             <select id="status" name="status"
-                                class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg">
+                                class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-slate-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg">
                                 <option value="Pending" {{ old('status') == 'Pending' ? 'selected' : '' }}>Pending
                                 </option>
                                 <option value="Waiting for Parts" {{ old('status') == 'Waiting for Parts' ? 'selected' : '' }}>Waiting for Parts</option>
@@ -370,9 +510,9 @@
                         </div>
                     </div>
 
-                    <div class="flex justify-end space-x-3 pt-6 border-t border-gray-100">
+                    <div class="flex justify-end space-x-3 pt-6 border-t border-gray-100 dark:border-slate-700">
                         <a href="{{ route('services.index') }}"
-                            class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                            class="px-4 py-2 border border-gray-300 dark:border-slate-500 rounded-lg text-sm font-medium text-gray-700 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:bg-slate-700/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
                             Cancel
                         </a>
                         <button type="submit"

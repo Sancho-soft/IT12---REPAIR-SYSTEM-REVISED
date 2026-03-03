@@ -7,6 +7,7 @@ use App\Models\ServiceReport;
 use App\Models\Part;
 use App\Models\Customer;
 use App\Models\Transaction;
+use App\Models\User;
 
 class ArchiveController extends Controller
 {
@@ -20,46 +21,61 @@ class ArchiveController extends Controller
         if ($type === 'all' || $type === 'services') {
             $services = ServiceReport::onlyTrashed()
                 ->when($search, function ($query) use ($search) {
-                    $query->where('customer_name', 'like', "%$search%")
-                        ->orWhere('id', 'like', "%$search%");
-                })
+                $query->where('customer_name', 'like', "%$search%")
+                    ->orWhere('id', 'like', "%$search%");
+            })
                 ->get()
                 ->map(function ($item) {
-                    $item->type = 'Service Report';
-                    $item->details = '#' . $item->id . ' - ' . $item->customer_name;
-                    return $item;
-                });
+                $item->type = 'Service Report';
+                $item->details = '#' . $item->id . ' - ' . $item->customer_name;
+                return $item;
+            });
             $archives = $archives->merge($services);
         }
 
         if ($type === 'all' || $type === 'inventory') {
             $parts = Part::onlyTrashed()
                 ->when($search, function ($query) use ($search) {
-                    $query->where('description', 'like', "%$search%")
-                        ->orWhere('part_no', 'like', "%$search%");
-                })
+                $query->where('name', 'like', "%$search%")
+                    ->orWhere('part_no', 'like', "%$search%");
+            })
                 ->get()
                 ->map(function ($item) {
-                    $item->type = 'Inventory Part';
-                    $item->details = $item->part_no . ' - ' . $item->description;
-                    return $item;
-                });
+                $item->type = 'Inventory Part';
+                $item->details = $item->part_no . ' - ' . $item->name;
+                return $item;
+            });
             $archives = $archives->merge($parts);
         }
 
         if ($type === 'all' || $type === 'customers') {
             $customers = Customer::onlyTrashed()
                 ->when($search, function ($query) use ($search) {
-                    $query->where('first_name', 'like', "%$search%")
-                        ->orWhere('last_name', 'like', "%$search%");
-                })
+                $query->where('first_name', 'like', "%$search%")
+                    ->orWhere('last_name', 'like', "%$search%");
+            })
                 ->get()
                 ->map(function ($item) {
-                    $item->type = 'Customer';
-                    $item->details = $item->first_name . ' ' . $item->last_name . ' - ' . $item->phone_no;
-                    return $item;
-                });
+                $item->type = 'Customer';
+                $item->details = $item->first_name . ' ' . $item->last_name . ' - ' . $item->phone_no;
+                return $item;
+            });
             $archives = $archives->merge($customers);
+        }
+
+        if ($type === 'all' || $type === 'users') {
+            $users = User::onlyTrashed()
+                ->when($search, function ($query) use ($search) {
+                $query->where('full_name', 'like', "%$search%")
+                    ->orWhere('username', 'like', "%$search%");
+            })
+                ->get()
+                ->map(function ($item) {
+                $item->type = 'User';
+                $item->details = $item->full_name . ' (' . $item->username . ') - ' . $item->role;
+                return $item;
+            });
+            $archives = $archives->merge($users);
         }
 
         // Pagination (manual)
@@ -71,8 +87,8 @@ class ArchiveController extends Controller
             $archives->count(),
             $perPage,
             $page,
-            ['path' => $request->url(), 'query' => $request->query()]
-        );
+        ['path' => $request->url(), 'query' => $request->query()]
+            );
 
         return view('archive.index', compact('paginatedArchives', 'type', 'search'));
     }
@@ -88,6 +104,9 @@ class ArchiveController extends Controller
                 break;
             case 'Customer':
                 $item = Customer::onlyTrashed()->find($id);
+                break;
+            case 'User':
+                $item = User::onlyTrashed()->find($id);
                 break;
             default:
                 return back()->with('error', 'Invalid type');
@@ -112,6 +131,9 @@ class ArchiveController extends Controller
                 break;
             case 'Customer':
                 $item = Customer::onlyTrashed()->find($id);
+                break;
+            case 'User':
+                $item = User::onlyTrashed()->find($id);
                 break;
             default:
                 return back()->with('error', 'Invalid type');

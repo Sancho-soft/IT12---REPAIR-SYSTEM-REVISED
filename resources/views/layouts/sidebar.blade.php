@@ -1,11 +1,10 @@
 <aside class="w-64 bg-slate-900 border-r border-slate-800 flex flex-col h-screen fixed left-0 top-0 z-50">
     <!-- Logo -->
-    <div class="h-16 flex items-center px-6 border-b border-slate-800">
-        <a href="{{ route('dashboard') }}" class="flex items-center gap-2">
-            <div class="bg-white p-1 rounded-lg">
-                <img src="{{ asset('img/101_logo.png') }}" alt="Logo" class="w-8 h-8 object-contain">
+    <div class="flex items-center justify-center px-6 py-6 border-b border-slate-800">
+        <a href="{{ route('dashboard') }}" class="flex items-center justify-center">
+            <div class="bg-white p-3 rounded-xl shadow-lg">
+                <img src="{{ asset('img/101_logo.png') }}" alt="Logo" class="w-24 h-24 object-contain">
             </div>
-            <span class="text-lg font-bold text-white text-wrap leading-tight">{{ config('app.name') }}</span>
         </a>
     </div>
 
@@ -33,7 +32,7 @@
                         d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
                     </path>
                 </svg>
-                <span class="font-medium">Customers</span>
+                <span class="font-medium">Customer Info</span>
             </a>
         @endif
 
@@ -63,7 +62,7 @@
         @endif
 
         <!-- Parts -->
-        @if(in_array(auth()->user()->role, ['Administrator', 'Secretary']))
+        @if(auth()->user()->role === 'Administrator')
             <a href="{{ route('inventory.index') }}"
                 class="flex items-center px-3 py-2.5 rounded-lg group {{ request()->routeIs('inventory.*') ? 'bg-blue-600 text-white shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
                 <svg class="w-5 h-5 mr-3 {{ request()->routeIs('inventory.*') ? 'text-white' : 'text-slate-400 group-hover:text-slate-300' }}"

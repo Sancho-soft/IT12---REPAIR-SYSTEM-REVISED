@@ -21,15 +21,16 @@ class InventoryController extends Controller
     {
         $request->validate([
             'name' => 'required|string',
-            'price' => 'numeric',
-            'quantity_stock' => 'integer',
+            'price' => 'required|numeric|min:0',
+            'quantity_stock' => 'required|integer|min:0',
         ]);
 
         // Auto-generate Part Number (P-001, P-002, etc.)
         $latestPart = \App\Models\Part::orderBy('id', 'desc')->first();
         if ($latestPart && preg_match('/^P-(\d+)$/', $latestPart->part_no, $matches)) {
             $nextNumber = intval($matches[1]) + 1;
-        } else {
+        }
+        else {
             // Fallback: count total parts if the latest doesn't match the format
             $nextNumber = \App\Models\Part::count() + 1;
         }
@@ -44,6 +45,7 @@ class InventoryController extends Controller
     }
 
     public function edit(\App\Models\Part $inventory) // Using $inventory to match route param usually, but simpler: $part
+
     {
         // Route resource maps 'inventory' to parameter names based on model or name.
         // 'inventory' resource -> 'inventory' param? Let's check route: Route::resource('inventory', ...).
@@ -72,7 +74,14 @@ class InventoryController extends Controller
     // I'll stick to a simpler implementation for now.
     public function destroy($id)
     {
-        \App\Models\Part::destroy($id);
+        $part = \App\Models\Part::findOrFail($id);
+
+        if ($part->quantity_stock > 0) {
+            return redirect()->route('inventory.index')
+                ->with('error', "Cannot delete \"{$part->name}\" because it still has {$part->quantity_stock} unit(s) in stock. Please use up or adjust the stock first.");
+        }
+
+        $part->delete();
         return redirect()->route('inventory.index')->with('success', 'Part deleted successfully.');
     }
 }

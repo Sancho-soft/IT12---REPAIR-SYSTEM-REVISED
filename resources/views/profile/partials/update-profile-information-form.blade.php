@@ -20,15 +20,15 @@
         @method('patch')
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Avatar -->
+            <!-- Profile Picture -->
             <div class="md:col-span-2">
-                <label for="avatar" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Profile
+                <label for="profile_picture" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Profile
                     Photo</label>
                 <div class="mt-1 flex items-center gap-4">
                     <div
                         class="h-16 w-16 overflow-hidden rounded-full border-2 border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800">
-                        @if($user->avatar)
-                            <img src="{{ asset('storage/' . $user->avatar) }}" alt="{{ $user->name }}"
+                        @if($user->profile_picture)
+                            <img src="{{ $user->profile_picture }}" alt="{{ $user->name }}"
                                 class="h-full w-full object-cover">
                         @else
                             <svg class="h-full w-full text-gray-400" fill="currentColor" viewBox="0 0 24 24">
@@ -37,10 +37,10 @@
                             </svg>
                         @endif
                     </div>
-                    <input type="file" name="avatar" id="avatar" accept="image/*"
-                        class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-gray-700 dark:file:text-gray-300 dark:text-gray-400 cursor-pointer">
+                    <input type="file" name="profile_picture" id="profile_picture" accept="image/*"
+                        class="block w-full text-sm text-gray-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-gray-700 dark:file:text-gray-300 dark:text-gray-400 cursor-pointer">
                 </div>
-                @error('avatar')
+                @error('profile_picture')
                     <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                 @enderror
             </div>
@@ -146,7 +146,7 @@
 
         <div class="flex items-center gap-4">
             <button type="submit"
-                class="px-4 py-2 bg-blue-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                class="px-4 py-2 bg-blue-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 dark:blue-600 focus:bg-blue-700 dark:blue-600 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
                 {{ __('Save Changes') }}
             </button>
 

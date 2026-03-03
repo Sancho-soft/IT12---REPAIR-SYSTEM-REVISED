@@ -3,8 +3,8 @@
         <!-- Header -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <h2 class="text-2xl font-bold text-gray-900">Service Prices</h2>
-                <p class="mt-1 text-sm text-gray-500">Manage pricing for different service types</p>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Service Prices</h2>
+                <p class="mt-1 text-sm text-gray-500 dark:text-slate-400">Manage pricing for different service types</p>
             </div>
             <a href="{{ route('prices.create') }}"
                 class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors">
@@ -17,16 +17,16 @@
 
         @if($prices->isEmpty())
             <!-- Empty State -->
-            <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-12 text-center">
-                <div class="mx-auto w-16 h-16 bg-gray-50 rounded-lg flex items-center justify-center mb-4 text-gray-400">
+            <div class="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm p-12 text-center">
+                <div class="mx-auto w-16 h-16 bg-gray-50 dark:bg-slate-700/50 rounded-lg flex items-center justify-center mb-4 text-gray-400">
                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
                         </path>
                     </svg>
                 </div>
-                <h3 class="text-lg font-medium text-gray-900">No service prices found</h3>
-                <p class="mt-1 text-gray-500 max-w-sm mx-auto">Start by adding pricing for your services.</p>
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white">No service prices found</h3>
+                <p class="mt-1 text-gray-500 dark:text-slate-400 max-w-sm mx-auto">Start by adding pricing for your services.</p>
                 <div class="mt-6">
                     <a href="{{ route('prices.create') }}"
                         class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 transition-colors">
@@ -36,7 +36,7 @@
             </div>
         @else
             <!-- Search -->
-            <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+            <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm">
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -45,44 +45,44 @@
                         </svg>
                     </div>
                     <input type="text" id="searchInput"
-                        class="block w-full pl-10 pr-3 py-2 border border-gray-200 rounded-lg leading-5 bg-white placeholder-gray-400 focus:outline-none focus:placeholder-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out"
+                        class="block w-full pl-10 pr-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg leading-5 bg-white dark:bg-slate-800 placeholder-gray-400 focus:outline-none focus:placeholder-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out"
                         placeholder="Search service prices...">
                 </div>
             </div>
 
             <!-- Table -->
-            <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+            <div class="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
+                        <thead class="bg-gray-50 dark:bg-slate-700/50">
                             <tr>
                                 <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                    class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                     Service Name
                                 </th>
                                 <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                    class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                     Price
                                 </th>
                                 <th scope="col"
-                                    class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                    class="px-6 py-3 text-right text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                     Actions
                                 </th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-200" id="pricesTableBody">
+                        <tbody class="bg-white dark:bg-slate-800 divide-y divide-gray-200" id="pricesTableBody">
                             @foreach($prices as $price)
-                                <tr class="hover:bg-gray-50 transition-colors">
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                <tr class="hover:bg-gray-50 dark:bg-slate-700/50 transition-colors">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
                                         {{ $price->service_name }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-slate-400">
                                         ₱{{ number_format($price->service_price, 2) }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <div class="flex justify-end space-x-3">
                                             <a href="{{ route('prices.edit', $price) }}"
-                                                class="text-blue-600 hover:text-blue-900 transition-colors" title="Edit">
+                                                class="text-blue-600 dark:text-blue-400 hover:text-blue-900 transition-colors" title="Edit">
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                         d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">

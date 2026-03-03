@@ -36,9 +36,9 @@
                     </svg>
                 </button>
             </div>
-            @error('current_password', 'updatePassword')
-                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-            @enderror
+            @if($errors->updatePassword->has('current_password'))
+                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $errors->updatePassword->first('current_password') }}</p>
+            @endif
         </div>
 
         <!-- New Password -->
@@ -50,9 +50,9 @@
                     autocomplete="new-password"
                     class="block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm pr-10">
             </div>
-            @error('password', 'updatePassword')
-                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-            @enderror
+            @if($errors->updatePassword->has('password'))
+                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $errors->updatePassword->first('password') }}</p>
+            @endif
         </div>
 
         <!-- Confirm Password -->
@@ -65,14 +65,14 @@
                     id="update_password_password_confirmation" autocomplete="new-password"
                     class="block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm pr-10">
             </div>
-            @error('password_confirmation', 'updatePassword')
-                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-            @enderror
+            @if($errors->updatePassword->has('password_confirmation'))
+                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $errors->updatePassword->first('password_confirmation') }}</p>
+            @endif
         </div>
 
         <div class="flex items-center gap-4">
             <button type="submit"
-                class="px-4 py-2 bg-blue-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                class="px-4 py-2 bg-blue-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 dark:blue-600 focus:bg-blue-700 dark:blue-600 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
                 {{ __('Update Password') }}
             </button>
 

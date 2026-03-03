@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Services\CloudinaryService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,9 +12,6 @@ use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
-    /**
-     * Display the user's profile form.
-     */
     public function edit(Request $request): View
     {
         return view('profile.edit', [
@@ -21,52 +19,43 @@ class ProfileController extends Controller
         ]);
     }
 
-    /**
-     * Display the user's profile information (Read-only).
-     */
     public function show(Request $request): View
     {
         $user = $request->user();
 
-        // Calculate Stats
-        $customersServed = \App\Models\Customer::count(); // Total customers (simple metric)
+        $customersServed = \App\Models\Customer::count();
         $servicesCompleted = \App\Models\ServiceReport::where('status', 'Completed')->count();
-        $monthsActive = (int) $user->created_at->diffInMonths(\Carbon\Carbon::now());
-
-        // Mock average rating (you would calculate this if you had ratings)
+        $monthsActive = (int)$user->created_at->diffInMonths(\Carbon\Carbon::now());
         $averageRating = 4.8;
-
-        // Recent Activity (Transactions or Service Reports)
         $recentActivity = \App\Models\Transaction::with('report.customer')
             ->latest()
             ->limit(5)
             ->get();
 
         return view('profile.show', compact(
-            'user',
-            'customersServed',
-            'servicesCompleted',
-            'monthsActive',
-            'averageRating',
-            'recentActivity'
+            'user', 'customersServed', 'servicesCompleted',
+            'monthsActive', 'averageRating', 'recentActivity'
         ));
     }
 
-    /**
-     * Update the user's profile information.
-     */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         $user = $request->user();
         $validated = $request->validated();
 
+        // Handle profile picture upload to Cloudinary
+        if ($request->hasFile('profile_picture')) {
+            $request->validate([
+                'profile_picture' => ['image', 'max:5120'],
+            ]);
 
+            $uploaded = CloudinaryService::uploadProfilePicture(
+                $request->file('profile_picture'),
+                $user->profile_picture_public_id
+            );
 
-        if ($request->hasFile('avatar')) {
-            if ($user->avatar && \Illuminate\Support\Facades\Storage::disk('public')->exists($user->avatar)) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->avatar);
-            }
-            $validated['avatar'] = $request->file('avatar')->store('avatars', 'public');
+            $validated['profile_picture'] = $uploaded['url'];
+            $validated['profile_picture_public_id'] = $uploaded['public_id'];
         }
 
         $user->fill($validated);
@@ -80,9 +69,6 @@ class ProfileController extends Controller
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 
-    /**
-     * Delete the user's account.
-     */
     public function destroy(Request $request): RedirectResponse
     {
         $request->validateWithBag('userDeletion', [
@@ -91,8 +77,11 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
-        Auth::logout();
+        if ($user->profile_picture_public_id) {
+            CloudinaryService::delete($user->profile_picture_public_id);
+        }
 
+        Auth::logout();
         $user->delete();
 
         $request->session()->invalidate();

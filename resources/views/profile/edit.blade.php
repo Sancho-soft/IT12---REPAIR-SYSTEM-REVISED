@@ -16,7 +16,7 @@
         <div class="border-b border-gray-200 dark:border-gray-700 px-4 sm:px-0">
             <nav class="-mb-px flex space-x-8" aria-label="Tabs">
                 <button @click="tab = 'account'"
-                    :class="tab === 'account' ? 'border-blue-500 text-blue-600 dark:text-blue-400' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'"
+                    :class="tab === 'account' ? 'border-blue-500 text-blue-600 dark:text-blue-400' : 'border-transparent text-gray-500 dark:text-slate-400 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'"
                     class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -25,7 +25,7 @@
                     Account
                 </button>
                 <button @click="tab = 'security'"
-                    :class="tab === 'security' ? 'border-blue-500 text-blue-600 dark:text-blue-400' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'"
+                    :class="tab === 'security' ? 'border-blue-500 text-blue-600 dark:text-blue-400' : 'border-transparent text-gray-500 dark:text-slate-400 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'"
                     class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -35,7 +35,7 @@
                     Security
                 </button>
                 <button @click="tab = 'notifications'"
-                    :class="tab === 'notifications' ? 'border-blue-500 text-blue-600 dark:text-blue-400' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'"
+                    :class="tab === 'notifications' ? 'border-blue-500 text-blue-600 dark:text-blue-400' : 'border-transparent text-gray-500 dark:text-slate-400 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'"
                     class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -45,7 +45,7 @@
                     Notifications
                 </button>
                 <button @click="tab = 'privacy'"
-                    :class="tab === 'privacy' ? 'border-blue-500 text-blue-600 dark:text-blue-400' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'"
+                    :class="tab === 'privacy' ? 'border-blue-500 text-blue-600 dark:text-blue-400' : 'border-transparent text-gray-500 dark:text-slate-400 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'"
                     class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -109,7 +109,7 @@
                                 not enabled.</p>
                             <p class="mt-3 text-sm md:mt-0 md:ml-6">
                                 <a href="#"
-                                    class="whitespace-nowrap font-medium text-blue-700 dark:text-blue-200 hover:text-blue-600">Enable
+                                    class="whitespace-nowrap font-medium text-blue-700 dark:text-blue-200 hover:text-blue-600 dark:text-blue-400">Enable
                                     2FA <span aria-hidden="true">&rarr;</span></a>
                             </p>
                         </div>
@@ -137,7 +137,7 @@
                             class="bg-blue-600 relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                             role="switch" aria-checked="true">
                             <span aria-hidden="true"
-                                class="translate-x-5 pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200"></span>
+                                class="translate-x-5 pointer-events-none inline-block h-5 w-5 rounded-full bg-white dark:bg-slate-800 shadow transform ring-0 transition ease-in-out duration-200"></span>
                         </button>
                     </div>
                     <div class="flex items-center justify-between">
@@ -150,7 +150,7 @@
                             class="bg-blue-600 relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                             role="switch" aria-checked="true">
                             <span aria-hidden="true"
-                                class="translate-x-5 pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200"></span>
+                                class="translate-x-5 pointer-events-none inline-block h-5 w-5 rounded-full bg-white dark:bg-slate-800 shadow transform ring-0 transition ease-in-out duration-200"></span>
                         </button>
                     </div>
                 </div>

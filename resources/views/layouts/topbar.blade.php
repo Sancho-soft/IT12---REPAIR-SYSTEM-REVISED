@@ -1,22 +1,25 @@
 <header
     class="h-16 bg-blue-700 dark:bg-blue-900 text-white shadow-sm flex items-center justify-between px-6 sticky top-0 z-40">
-    <!-- Search Bar -->
-    <div class="w-96">
-        <div class="relative">
-            <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-                <svg class="w-5 h-5 text-blue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                </svg>
-            </span>
-            <input type="text"
-                class="w-full pl-10 pr-4 py-2 text-sm text-white bg-blue-800/50 border border-transparent rounded-lg focus:outline-none focus:bg-white focus:text-gray-900 focus:ring-2 focus:ring-blue-300 placeholder-blue-200 transition-colors"
-                placeholder="Search..." />
-        </div>
+    <!-- Module Title + Greeting -->
+    <div class="flex flex-col justify-center">
+        <h1 class="text-lg font-bold text-white leading-tight tracking-wide">
+            {{ $pageTitle ?? '101 Repair Service' }}
+        </h1>
+        <p class="text-xs text-blue-200 leading-tight mt-0.5">
+            Welcome, {{ auth()->user()->full_name ?? auth()->user()->name ?? 'Guest' }}
+            &nbsp;·&nbsp;
+            {{ now()->format('l, F j, Y') }}
+        </p>
     </div>
 
     <!-- Right Side Actions -->
     <div class="flex items-center space-x-6">
+        <!-- Dark Mode Toggle -->
+        <button id="theme-toggle" type="button" class="text-blue-100 hover:text-white transition-colors focus:outline-none">
+            <svg id="theme-toggle-dark-icon" class="w-6 h-6 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            <svg id="theme-toggle-light-icon" class="w-6 h-6 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+        </button>
+
         <!-- Notifications -->
         @php
             $unreadNotifications = Auth::check() ? Auth::user()->unreadNotifications : collect();
@@ -97,8 +100,8 @@
                 </div>
                 <div
                     class="h-10 w-10 rounded-full bg-blue-500 border-2 border-white flex items-center justify-center text-white font-bold transition-transform transform hover:scale-105 overflow-hidden">
-                    @if(Auth::user()->avatar)
-                        <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="{{ Auth::user()->name }}"
+                    @if(Auth::user()->profile_picture)
+                        <img src="{{ Auth::user()->profile_picture }}" alt="{{ Auth::user()->name }}"
                             class="h-full w-full object-cover">
                     @else
                         {{ substr(Auth::user()->name, 0, 1) }}

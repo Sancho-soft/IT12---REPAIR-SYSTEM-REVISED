@@ -46,6 +46,9 @@ class CustomerController extends Controller
 
     public function show(\App\Models\Customer $customer)
     {
+        $customer->load(['appliances', 'serviceReports' => function ($q) {
+            $q->latest()->with('appliance');
+        }]);
         return view('customers.show', compact('customer'));
     }
 

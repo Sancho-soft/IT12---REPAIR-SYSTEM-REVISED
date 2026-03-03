@@ -71,7 +71,8 @@ class ServiceReportController extends Controller
         $customers = \App\Models\Customer::with('appliances')->get();
         $technicians = User::where('role', 'Technician')->get();
         $parts = \App\Models\Part::all();
-        return view('services.create', compact('customers', 'technicians', 'parts'));
+        $servicePrices = \App\Models\ServicePrice::all();
+        return view('services.create', compact('customers', 'technicians', 'parts', 'servicePrices'));
     }
 
     public function store(Request $request)
@@ -147,6 +148,7 @@ class ServiceReportController extends Controller
         $customers = \App\Models\Customer::with('appliances')->get();
         $technicians = User::where('role', 'Technician')->get();
         $parts = \App\Models\Part::all();
+        $servicePrices = \App\Models\ServicePrice::all();
         $service->load('parts');
         return view('services.edit', compact('service', 'customers', 'technicians', 'parts'));
     }
@@ -259,3 +261,5 @@ class ServiceReportController extends Controller
         return view('services.print', compact('service'));
     }
 }
+
+

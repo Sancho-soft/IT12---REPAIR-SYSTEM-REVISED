@@ -8,8 +8,8 @@
                 </path>
             </svg>
         </div>
-        <h2 class="text-lg font-bold text-gray-900 leading-tight">Forgot Password?</h2>
-        <p class="mt-2 text-sm text-gray-500">
+        <h2 class="text-lg font-bold text-gray-900 dark:text-white leading-tight">Forgot Password?</h2>
+        <p class="mt-2 text-sm text-gray-500 dark:text-slate-400">
             {{ __('No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
         </p>
     </div>
@@ -22,7 +22,7 @@
 
         <!-- Email Address -->
         <div>
-            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+            <label for="email" class="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-1">Email Address</label>
             <div class="relative rounded-md shadow-sm">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -32,7 +32,7 @@
                     </svg>
                 </div>
                 <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus
-                    class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm placeholder-gray-400"
+                    class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-slate-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm placeholder-gray-400"
                     placeholder="Enter your registered email">
             </div>
             <x-input-error :messages="$errors->get('email')" class="mt-2 text-red-600 text-xs" />
@@ -40,13 +40,13 @@
 
         <div class="flex items-center justify-end">
             <button type="submit"
-                class="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                class="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 dark:blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
                 {{ __('Email Password Reset Link') }}
             </button>
         </div>
 
         <div class="text-center mt-4">
-            <a href="{{ route('login') }}" class="text-sm font-medium text-blue-600 hover:text-blue-500">
+            <a href="{{ route('login') }}" class="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500">
                 Back to Login
             </a>
         </div>

@@ -31,9 +31,9 @@
                 <input id="password" name="password" type="password"
                     class="mt-1 block w-3/4 rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"
                     placeholder="Type your password to confirm" />
-                @error('password', 'userDeletion')
-                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                @enderror
+                @if($errors->userDeletion->has('password'))
+                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $errors->userDeletion->first('password') }}</p>
+                @endif
             </div>
 
             <div class="mt-6 flex justify-end gap-3">

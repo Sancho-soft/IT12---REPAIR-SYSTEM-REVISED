@@ -3,8 +3,8 @@
         <!-- Header -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <h2 class="text-2xl font-bold text-gray-900">Parts Inventory</h2>
-                <p class="mt-1 text-sm text-gray-500">Manage spare parts and inventory</p>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Parts Inventory</h2>
+                <p class="mt-1 text-sm text-gray-500 dark:text-slate-400">Manage spare parts and inventory</p>
             </div>
             <a href="{{ route('inventory.create') }}"
                 class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors">
@@ -16,7 +16,7 @@
         </div>
 
         <!-- Search -->
-        <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+        <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm">
             <div class="relative">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -25,42 +25,43 @@
                     </svg>
                 </div>
                 <input type="text" id="searchInput"
-                    class="block w-full pl-10 pr-3 py-2 border border-gray-200 rounded-lg leading-5 bg-white placeholder-gray-400 focus:outline-none focus:placeholder-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out"
+                    class="block w-full pl-10 pr-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg leading-5 bg-white dark:bg-slate-800 placeholder-gray-400 focus:outline-none focus:placeholder-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out"
                     placeholder="Search parts by name or part number...">
             </div>
         </div>
 
         <!-- Table -->
-        <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+        <div class="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
+                    <thead class="bg-gray-50 dark:bg-slate-700/50">
                         <tr>
                             <th scope="col"
-                                class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                 Part No
                             </th>
                             <th scope="col"
-                                class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                 Part Name
                             </th>
                             <th scope="col"
-                                class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                 Price
                             </th>
                             <th scope="col"
-                                class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                 Stock
                             </th>
                             <th scope="col"
-                                class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                class="px-6 py-3 text-right text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                 Actions
                             </th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-gray-200" id="inventoryTableBody">
-                        @forelse($parts as $part)
-                                            <tr class="hover:bg-gray-50 transition-colors">
+                    <tbody class="bg-white dark:bg-slate-800 divide-y divide-gray-200" id="inventoryTableBody">
+                        @if(count($parts) > 0)
+                            @foreach($parts as $part)
+                                            <tr class="hover:bg-gray-50 dark:bg-slate-700/50 transition-colors">
                                                 <td class="px-6 py-4 whitespace-nowrap">
                                                     <div class="flex items-center">
                                                         <div
@@ -72,11 +73,11 @@
                                                             </svg>
                                                         </div>
                                                         <div class="ml-4">
-                                                            <div class="text-sm font-medium text-gray-900">{{ $part->part_no }}</div>
+                                                            <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $part->part_no }}</div>
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-slate-400">
                                                     {{ $part->name }}
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-green-600">
@@ -93,7 +94,7 @@
                                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                     <div class="flex justify-end space-x-3">
                                                         <a href="{{ route('inventory.edit', $part) }}"
-                                                            class="text-blue-600 hover:text-blue-900 transition-colors" title="Edit">
+                                                            class="text-blue-600 dark:text-blue-400 hover:text-blue-900 transition-colors" title="Edit">
                                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                                     d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
@@ -116,9 +117,10 @@
                                                     </div>
                                                 </td>
                                             </tr>
-                        @empty
+                            @endforeach
+                        @else
                             <tr>
-                                <td colspan="5" class="px-6 py-10 text-center text-gray-500">
+                                <td colspan="5" class="px-6 py-10 text-center text-gray-500 dark:text-slate-400">
                                     <div class="flex flex-col items-center justify-center">
                                         <svg class="w-12 h-12 text-gray-300 mb-3" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
@@ -129,7 +131,7 @@
                                     </div>
                                 </td>
                             </tr>
-                        @endforelse
+                        @endif
                     </tbody>
                 </table>
             </div>

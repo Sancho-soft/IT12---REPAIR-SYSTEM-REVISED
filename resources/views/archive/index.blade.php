@@ -3,13 +3,13 @@
         <!-- Header -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <h2 class="text-2xl font-bold text-gray-900">Archive & Deleted Records</h2>
-                <p class="mt-1 text-sm text-gray-500">View and restore archived or deleted items</p>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Archive & Deleted Records</h2>
+                <p class="mt-1 text-sm text-gray-500 dark:text-slate-400">View and restore archived or deleted items</p>
             </div>
         </div>
 
         <!-- Search & Filter -->
-        <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm space-y-4">
+        <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm space-y-4">
             <form method="GET" action="{{ route('archive.index') }}" class="flex flex-col sm:flex-row gap-4">
                 <input type="hidden" name="type" value="{{ $type }}">
                 <div class="relative flex-1">
@@ -20,89 +20,95 @@
                         </svg>
                     </div>
                     <input type="text" name="search" value="{{ $search }}"
-                        class="block w-full pl-10 pr-3 py-2 border border-gray-200 rounded-lg leading-5 bg-white placeholder-gray-400 focus:outline-none focus:placeholder-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out"
+                        class="block w-full pl-10 pr-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg leading-5 bg-white dark:bg-slate-800 placeholder-gray-400 focus:outline-none focus:placeholder-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out"
                         placeholder="Search archive...">
                 </div>
                 <!-- Filter Tabs -->
                 <div class="flex space-x-2">
                     <a href="{{ route('archive.index', ['type' => 'all', 'search' => $search]) }}"
-                        class="px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ $type == 'all' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
+                        class="px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ $type == 'all' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300 hover:bg-gray-200' }}">
                         All
                     </a>
                     <a href="{{ route('archive.index', ['type' => 'services', 'search' => $search]) }}"
-                        class="px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ $type == 'services' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
+                        class="px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ $type == 'services' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300 hover:bg-gray-200' }}">
                         Services
                     </a>
                     <a href="{{ route('archive.index', ['type' => 'inventory', 'search' => $search]) }}"
-                        class="px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ $type == 'inventory' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
+                        class="px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ $type == 'inventory' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300 hover:bg-gray-200' }}">
                         Inventory
                     </a>
                     <a href="{{ route('archive.index', ['type' => 'customers', 'search' => $search]) }}"
-                        class="px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ $type == 'customers' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
+                        class="px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ $type == 'customers' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300 hover:bg-gray-200' }}">
                         Customers
                     </a>
+                    @can('admin-only')
+                    <a href="{{ route('archive.index', ['type' => 'users', 'search' => $search]) }}"
+                        class="px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ $type == 'users' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300 hover:bg-gray-200' }}">
+                        Users
+                    </a>
+                    @endcan
                 </div>
             </form>
         </div>
 
         @if($paginatedArchives->isEmpty())
             <!-- Empty State -->
-            <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-12 text-center">
-                <div class="mx-auto w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+            <div class="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm p-12 text-center">
+                <div class="mx-auto w-16 h-16 bg-gray-50 dark:bg-slate-700/50 rounded-full flex items-center justify-center mb-4">
                     <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z">
                         </path>
                     </svg>
                 </div>
-                <h3 class="text-lg font-medium text-gray-900">No archived records found</h3>
-                <p class="mt-1 text-gray-500 max-w-sm mx-auto">Deleted items will appear here for recovery.</p>
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white">No archived records found</h3>
+                <p class="mt-1 text-gray-500 dark:text-slate-400 max-w-sm mx-auto">Deleted items will appear here for recovery.</p>
             </div>
         @else
             <!-- Table -->
-            <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+            <div class="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
+                        <thead class="bg-gray-50 dark:bg-slate-700/50">
                             <tr>
                                 <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                    class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                     Type
                                 </th>
                                 <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                    class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                     Details
                                 </th>
                                 <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                    class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                     Deleted At
                                 </th>
                                 <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                    class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                     Deleted By
                                 </th>
                                 <th scope="col"
-                                    class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                    class="px-6 py-3 text-right text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                     Actions
                                 </th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
+                        <tbody class="bg-white dark:bg-slate-800 divide-y divide-gray-200">
                             @foreach($paginatedArchives as $item)
-                                <tr class="hover:bg-gray-50 transition-colors">
+                                <tr class="hover:bg-gray-50 dark:bg-slate-700/50 transition-colors">
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span
-                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-slate-100">
                                             {{ $item->type }}
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                                         {{ $item->details }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-slate-400">
                                         {{ $item->deleted_at->format('M d, Y H:i') }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-slate-400">
                                         {{ $item->deleted_by ?? 'Unknown' }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -143,7 +149,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="px-6 py-4 border-t border-gray-200">
+                <div class="px-6 py-4 border-t border-gray-200 dark:border-slate-600">
                     {{ $paginatedArchives->links() }}
                     <!-- Note: Pagination links might need custom view for Tailwind, usually handled globally in AppServiceProvider or vendor:publish -->
                 </div>
