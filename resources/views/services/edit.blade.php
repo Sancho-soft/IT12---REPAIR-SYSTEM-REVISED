@@ -8,6 +8,7 @@
         selectedParts: [],
         selectedPartId: '',
         partQuantity: 1,
+        miscCost: {{ old('miscellaneous_cost', 0) }},
         checkedTypes: @json(old('service_types', $service->details?->service_types ?? [])),
         techniciansList: {{ Js::from($technicians) }},
         searchTech: '',
@@ -23,7 +24,7 @@
             return this.selectedParts.reduce((total, part) => total + (part.price * part.quantity), 0);
         },
         get computedLabor() {
-            let base = 300;
+            let base = 0;
             this.servicePrices.forEach(sp => {
                 if (this.checkedTypes.includes(sp.service_name)) {
                     base += parseFloat(sp.service_price);
@@ -266,7 +267,7 @@
                                         
                                         <!-- Hidden Input Array for Form Submission and Interaction -->
                                         <input type="checkbox" name="technicians[]" :value="(tech.first_name + ' ' + (tech.last_name || '')).trim()"
-                                            class="mt-1 h-4 w-4 text-blue-600 border-gray-300 dark:border-slate-500 rounded focus:ring-blue-500 cursor-pointer disabled:opacity-50"
+                                            class="hidden"
                                             :checked="selectedTechs.includes((tech.first_name + ' ' + (tech.last_name || '')).trim())"
                                             @click.prevent="if('{{ $techDisabled }}' !== 'disabled') toggleTech((tech.first_name + ' ' + (tech.last_name || '')).trim())"
                                             :disabled="'{{ $techDisabled }}' === 'disabled' || (!selectedTechs.includes((tech.first_name + ' ' + (tech.last_name || '')).trim()) && selectedTechs.length >= 3)" />
@@ -333,11 +334,10 @@
                             @enderror
                         </div>
 
-                        <!-- Problem Description (Complaint - Optional) -->
+                        <!-- Problem Description (Complaint - Required) -->
                         <div class="md:col-span-2">
-                            <label for="problem_desc" class="block text-sm font-medium text-gray-700 dark:text-slate-200">Problem
-                                Description (Complaint) <span class="text-gray-400 text-xs font-normal">Optional</span></label>
-                            <textarea id="problem_desc" name="problem_desc" rows="3" {{ $techDisabled }}
+                            <label for="problem_desc" class="block text-sm font-medium text-gray-700 dark:text-slate-200">Problem Description (Complaint) <span class="text-red-500">*</span></label>
+                            <textarea id="problem_desc" name="problem_desc" rows="3" required {{ $techDisabled }}
                                 class="mt-1 block w-full rounded-lg border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm disabled:bg-gray-100 dark:bg-slate-700 disabled:cursor-not-allowed">{{ old('problem_desc', $service->details ? $service->details->complaint : '') }}</textarea>
                             @error('problem_desc')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -365,8 +365,8 @@
                         </div>
 
                         <!-- Attachments Upload -->
-                        <div class="md:col-span-2">
-                            <label for="attachments" class="block text-sm font-medium text-gray-700 dark:text-slate-200">Add Attachments <span class="text-gray-400 text-xs font-normal">Optional (Images, PDFs - Max 10MB each)</span></label>
+                        <div class="md:col-span-2" x-data="{ files: [] }">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-1">Attachments & Files <span class="text-gray-400 text-xs font-normal">Optional (Max 5 files)</span></label>
                             
                             @if (!empty($service->attachments))
                                 <div class="mb-3 p-3 bg-gray-50 dark:bg-slate-700/50 border border-gray-200 dark:border-slate-600 rounded-lg flex flex-wrap gap-3">
@@ -384,8 +384,32 @@
                                 </div>
                             @endif
 
-                            <input type="file" name="attachments[]" id="attachments" multiple accept="image/*,.pdf,.doc,.docx" {{ $secDisabled }}
-                                class="mt-1 block w-full text-sm text-gray-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 dark:blue-600 hover:file:bg-blue-100 cursor-pointer border border-gray-200 dark:border-slate-600 rounded-lg p-2 disabled:bg-gray-100 dark:bg-slate-700 disabled:cursor-not-allowed">
+                            <div>
+                                <label for="attachments" class="inline-flex items-center px-4 py-2 bg-blue-50 border border-blue-200 rounded-lg text-sm font-medium text-blue-700 hover:bg-blue-100 cursor-pointer transition-colors cursor-pointer {{ $secDisabled === 'disabled' ? 'opacity-50 cursor-not-allowed pointer-events-none' : '' }}">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                    Add More Files
+                                </label>
+                                <input type="file" name="attachments[]" id="attachments" multiple accept="image/*,.pdf,.doc,.docx" class="hidden" {{ $secDisabled }}
+                                    @change="
+                                        let selected = Array.from($event.target.files);
+                                        if (selected.length > 5) {
+                                            alert('Maximum of 5 files allowed.');
+                                            $event.target.value = '';
+                                            files = [];
+                                        } else {
+                                            files = selected.map(f => f.name);
+                                        }
+                                    ">
+                            </div>
+                            
+                            <div x-show="files.length > 0" class="mt-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                                <template x-for="file in files" :key="file">
+                                    <div class="flex items-center text-sm text-gray-600 bg-gray-50 p-2 rounded border border-gray-100 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-300 truncate shadow-sm">
+                                        <svg class="flex-shrink-0 w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
+                                        <span x-text="file" class="truncate"></span>
+                                    </div>
+                                </template>
+                            </div>
                             @error('attachments.*')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -465,9 +489,29 @@
                             </div>
                             
                             <!-- Optional manual text just in case they need to write something else that is not in inventory -->
-                            <div class="mt-4">
-                                <label for="used_parts" class="block text-xs font-medium text-gray-700 dark:text-slate-200">Additional Notes / Miscellaneous Not In Inventory</label>
-                                <textarea id="used_parts" name="used_parts" rows="1" {{ $secDisabled }} class="mt-1 block w-full rounded-md border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm disabled:bg-gray-100 dark:bg-slate-700 disabled:cursor-not-allowed" placeholder="Any screws, tapes, manual items used...">{{ old('used_parts', $service->used_parts) }}</textarea>
+                            <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="used_parts" class="block text-xs font-medium text-gray-700 dark:text-slate-200">Additional Notes / Miscellaneous Not In Inventory</label>
+                                    <textarea id="used_parts" name="used_parts" rows="2" {{ $secDisabled }} class="mt-1 block w-full rounded-md border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm disabled:bg-gray-100 dark:bg-slate-700 disabled:cursor-not-allowed" placeholder="Any screws, tapes, manual items used...">{{ old('used_parts', $service->used_parts) }}</textarea>
+                                </div>
+                                <div>
+                                    <label for="miscellaneous_cost" class="block text-xs font-medium text-gray-700 dark:text-slate-200">Miscellaneous Cost</label>
+                                    <div class="mt-1 relative rounded-md shadow-sm">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <span class="text-gray-500 sm:text-sm">₱</span>
+                                        </div>
+                                        <input type="number" name="miscellaneous_cost" id="miscellaneous_cost" step="0.01" min="0" x-model.number="miscCost" {{ $secDisabled }}
+                                            class="focus:ring-blue-500 focus:border-blue-500 block w-full pl-7 sm:text-sm border-gray-300 dark:border-slate-500 rounded-lg disabled:bg-gray-100 dark:bg-slate-700 disabled:cursor-not-allowed" placeholder="0.00">
+                                    </div>
+                                    @error('miscellaneous_cost')
+                                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="mt-4 p-3 bg-blue-50 dark:bg-slate-700/50 rounded-lg border border-blue-100 dark:border-slate-600 flex justify-between items-center text-sm font-medium text-gray-900 dark:text-white mb-1">
+                                <span>Total Labor Material Cost (Parts + Misc):</span>
+                                <span class="text-lg text-blue-700 dark:text-blue-400 font-bold" x-text="'₱' + (totalPartsCost + (Number(miscCost) || 0)).toFixed(2)"></span>
                             </div>
                         </div>
 
@@ -475,18 +519,18 @@
                         <div>
                             <label for="labor_cost" class="block text-sm font-medium text-gray-700 dark:text-slate-200">
                                 Labor Cost <span class="text-red-500">*</span>
-                                <span class="text-xs text-gray-400 font-normal ml-1">(auto-calculated, min ₱300)</span>
                             </label>
                             <div class="mt-1 relative rounded-md shadow-sm">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <span class="text-gray-500 dark:text-slate-400 sm:text-sm">₱</span>
                                 </div>
-                                <input type="number" name="labor_cost" id="labor_cost" step="0.01" min="300" {{ $techDisabled }}
+                                <input type="number" name="labor_cost" id="labor_cost" step="0.01" min="0" {{ $techDisabled }}
                                     :value="computedLabor"
                                     x-bind:value="computedLabor"
                                     class="focus:ring-blue-500 focus:border-blue-500 block w-full pl-7 sm:text-sm border-gray-300 dark:border-slate-500 rounded-lg disabled:bg-gray-100 dark:bg-slate-700 disabled:cursor-not-allowed bg-gray-50 dark:bg-slate-700/50"
                                     readonly>
                             </div>
+                            <p class="text-xs text-gray-500 dark:text-slate-400 mt-1">Calculated from selected service types.</p>
                             @error('labor_cost')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror

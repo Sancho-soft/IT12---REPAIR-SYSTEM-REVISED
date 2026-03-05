@@ -60,6 +60,7 @@ class StaffController extends Controller
      * Show the form for editing the specified resource.
      */
     public function edit(User $staff) // Using route model binding
+
     {
         return view('staff.edit', compact('staff'));
     }
@@ -88,8 +89,8 @@ class StaffController extends Controller
             'status' => $request->status,
         ];
 
-        // Only update password if a new one was provided
-        if ($request->filled('password')) {
+        // Only update password if a new one was provided and the admin is editing their own profile
+        if ($request->filled('password') && auth()->id() === $staff->id) {
             $data['password'] = Hash::make($request->password);
         }
 

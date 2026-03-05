@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int $id
@@ -39,6 +40,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Appliance extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'customer_id',
         'brand',

@@ -98,13 +98,108 @@
                             @enderror
                         </div>
 
-                        <!-- Address -->
-                        <div class="md:col-span-2">
+                        <!-- Address with Map Search -->
+                        <div class="md:col-span-2" x-data="{
+                            mapInstance: null,
+                            marker: null,
+                            searchQuery: '',
+                            searchResults: [],
+                            searching: false,
+                            initMap() {
+                                let lat = 10.3157, lng = 123.8854; // Default: Cebu City
+                                this.mapInstance = L.map('customer-map').setView([lat, lng], 13);
+                                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                    attribution: '© OpenStreetMap contributors'
+                                }).addTo(this.mapInstance);
+                                
+                                const existingAddress = document.getElementById('address').value;
+                                if (existingAddress) {
+                                    fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(existingAddress)}&limit=1`)
+                                        .then(r => r.json())
+                                        .then(results => {
+                                            if (results && results.length > 0) {
+                                                this.setMarker(parseFloat(results[0].lat), parseFloat(results[0].lon));
+                                            }
+                                        });
+                                }
+
+                                this.mapInstance.on('click', (e) => {
+                                    this.setMarker(e.latlng.lat, e.latlng.lng);
+                                    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${e.latlng.lat}&lon=${e.latlng.lng}`)
+                                        .then(r => r.json())
+                                        .then(data => {
+                                            if (data.display_name) {
+                                                document.getElementById('address').value = data.display_name;
+                                            }
+                                        });
+                                });
+                            },
+                            setMarker(lat, lng) {
+                                if (this.marker) this.mapInstance.removeLayer(this.marker);
+                                this.marker = L.marker([lat, lng]).addTo(this.mapInstance);
+                                this.mapInstance.setView([lat, lng], 16);
+                            },
+                            searchAddress() {
+                                if (!this.searchQuery.trim()) return;
+                                this.searching = true;
+                                this.searchResults = [];
+                                fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(this.searchQuery)}&limit=5&countrycodes=ph`)
+                                    .then(r => r.json())
+                                    .then(results => {
+                                        this.searchResults = results;
+                                        this.searching = false;
+                                    });
+                            },
+                            selectResult(result) {
+                                document.getElementById('address').value = result.display_name;
+                                this.setMarker(parseFloat(result.lat), parseFloat(result.lon));
+                                this.searchResults = [];
+                                this.searchQuery = '';
+                            }
+                        }" x-init="$nextTick(() => initMap())">
                             <label for="address" class="block text-sm font-medium text-gray-700 dark:text-slate-200">Address</label>
+                            
+                            <!-- Address text area -->
                             <div class="mt-1">
-                                <textarea id="address" name="address" rows="3"
-                                    class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 dark:border-slate-500 rounded-lg">{{ old('address') }}</textarea>
+                                <textarea id="address" name="address" rows="2"
+                                    class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 dark:border-slate-500 rounded-lg"
+                                    placeholder="Full address will auto-fill when you select from map or search results">{{ old('address') }}</textarea>
                             </div>
+
+                            <!-- Map search -->
+                            <div class="mt-2 relative">
+                                <div class="flex gap-2">
+                                    <input type="text" x-model="searchQuery"
+                                        @keydown.enter.prevent="searchAddress()"
+                                        class="block w-full rounded-lg border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                        placeholder="Search address on map (e.g., SM City Cebu)...">
+                                    <button type="button" @click="searchAddress()"
+                                        class="px-3 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 dark:blue-600 transition-colors flex items-center gap-1 whitespace-nowrap">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                        </svg>
+                                        Search
+                                    </button>
+                                </div>
+                                <!-- Search results dropdown -->
+                                <div x-show="searchResults.length > 0"
+                                    class="absolute z-20 mt-1 w-full bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-gray-200 dark:border-slate-600 overflow-hidden" style="display:none;">
+                                    <template x-for="result in searchResults" :key="result.place_id">
+                                        <button type="button" @click="selectResult(result)"
+                                            class="w-full text-left px-4 py-3 text-sm text-gray-700 dark:text-slate-200 hover:bg-blue-50 border-b border-gray-100 dark:border-slate-700 last:border-b-0 transition-colors">
+                                            <svg class="w-3 h-3 inline mr-1 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                            </svg>
+                                            <span x-text="result.display_name"></span>
+                                        </button>
+                                    </template>
+                                </div>
+                                <p x-show="searching" class="text-xs text-gray-500 dark:text-slate-400 mt-1">Searching...</p>
+                            </div>
+
+                            <!-- Leaflet Map -->
+                            <div id="customer-map" class="mt-2 rounded-lg border border-gray-200 dark:border-slate-600 overflow-hidden" style="height: 250px; width: 100%; z-index: 0;"></div>
+                            <p class="text-xs text-gray-500 dark:text-slate-400 mt-1">💡 Click anywhere on the map or search above to auto-fill the address.</p>
                             @error('address')
                                 <p class="mt-1 text-sm text-red-600 flex items-center">
                                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">

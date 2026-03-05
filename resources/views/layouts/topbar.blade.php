@@ -146,7 +146,7 @@
 
                 <div class="border-t border-gray-100 dark:border-gray-700 my-1"></div>
 
-                <form method="POST" action="{{ route('logout') }}">
+                <form method="POST" action="{{ route('logout') }}" onsubmit="localStorage.removeItem('color-theme'); document.documentElement.classList.remove('dark');">
                     @csrf
                     <button type="submit"
                         class="w-full flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 transition-colors text-left">

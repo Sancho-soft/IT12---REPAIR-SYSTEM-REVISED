@@ -107,11 +107,23 @@
                             searchResults: [],
                             searching: false,
                             initMap() {
-                                const lat = 10.3157, lng = 123.8854; // Default: Cebu City
+                                let lat = 10.3157, lng = 123.8854; // Default: Cebu City
                                 this.mapInstance = L.map('customer-map').setView([lat, lng], 13);
                                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                                     attribution: '© OpenStreetMap contributors'
                                 }).addTo(this.mapInstance);
+                                
+                                const existingAddress = document.getElementById('address').value;
+                                if (existingAddress) {
+                                    fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(existingAddress)}&limit=1`)
+                                        .then(r => r.json())
+                                        .then(results => {
+                                            if (results && results.length > 0) {
+                                                this.setMarker(parseFloat(results[0].lat), parseFloat(results[0].lon));
+                                            }
+                                        });
+                                }
+
                                 this.mapInstance.on('click', (e) => {
                                     this.setMarker(e.latlng.lat, e.latlng.lng);
                                     fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${e.latlng.lat}&lon=${e.latlng.lng}`)

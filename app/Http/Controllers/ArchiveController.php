@@ -120,7 +120,7 @@ class ArchiveController extends Controller
         return back()->with('error', 'Record not found.');
     }
 
-    public function destroy($type, $id)
+    public function destroy(Request $request, $type, $id)
     {
         switch ($type) {
             case 'Service Report':
@@ -137,6 +137,14 @@ class ArchiveController extends Controller
                 break;
             default:
                 return back()->with('error', 'Invalid type');
+        }
+
+        $request->validate([
+            'password' => 'required|string',
+        ]);
+
+        if (!\Illuminate\Support\Facades\Hash::check($request->password, auth()->user()->password)) {
+            return back()->with('error', 'Incorrect password. Deletion cancelled.');
         }
 
         if ($item) {

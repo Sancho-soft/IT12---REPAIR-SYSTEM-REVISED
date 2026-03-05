@@ -69,33 +69,40 @@
                         </div>
 
                         <!-- Update Password (Optional) -->
-                        <div class="bg-gray-50 dark:bg-slate-700/50 border border-gray-100 dark:border-slate-700 rounded-lg p-4 mb-4">
-                            <h3 class="text-sm font-medium text-gray-700 dark:text-slate-200 mb-4">Reset Password (Optional)</h3>
-                            <p class="text-xs text-gray-500 dark:text-slate-400 mb-4">Leave these fields blank if you do not want to change
-                                the user's current password.</p>
+                        @if (auth()->id() === $staff->id)
+                            <div class="bg-gray-50 dark:bg-slate-700/50 border border-gray-100 dark:border-slate-700 rounded-lg p-4 mb-4">
+                                <h3 class="text-sm font-medium text-gray-700 dark:text-slate-200 mb-4">Reset Password (Optional)</h3>
+                                <p class="text-xs text-gray-500 dark:text-slate-400 mb-4">Leave these fields blank if you do not want to change
+                                    the user's current password.</p>
 
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                <div>
-                                    <label for="password" class="block text-sm font-medium text-gray-700 dark:text-slate-200">New
-                                        Password</label>
-                                    <input type="password" name="password" id="password"
-                                        class="mt-1 block w-full rounded-lg border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                        placeholder="••••••••">
-                                    @error('password')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                    <div>
+                                        <label for="password" class="block text-sm font-medium text-gray-700 dark:text-slate-200">New
+                                            Password</label>
+                                        <input type="password" name="password" id="password"
+                                            class="mt-1 block w-full rounded-lg border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                            placeholder="••••••••">
+                                        @error('password')
+                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                        @enderror
+                                    </div>
 
-                                <!-- Confirm New Password -->
-                                <div>
-                                    <label for="password_confirmation"
-                                        class="block text-sm font-medium text-gray-700 dark:text-slate-200">Confirm New Password</label>
-                                    <input type="password" name="password_confirmation" id="password_confirmation"
-                                        class="mt-1 block w-full rounded-lg border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                        placeholder="••••••••">
+                                    <!-- Confirm New Password -->
+                                    <div>
+                                        <label for="password_confirmation"
+                                            class="block text-sm font-medium text-gray-700 dark:text-slate-200">Confirm New Password</label>
+                                        <input type="password" name="password_confirmation" id="password_confirmation"
+                                            class="mt-1 block w-full rounded-lg border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                            placeholder="••••••••">
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        @else
+                            <div class="bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 mb-4">
+                                <h3 class="text-sm font-medium text-yellow-800 dark:text-yellow-300">Password Management</h3>
+                                <p class="text-xs text-yellow-700 dark:text-yellow-400 mt-1">For security reasons, administrators cannot change other users' passwords directly. If a user has forgotten their password, they must reset it themselves using the password reset process.</p>
+                            </div>
+                        @endif
 
                         <!-- Role -->
                         <div>
