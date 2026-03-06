@@ -2,18 +2,18 @@
     <div class="w-full mx-auto space-y-6" x-data="{
         customers: {{ Js::from($customers) }},
         parts: {{ Js::from($parts) }},
-        servicePrices: {{ Js::from($servicePrices) }},
+        servicePrices: {{ Js::from($servicePrices ?? \App\Models\ServicePrice::all()) }},
         selectedCustomerId: '{{ old('customer_id', $service->customer_id) }}',
         selectedApplianceId: '{{ old('appliance_id', $service->appliance_id) }}',
         selectedParts: [],
         selectedPartId: '',
         partQuantity: 1,
         miscCost: {{ old('miscellaneous_cost', 0) }},
-        checkedTypes: @json(old('service_types', $service->details?->service_types ?? [])),
+        checkedTypes: {{ Js::from(old('service_types', $service->details?->service_types ?? [])) }},
         techniciansList: {{ Js::from($technicians) }},
         searchTech: '',
         filterTech: '',
-        selectedTechs: @json(old('technicians', $service->details ? explode(', ', $service->details->technician) : [])),
+        selectedTechs: {{ Js::from(old('technicians', $service->details && $service->details->technician ? array_map('trim', explode(',', $service->details->technician)) : [])) }},
         get currentCustomer() {
             return this.customers.find(c => c.id == this.selectedCustomerId) || null;
         },
@@ -105,7 +105,7 @@
             });
             
             // Re-populate selectedParts from old input or existing service parts
-            let oldParts = @json(old('parts', $service->parts ?: []));
+            let oldParts = {{ Js::from(old('parts', $service->parts ?: [])) }};
             if (oldParts.length > 0) {
                 oldParts.forEach(oldPart => {
                     const p = this.parts.find(px => px.id == oldPart.id);

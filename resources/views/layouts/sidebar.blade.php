@@ -1,9 +1,12 @@
 <aside class="w-64 bg-slate-900 border-r border-slate-800 flex flex-col h-screen fixed left-0 top-0 z-50">
     <!-- Logo -->
-    <div class="flex items-center justify-center px-6 py-6 border-b border-slate-800">
-        <a href="{{ route('dashboard') }}" class="flex items-center justify-center">
-            <div class="bg-white p-3 rounded-xl shadow-lg">
-                <img src="{{ asset('img/101_logo.png') }}" alt="Logo" class="w-24 h-24 object-contain">
+    <div class="flex items-center justify-center px-6 py-6 border-b border-gray-200 dark:border-slate-800">
+        <a href="{{ route('dashboard') }}" class="flex items-center justify-center w-full">
+            <div class="p-2 w-full flex justify-center">
+                <!-- Light Mode Logo (Blue) -->
+                <img src="{{ asset('img/repairservicelogoblue.png') }}" alt="101 Repair Shop Logo" class="w-40 h-auto max-h-32 object-contain block dark:hidden">
+                <!-- Dark Mode Logo (Gray/Red) -->
+                <img src="{{ asset('img/repairservicelogogray.png') }}" alt="101 Repair Shop Logo" class="w-40 h-auto max-h-32 object-contain hidden dark:block">
             </div>
         </a>
     </div>

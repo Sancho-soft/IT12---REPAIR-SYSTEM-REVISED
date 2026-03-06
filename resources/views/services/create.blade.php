@@ -6,14 +6,14 @@
         techniciansList: {{ Js::from($technicians) }},
         searchTech: '',
         filterTech: '',
-        selectedTechs: @json(old('technicians', [])),
+        selectedTechs: {{ Js::from(old('technicians', [])) }},
         selectedCustomerId: '{{ old('customer_id') }}',
         selectedApplianceId: '{{ old('appliance_id') }}',
         selectedPartId: '',
         partQuantity: 1,
         miscCost: {{ old('miscellaneous_cost', 0) }},
         laborBase: {{ old('labor_cost', 0) }},
-        checkedTypes: @json(old('service_types', [])),
+        checkedTypes: {{ Js::from(old('service_types', [])) }},
         get currentCustomer() {
             return this.customers.find(c => c.id == this.selectedCustomerId) || null;
         },
@@ -99,7 +99,7 @@
                 this.selectedApplianceId = '';
             });
             // Re-populate selectedParts from old input if validation fails
-            let oldParts = @json(old('parts', []));
+            let oldParts = {{ Js::from(old('parts', [])) }};
             if (oldParts.length > 0) {
                 oldParts.forEach(oldPart => {
                     const p = this.parts.find(px => px.id == oldPart.id);

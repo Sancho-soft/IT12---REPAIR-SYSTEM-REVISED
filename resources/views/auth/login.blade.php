@@ -27,23 +27,36 @@
             display: none !important;
         }
     </style>
+
+    <script>
+        // Check for dark mode preference in local storage
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
 </head>
 
-<body class="font-sans antialiased text-gray-900 bg-gray-50  flex items-center justify-center min-h-screen p-4 sm:p-8">
+<body class="font-sans antialiased text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-900 flex items-center justify-center min-h-screen p-4 sm:p-8 transition-colors duration-200">
 
     <div
-        class="w-full max-w-5xl bg-white  rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row min-h-[600px]">
+        class="w-full max-w-5xl bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row min-h-[600px] transition-colors duration-200">
 
         <!-- Left Pane: Login Form -->
-        <div class="w-full md:w-1/2 p-8 sm:p-12 lg:p-16 flex flex-col justify-center bg-white  relative">
+        <div class="w-full md:w-1/2 p-8 sm:p-12 lg:p-16 flex flex-col justify-center bg-white dark:bg-gray-800 relative transition-colors duration-200">
 
             <div class="max-w-md w-full mx-auto">
                 <!-- Logo & Header -->
                 <div class="text-center mb-10">
-                    <img src="{{ asset('img/101_logo.png') }}" alt="101 Repair Shop Logo"
-                        class="h-24 mx-auto object-contain mb-4">
-                    <h2 class="text-2xl font-bold text-gray-900  leading-tight tracking-tight">101 Repair Service</h2>
-                    <p class="mt-2 text-sm text-gray-500  font-medium tracking-wide">Sign in to your account</p>
+                    <!-- Light Mode Logo (Blue) -->
+                    <img src="{{ asset('img/repairservicelogoblue.png') }}" alt="101 Repair Shop Logo"
+                        class="h-32 md:h-40 mx-auto object-contain mb-4 block dark:hidden">
+                    <!-- Dark Mode Logo (Gray/Red) -->
+                    <img src="{{ asset('img/repairservicelogogray.png') }}" alt="101 Repair Shop Logo"
+                        class="h-32 md:h-40 mx-auto object-contain mb-4 hidden dark:block">
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white leading-tight tracking-tight">101 Repair Service</h2>
+                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400 font-medium tracking-wide">Sign in to your account</p>
                 </div>
 
                 <!-- Session Status -->
@@ -54,24 +67,24 @@
 
                     <!-- Email Address -->
                     <div>
-                        <label for="email" class="block text-sm font-medium text-gray-700  mb-1">Email</label>
+                        <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
                         <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus
-                            class="block w-full px-4 py-3 border border-gray-300  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 sm:text-sm placeholder-gray-400 transition-shadow"
+                            class="block w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 sm:text-sm placeholder-gray-400 dark:bg-gray-700 dark:text-white transition-shadow"
                             placeholder="Enter your email">
                         <x-input-error :messages="$errors->get('email')"
-                            class="mt-2 text-red-600 text-xs font-medium" />
+                            class="mt-2 text-red-600 dark:text-red-400 text-xs font-medium" />
                     </div>
 
                     <!-- Password -->
                     <div x-data="{ showPassword: false }">
-                        <label for="password" class="block text-sm font-medium text-gray-700  mb-1">Password</label>
+                        <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Password</label>
                         <div class="relative">
                             <input id="password" :type="showPassword ? 'text' : 'password'" name="password" required
                                 autocomplete="current-password"
-                                class="block w-full px-4 py-3 border border-gray-300  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 sm:text-sm placeholder-gray-400 transition-shadow pr-10"
+                                class="block w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 sm:text-sm placeholder-gray-400 dark:bg-gray-700 dark:text-white transition-shadow pr-10"
                                 placeholder="Enter your password">
                             <button type="button" @click="showPassword = !showPassword"
-                                class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600  focus:outline-none">
+                                class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 focus:outline-none">
                                 <!-- Eye open (password hidden) -->
                                 <svg x-show="!showPassword" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -87,21 +100,21 @@
                             </button>
                         </div>
                         <x-input-error :messages="$errors->get('password')"
-                            class="mt-2 text-red-600 text-xs font-medium" />
+                            class="mt-2 text-red-600 dark:text-red-400 text-xs font-medium" />
                     </div>
 
                     <!-- Remember Me & Forgot Password -->
                     <div class="flex items-center justify-between pt-2">
                         <div class="flex items-center">
                             <input id="remember_me" type="checkbox" name="remember"
-                                class="h-4 w-4 text-blue-600  focus:ring-blue-500 border-gray-300  rounded cursor-pointer">
+                                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded cursor-pointer">
                             <label for="remember_me"
-                                class="ml-2 block text-sm text-gray-600  cursor-pointer select-none">Remember me</label>
+                                class="ml-2 block text-sm text-gray-600 dark:text-gray-400 cursor-pointer select-none">Remember me</label>
                         </div>
 
                         @if (Route::has('password.request'))
                             <a href="{{ route('password.request') }}"
-                                class="text-sm font-semibold text-blue-600  hover:text-blue-500 transition-colors">
+                                class="text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-colors">
                                 Forgot Password?
                             </a>
                         @endif
@@ -110,7 +123,7 @@
                     <!-- Submit Button -->
                     <div class="pt-2">
                         <button type="submit"
-                            class="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-white bg-[#1a56db] hover:bg-blue-700  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 transition-colors">
+                            class="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-white bg-[#1a56db] hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 transition-colors">
                             Sign in
                         </button>
                     </div>

@@ -150,7 +150,7 @@ class ServiceReportController extends Controller
         $parts = \App\Models\Part::all();
         $servicePrices = \App\Models\ServicePrice::all();
         $service->load('parts');
-        return view('services.edit', compact('service', 'customers', 'technicians', 'parts'));
+        return view('services.edit', compact('service', 'customers', 'technicians', 'parts', 'servicePrices'));
     }
 
     public function update(Request $request, \App\Models\ServiceReport $service)
