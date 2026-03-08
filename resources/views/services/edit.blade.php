@@ -21,7 +21,10 @@
             return this.currentCustomer ? this.currentCustomer.appliances : [];
         },
         get totalPartsCost() {
-            return this.selectedParts.reduce((total, part) => total + (part.price * part.quantity), 0);
+            return this.selectedParts.reduce((total, part) => {
+                if (part.is_not_working) return total;
+                return total + (part.price * part.quantity);
+            }, 0);
         },
         get computedLabor() {
             let base = 0;
@@ -88,7 +91,8 @@
                     name: part.name,
                     part_no: part.part_no,
                     price: parseFloat(part.price),
-                    quantity: parseInt(this.partQuantity)
+                    quantity: parseInt(this.partQuantity),
+                    is_not_working: false
                 });
             }
             this.selectedPartId = '';
@@ -115,7 +119,8 @@
                             name: p.name,
                             part_no: p.part_no,
                             price: parseFloat(oldPart.pivot ? oldPart.pivot.price : (oldPart.price || p.price)),
-                            quantity: parseInt(oldPart.pivot ? oldPart.pivot.quantity : oldPart.quantity)
+                            quantity: parseInt(oldPart.pivot ? oldPart.pivot.quantity : oldPart.quantity),
+                            is_not_working: oldPart.pivot ? (oldPart.pivot.is_not_working === 1 || oldPart.pivot.is_not_working === true) : (oldPart.is_not_working === '1' || oldPart.is_not_working === true)
                         });
                     }
                 });
@@ -365,7 +370,32 @@
                         </div>
 
                         <!-- Attachments Upload -->
-                        <div class="md:col-span-2" x-data="{ files: [] }">
+                        <div class="md:col-span-2" x-data="{ 
+                            files: [],
+                            init() {
+                                this.$watch('files', () => {
+                                    if(this.files.length === 0) {
+                                        document.getElementById('attachments').value = '';
+                                    }
+                                });
+                            },
+                            removeFile(index) {
+                                this.files.splice(index, 1);
+                                
+                                // Reconstruct the FileList using DataTransfer
+                                const dt = new DataTransfer();
+                                const input = document.getElementById('attachments');
+                                const { files } = input;
+                                
+                                for (let i = 0; i < files.length; i++) {
+                                    if (i !== index) {
+                                        dt.items.add(files[i]);
+                                    }
+                                }
+                                
+                                input.files = dt.files;
+                            }
+                        }">
                             <label class="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-1">Attachments & Files <span class="text-gray-400 text-xs font-normal">Optional (Max 5 files)</span></label>
                             
                             @if (!empty($service->attachments))
@@ -403,10 +433,15 @@
                             </div>
                             
                             <div x-show="files.length > 0" class="mt-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                                <template x-for="file in files" :key="file">
-                                    <div class="flex items-center text-sm text-gray-600 bg-gray-50 p-2 rounded border border-gray-100 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-300 truncate shadow-sm">
-                                        <svg class="flex-shrink-0 w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
-                                        <span x-text="file" class="truncate"></span>
+                                <template x-for="(file, index) in files" :key="index">
+                                    <div class="flex items-center justify-between text-sm text-gray-600 bg-gray-50 p-2 rounded border border-gray-100 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-300 shadow-sm">
+                                        <div class="flex items-center truncate">
+                                            <svg class="flex-shrink-0 w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
+                                            <span x-text="file" class="truncate"></span>
+                                        </div>
+                                        <button type="button" @click="removeFile(index)" class="ml-2 text-gray-400 hover:text-red-500 focus:outline-none transition-colors">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                        </button>
                                     </div>
                                 </template>
                             </div>
@@ -448,6 +483,7 @@
                                             <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 dark:text-slate-400">Price</th>
                                             <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 dark:text-slate-400">Qty</th>
                                             <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 dark:text-slate-400">Subtotal</th>
+                                            <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 dark:text-slate-400">Not Working</th>
                                             <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 dark:text-slate-400">Action</th>
                                         </tr>
                                     </thead>
@@ -460,7 +496,10 @@
                                                 <td class="px-4 py-2 text-sm text-center text-gray-900 dark:text-white">
                                                     <input type="number" x-model.number="part.quantity" min="1" class="w-16 p-1 text-center text-sm border-gray-300 dark:border-slate-500 rounded" @change="$dispatch('input')">
                                                 </td>
-                                                <td class="px-4 py-2 text-sm text-right text-gray-900 dark:text-white" x-text="'₱' + (part.price * part.quantity).toFixed(2)"></td>
+                                                <td class="px-4 py-2 text-sm text-right text-gray-900 dark:text-white" x-text="'₱' + (part.is_not_working ? '0.00' : (part.price * part.quantity).toFixed(2))"></td>
+                                                <td class="px-4 py-2 text-sm text-center text-gray-900 dark:text-white">
+                                                    <input type="checkbox" x-model="part.is_not_working" class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                                                </td>
                                                 <td class="px-4 py-2 text-sm text-center">
                                                     <button type="button" @click="removePart(part.id)" class="text-red-500 hover:text-red-700">
                                                         <svg class="h-4 w-4 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -474,6 +513,7 @@
                                                     <input type="hidden" :name="'parts['+index+'][id]'" :value="part.id">
                                                     <input type="hidden" :name="'parts['+index+'][quantity]'" :value="part.quantity">
                                                     <input type="hidden" :name="'parts['+index+'][price]'" :value="part.price">
+                                                    <input type="hidden" :name="'parts['+index+'][is_not_working]'" :value="part.is_not_working ? '1' : '0'">
                                                 </td>
                                             </tr>
                                         </template>

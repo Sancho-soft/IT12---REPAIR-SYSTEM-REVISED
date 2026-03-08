@@ -14,14 +14,14 @@ class CloudinaryService
         // Delete old image if replacing
         if ($oldPublicId) {
             try {
-                Cloudinary::destroy($oldPublicId);
+                cloudinary()->uploadApi()->destroy($oldPublicId);
             }
             catch (\Exception $e) {
             // Silently fail - old image deletion is not critical
             }
         }
 
-        $result = Cloudinary::upload($file->getRealPath(), [
+        $result = cloudinary()->uploadApi()->upload($file->getRealPath(), [
             'folder' => 'Repairshop101/profile_pictures',
             'transformation' => [
                 'width' => 400,
@@ -33,8 +33,8 @@ class CloudinaryService
         ]);
 
         return [
-            'url' => $result->getSecurePath(),
-            'public_id' => $result->getPublicId(),
+            'url' => $result['secure_url'],
+            'public_id' => $result['public_id'],
         ];
     }
 
@@ -47,15 +47,15 @@ class CloudinaryService
             ? 'raw'
             : 'image';
 
-        $result = Cloudinary::upload($file->getRealPath(), [
+        $result = cloudinary()->uploadApi()->upload($file->getRealPath(), [
             'folder' => 'Repairshop101/service_attachments',
             'resource_type' => $resourceType,
             'quality' => 'auto',
         ]);
 
         return [
-            'url' => $result->getSecurePath(),
-            'public_id' => $result->getPublicId(),
+            'url' => $result['secure_url'],
+            'public_id' => $result['public_id'],
             'original_name' => $file->getClientOriginalName(),
             'resource_type' => $resourceType,
         ];
@@ -67,7 +67,7 @@ class CloudinaryService
     public static function delete(string $publicId, string $resourceType = 'image'): void
     {
         try {
-            Cloudinary::destroy($publicId, ['resource_type' => $resourceType]);
+            cloudinary()->uploadApi()->destroy($publicId, ['resource_type' => $resourceType]);
         }
         catch (\Exception $e) {
         // Silently fail

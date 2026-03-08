@@ -106,6 +106,7 @@
                                             <tr>
                                                 <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-slate-400">Part No. / Name</th>
                                                 <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 dark:text-slate-400">Qty</th>
+                                                <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 dark:text-slate-400">Not Working</th>
                                                 <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 dark:text-slate-400">Price</th>
                                                 <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 dark:text-slate-400">Subtotal</th>
                                             </tr>
@@ -113,10 +114,19 @@
                                         <tbody class="divide-y divide-gray-200">
                                             @foreach($service->parts as $part)
                                                 <tr>
-                                                    <td class="px-4 py-2 text-sm text-gray-900 dark:text-white">{{ $part->part_no }} - {{ $part->description }}</td>
+                                                    <td class="px-4 py-2 text-sm text-gray-900 dark:text-white flex items-center space-x-2">
+                                                        <span>{{ $part->part_no }} - {{ $part->description ?: $part->name }}</span>
+                                                    </td>
                                                     <td class="px-4 py-2 text-sm text-center text-gray-900 dark:text-white">{{ $part->pivot->quantity }}</td>
+                                                    <td class="px-4 py-2 text-sm text-center">
+                                                        @if($part->pivot->is_not_working)
+                                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">Yes</span>
+                                                        @else
+                                                            <span class="text-gray-400 dark:text-slate-500">-</span>
+                                                        @endif
+                                                    </td>
                                                     <td class="px-4 py-2 text-sm text-right text-gray-900 dark:text-white">₱{{ number_format($part->pivot->price, 2) }}</td>
-                                                    <td class="px-4 py-2 text-sm text-right text-gray-900 dark:text-white">₱{{ number_format($part->pivot->quantity * $part->pivot->price, 2) }}</td>
+                                                    <td class="px-4 py-2 text-sm text-right text-gray-900 dark:text-white">₱{{ number_format($part->pivot->is_not_working ? 0 : ($part->pivot->quantity * $part->pivot->price), 2) }}</td>
                                                 </tr>
                                             @endforeach
                                         </tbody>

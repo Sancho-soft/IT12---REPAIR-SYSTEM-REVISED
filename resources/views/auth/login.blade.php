@@ -26,15 +26,17 @@
         [x-cloak] {
             display: none !important;
         }
+
+        /* Hide default browser reveal icon for password fields (e.g., in Edge) */
+        input[type="password"]::-ms-reveal,
+        input[type="password"]::-ms-clear {
+            display: none;
+        }
     </style>
 
     <script>
-        // Check for dark mode preference in local storage
-        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
+        // Force light mode for login page
+        document.documentElement.classList.remove('dark');
     </script>
 </head>
 

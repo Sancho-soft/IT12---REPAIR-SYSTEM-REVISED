@@ -77,7 +77,7 @@
             </a>
 
             <!-- Growth Rate -->
-            <a href="#"
+            <a href="{{ route('transactions.index') }}"
                 class="block bg-orange-50/50 dark:bg-slate-800 p-6 rounded-xl border border-orange-100 dark:border-slate-700 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
                 <div class="flex justify-between items-start">
                     <div class="p-3 bg-orange-100 rounded-lg text-orange-700">
@@ -162,12 +162,13 @@
                                     {{ substr($service->customer_name ?? 'U', 0, 1) }}
                                 </div>
                                 <div class="ml-4 flex-1">
-                                    <div class="flex justify-between items-start">
+                                    <div class="flex justify-between items-center text-center">
                                         <h4 class="text-sm font-semibold text-gray-900 dark:text-white">{{ $service->customer_name }}</h4>
                                         <span
-                                            class="px-2 py-0.5 text-xs rounded-full
-                                                                                    {{ $service->status === 'Completed' ? 'bg-green-100 text-green-800' :
-                                ($service->status === 'Pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800') }}">
+                                            class="px-2 py-0.5 text-xs rounded-full text-center
+                                                {{ $service->status === 'Completed' ? 'bg-green-100 text-green-800' :
+                                                ($service->status === 'Pending' ? 'bg-yellow-100 text-yellow-800' : 
+                                                ($service->status === 'Cancelled' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800')) }}">
                                             {{ $service->status }}
                                         </span>
                                     </div>

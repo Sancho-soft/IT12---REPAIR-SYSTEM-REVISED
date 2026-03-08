@@ -128,7 +128,7 @@
                 </div>
                 <div class="col">
                     <p><span class="label">Customer:</span> {{ $service->customer_name }}</p>
-                    <p><span class="label">Technician:</span> {{ $service->technician ?? 'Unassigned' }}</p>
+                    <p><span class="label">Technician:</span> {{ optional($service->details)->technician ?: 'Unassigned' }}</p>
                 </div>
             </div>
         </div>
@@ -168,6 +168,7 @@
                             <th>Part No.</th>
                             <th>Description</th>
                             <th style="text-align:center;">Qty</th>
+                            <th style="text-align:center;">Not Working</th>
                             <th style="text-align:right;">Price</th>
                             <th style="text-align:right;">Subtotal</th>
                         </tr>
@@ -176,11 +177,12 @@
                         @foreach($service->parts as $part)
                             <tr>
                                 <td>{{ $part->part_no }}</td>
-                                <td>{{ $part->description }}</td>
+                                <td>{{ $part->description ?: $part->name }}</td>
                                 <td style="text-align:center;">{{ $part->pivot->quantity }}</td>
+                                <td style="text-align:center;">{{ $part->pivot->is_not_working ? 'Yes' : '-' }}</td>
                                 <td style="text-align:right;">{{ number_format($part->pivot->price, 2) }}</td>
                                 <td style="text-align:right;">
-                                    {{ number_format($part->pivot->quantity * $part->pivot->price, 2) }}
+                                    {{ number_format($part->pivot->is_not_working ? 0 : ($part->pivot->quantity * $part->pivot->price), 2) }}
                                 </td>
                             </tr>
                         @endforeach
