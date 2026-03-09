@@ -66,7 +66,7 @@ class ArchiveController extends Controller
         if ($type === 'all' || $type === 'users') {
             $users = User::onlyTrashed()
                 ->when($search, function ($query) use ($search) {
-                $query->where('full_name', 'like', "%$search%")
+                $query->where('first_name', 'like', "%$search%")
                     ->orWhere('username', 'like', "%$search%");
             })
                 ->get()
@@ -78,8 +78,32 @@ class ArchiveController extends Controller
             $archives = $archives->merge($users);
         }
 
+        if ($type === 'all' || $type === 'transactions') {
+            $transactions = Transaction::onlyTrashed()
+                ->when($search, function ($query) use ($search) {
+                $query->where('id', 'like', "%$search%");
+            })
+                ->get()
+                ->map(function ($item) {
+                $item->type = 'Transaction';
+                $item->details = 'Transaction #' . $item->id . ' — ₱' . number_format($item->total_amount, 2);
+                return $item;
+            });
+            $archives = $archives->merge($transactions);
+        }
+
         // Pagination (manual)
-        $archives = $archives->sortByDesc('deleted_at');
+        $archives = $archives->sortByDesc('deleted_at')->map(function ($item) {
+            // Resolve deleted_by name if it's an integer (user ID)
+            if (isset($item->deleted_by) && is_numeric($item->deleted_by)) {
+                $deleter = User::withTrashed()->find($item->deleted_by);
+                $item->deleted_by_name = $deleter ? $deleter->full_name : 'Unknown';
+            }
+            else {
+                $item->deleted_by_name = $item->deleted_by ?? 'Unknown';
+            }
+            return $item;
+        });
         $perPage = 10;
         $page = $request->input('page', 1);
         $paginatedArchives = new \Illuminate\Pagination\LengthAwarePaginator(

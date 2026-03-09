@@ -14,6 +14,19 @@
 
     <!-- Right Side Actions -->
     <div class="flex items-center space-x-6">
+        <!-- Font Size Toggle -->
+        <div class="relative flex items-center justify-center" x-data="{ fontOpen: false }">
+            <button @click="fontOpen = !fontOpen" @click.away="fontOpen = false" class="text-blue-100 hover:text-white transition-colors focus:outline-none flex items-center gap-1" title="Adjust Font Size">
+                <span class="text-lg font-serif font-bold">A</span><span class="text-sm font-serif">a</span>
+                <svg class="w-4 h-4 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            </button>
+            <div x-show="fontOpen" x-transition class="absolute right-0 top-10 mt-2 w-36 bg-white dark:bg-gray-800 rounded-lg shadow-xl ring-1 ring-black ring-opacity-5 z-50 overflow-hidden" style="display: none;">
+                <button onclick="changeFontSize('sm')" class="w-full text-left px-4 py-3 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">Small</button>
+                <button onclick="changeFontSize('md')" class="w-full text-left px-4 py-3 text-base hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 border-t border-gray-100 dark:border-gray-700">Medium</button>
+                <button onclick="changeFontSize('lg')" class="w-full text-left px-4 py-3 text-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 border-t border-gray-100 dark:border-gray-700">Large</button>
+            </div>
+        </div>
+
         <!-- Dark Mode Toggle -->
         <button id="theme-toggle" type="button" class="flex items-center justify-center text-blue-100 hover:text-white transition-colors focus:outline-none">
             <svg id="theme-toggle-dark-icon" class="w-6 h-6 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>

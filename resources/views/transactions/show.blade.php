@@ -43,6 +43,28 @@
                     </div>
                 </div>
 
+                <!-- Additional Payment Info -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8 mt-6">
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-500 dark:text-slate-400">Received By</h3>
+                        <p class="mt-1 text-sm font-semibold text-gray-900 dark:text-white">{{ $transaction->received_by ?? 'System' }}</p>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-500 dark:text-slate-400">Payment Method</h3>
+                        <p class="mt-1 text-sm font-semibold text-gray-900 dark:text-white">{{ $transaction->payment_method ?? 'N/A' }}</p>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-500 dark:text-slate-400">Reference Number</h3>
+                        <p class="mt-1 text-sm font-semibold text-gray-900 dark:text-white">{{ $transaction->reference_no ?? 'N/A' }}</p>
+                    </div>
+                    @if($transaction->payment_status === 'Partial')
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-500 dark:text-slate-400">Partial Payment Amount</h3>
+                        <p class="mt-1 text-sm font-semibold text-yellow-600 dark:text-yellow-400">₱{{ number_format($transaction->partial_payment_amount, 2) }}</p>
+                    </div>
+                    @endif
+                </div>
+
                 <hr class="border-gray-100 dark:border-slate-700 mb-8">
 
                 <!-- Linked Service Report -->

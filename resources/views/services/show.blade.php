@@ -125,8 +125,20 @@
                                                             <span class="text-gray-400 dark:text-slate-500">-</span>
                                                         @endif
                                                     </td>
-                                                    <td class="px-4 py-2 text-sm text-right text-gray-900 dark:text-white">₱{{ number_format($part->pivot->price, 2) }}</td>
-                                                    <td class="px-4 py-2 text-sm text-right text-gray-900 dark:text-white">₱{{ number_format($part->pivot->is_not_working ? 0 : ($part->pivot->quantity * $part->pivot->price), 2) }}</td>
+                                                    <td class="px-4 py-2 text-sm text-right text-gray-900 dark:text-white">
+                                                        @if($part->pivot->is_not_working)
+                                                            <span class="text-gray-400 dark:text-slate-500">-</span>
+                                                        @else
+                                                            ₱{{ number_format($part->pivot->price, 2) }}
+                                                        @endif
+                                                    </td>
+                                                    <td class="px-4 py-2 text-sm text-right text-gray-900 dark:text-white">
+                                                        @if($part->pivot->is_not_working)
+                                                            <span class="text-gray-400 dark:text-slate-500">-</span>
+                                                        @else
+                                                            ₱{{ number_format($part->pivot->quantity * $part->pivot->price, 2) }}
+                                                        @endif
+                                                    </td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
@@ -137,7 +149,7 @@
                         <div class="sm:col-span-2">
                             <dt class="text-sm font-medium text-gray-500 dark:text-slate-400">Assigned Technician(s)</dt>
                             <dd class="mt-1 text-sm text-gray-900 dark:text-white">
-                                {{ $service->details && $service->details->technician ? $service->details->technician : 'None Assigned' }}
+                                {{ !empty($service->details->technician) ? $service->details->technician : 'No Assigned Technician' }}
                             </dd>
                         </div>
                         <div class="sm:col-span-2">
@@ -177,7 +189,7 @@
 
                         <div class="sm:col-span-2 bg-blue-50 p-4 rounded-lg">
                             <dt class="text-sm font-bold text-gray-700 dark:text-slate-200 mb-2">Cost Breakdown</dt>
-                            <dd class="mt-1 grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+                            <dd class="mt-1 grid grid-cols-1 sm:grid-cols-4 gap-4 text-sm">
                                 <div>
                                     <span class="text-gray-500 dark:text-slate-400 block">Labor Cost</span>
                                     <span class="font-semibold text-gray-900 dark:text-white">₱{{ number_format($service->details ? $service->details->labor : 0, 2) }}</span>
@@ -185,6 +197,10 @@
                                 <div>
                                     <span class="text-gray-500 dark:text-slate-400 block">Parts Total</span>
                                     <span class="font-semibold text-gray-900 dark:text-white">₱{{ number_format($service->details ? $service->details->parts_total_charge : 0, 2) }}</span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-500 dark:text-slate-400 block">Misc. Cost</span>
+                                    <span class="font-semibold text-gray-900 dark:text-white">₱{{ number_format($service->details ? $service->details->miscellaneous_cost : 0, 2) }}</span>
                                 </div>
                                 <div class="sm:border-l sm:border-blue-200 sm:pl-4">
                                     <span class="text-gray-500 dark:text-slate-400 block">Total Estimated</span>

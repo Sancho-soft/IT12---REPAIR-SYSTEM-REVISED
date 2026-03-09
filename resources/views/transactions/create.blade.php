@@ -38,6 +38,7 @@
             labor: {{ old('labor', 0) }},
             materials: {{ old('materials', 0) }},
             delivery: {{ old('delivery', 0) }},
+            payment_status: '{{ old('payment_status', 'Paid') }}',
             total_amount: 0,
             calculateTotal() {
                 this.total_amount = ((parseFloat(this.labor) || 0) + (parseFloat(this.materials) || 0) + (parseFloat(this.delivery) || 0)).toFixed(2);
@@ -144,7 +145,6 @@
                                         <span class="text-gray-500 dark:text-slate-400 sm:text-sm">₱</span>
                                     </div>
                                     <input type="number" name="delivery" id="delivery" step="0.01" x-model="delivery"
-                                        required
                                         class="focus:ring-blue-500 focus:border-blue-500 block w-full pl-7 sm:text-sm border-gray-300 dark:border-slate-500 rounded-lg"
                                         placeholder="0.00">
                                 </div>
@@ -172,22 +172,76 @@
                             @enderror
                         </div>
 
-                        <!-- Payment Status -->
-                        <div>
-                            <label for="payment_status" class="block text-sm font-medium text-gray-700 dark:text-slate-200">Payment
-                                Status</label>
-                            <select id="payment_status" name="payment_status"
-                                class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-slate-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg">
-                                <option value="Paid" {{ old('payment_status', 'Paid') == 'Paid' ? 'selected' : '' }}>Paid
-                                </option>
-                                <option value="Unpaid" {{ old('payment_status') == 'Unpaid' ? 'selected' : '' }}>Unpaid
-                                </option>
-                                <option value="Partial" {{ old('payment_status') == 'Partial' ? 'selected' : '' }}>Partial
-                                </option>
-                            </select>
-                            @error('payment_status')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Payment Status -->
+                            <div>
+                                <label for="payment_status" class="block text-sm font-medium text-gray-700 dark:text-slate-200">Payment
+                                    Status</label>
+                                <select id="payment_status" name="payment_status" x-model="payment_status"
+                                    class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-slate-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg">
+                                    <option value="Paid">Paid</option>
+                                    <option value="Unpaid">Unpaid</option>
+                                    <option value="Partial">Partial</option>
+                                </select>
+                                @error('payment_status')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Partial Amount -->
+                            <div x-show="payment_status === 'Partial'" x-cloak>
+                                <label for="partial_payment_amount" class="block text-sm font-medium text-gray-700 dark:text-slate-200">Partial Amount Paid</label>
+                                <div class="mt-1 relative rounded-md shadow-sm">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <span class="text-gray-500 dark:text-slate-400 sm:text-sm">₱</span>
+                                    </div>
+                                    <input type="number" name="partial_payment_amount" id="partial_payment_amount" step="0.01"
+                                        class="focus:ring-blue-500 focus:border-blue-500 block w-full pl-7 sm:text-sm border-gray-300 dark:border-slate-500 rounded-lg"
+                                        placeholder="0.00" value="{{ old('partial_payment_amount') }}">
+                                </div>
+                                @error('partial_payment_amount')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Payment Method -->
+                            <div>
+                                <label for="payment_method" class="block text-sm font-medium text-gray-700 dark:text-slate-200">Payment Method</label>
+                                <select id="payment_method" name="payment_method"
+                                    class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-slate-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg">
+                                    <option value="">Select Method</option>
+                                    <option value="Cash" {{ old('payment_method') == 'Cash' ? 'selected' : '' }}>Cash</option>
+                                    <option value="GCash" {{ old('payment_method') == 'GCash' ? 'selected' : '' }}>GCash</option>
+                                    <option value="PayMaya" {{ old('payment_method') == 'PayMaya' ? 'selected' : '' }}>PayMaya</option>
+                                    <option value="Bank Transfer" {{ old('payment_method') == 'Bank Transfer' ? 'selected' : '' }}>Bank Transfer</option>
+                                    <option value="Check" {{ old('payment_method') == 'Check' ? 'selected' : '' }}>Check</option>
+                                </select>
+                                @error('payment_method')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Reference No -->
+                            <div>
+                                <label for="reference_no" class="block text-sm font-medium text-gray-700 dark:text-slate-200">Reference Number <span class="text-gray-400 text-xs">(If applicable)</span></label>
+                                <input type="text" name="reference_no" id="reference_no"
+                                    class="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 dark:border-slate-500 rounded-lg"
+                                    placeholder="e.g. 10023940192" value="{{ old('reference_no') }}">
+                                @error('reference_no')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Received By -->
+                            <div>
+                                <label for="received_by" class="block text-sm font-medium text-gray-700 dark:text-slate-200">Received By <span class="text-gray-400 text-xs">(Defaults to {{ auth()->user()->first_name }} {{ auth()->user()->last_name }})</span></label>
+                                <input type="text" name="received_by" id="received_by"
+                                    class="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 dark:border-slate-500 rounded-lg"
+                                    placeholder="Name of Cashier/Admin" value="{{ old('received_by', auth()->user()->first_name . ' ' . auth()->user()->last_name) }}">
+                                @error('received_by')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
                         </div>
 
                         <div class="flex justify-end space-x-3 pt-6 border-t border-gray-100 dark:border-slate-700">

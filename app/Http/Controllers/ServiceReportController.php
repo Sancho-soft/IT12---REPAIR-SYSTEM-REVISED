@@ -59,10 +59,19 @@ class ServiceReportController extends Controller
         return $partsTotalCost;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $services = \App\Models\ServiceReport::with(['customer', 'appliance', 'details'])->latest()->get();
-        return view('services.index', compact('services'));
+        $search = $request->input('search');
+        $status = $request->input('status');
+        $services = \App\Models\ServiceReport::with(['customer', 'appliance', 'details'])
+            ->when($search, fn($q) => $q->where('customer_name', 'like', "%$search%")
+                ->orWhere('id', 'like', "%$search%"))
+            ->when($status, fn($q) => $q->where('status', $status))
+            ->latest()
+            ->paginate(25)
+            ->withQueryString();
+        return view('services.index', compact('services', 'search', 'status'));
+    }
     }
 
     public function create()

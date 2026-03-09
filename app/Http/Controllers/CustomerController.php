@@ -13,10 +13,17 @@ class CustomerController extends Controller
         }
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $customers = \App\Models\Customer::all();
-        return view('customers.index', compact('customers'));
+        $search = $request->input('search');
+        $customers = \App\Models\Customer::with('appliances')
+            ->when($search, fn($q) => $q->where('first_name', 'like', "%$search%")
+        ->orWhere('last_name', 'like', "%$search%")
+        ->orWhere('phone_no', 'like', "%$search%"))
+            ->latest()
+            ->paginate(25)
+            ->withQueryString();
+        return view('customers.index', compact('customers', 'search'));
     }
 
     public function create()
@@ -80,6 +87,7 @@ class CustomerController extends Controller
     public function destroy(\App\Models\Customer $customer)
     {
         $this->checkCustomerAccess();
+        $customer->update(['deleted_by' => auth()->id()]);
         $customer->delete();
         return redirect()->route('customers.index')->with('success', 'Customer deleted successfully.');
     }

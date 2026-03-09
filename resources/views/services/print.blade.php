@@ -128,7 +128,7 @@
                 </div>
                 <div class="col">
                     <p><span class="label">Customer:</span> {{ $service->customer_name }}</p>
-                    <p><span class="label">Technician:</span> {{ optional($service->details)->technician ?: 'Unassigned' }}</p>
+                    <p><span class="label">Technician:</span> {{ !empty($service->details->technician) ? $service->details->technician : 'No Assigned Technician' }}</p>
                 </div>
             </div>
         </div>
@@ -180,9 +180,19 @@
                                 <td>{{ $part->description ?: $part->name }}</td>
                                 <td style="text-align:center;">{{ $part->pivot->quantity }}</td>
                                 <td style="text-align:center;">{{ $part->pivot->is_not_working ? 'Yes' : '-' }}</td>
-                                <td style="text-align:right;">{{ number_format($part->pivot->price, 2) }}</td>
                                 <td style="text-align:right;">
-                                    {{ number_format($part->pivot->is_not_working ? 0 : ($part->pivot->quantity * $part->pivot->price), 2) }}
+                                    @if($part->pivot->is_not_working)
+                                        -
+                                    @else
+                                        {{ number_format($part->pivot->price, 2) }}
+                                    @endif
+                                </td>
+                                <td style="text-align:right;">
+                                    @if($part->pivot->is_not_working)
+                                        -
+                                    @else
+                                        {{ number_format($part->pivot->quantity * $part->pivot->price, 2) }}
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
@@ -204,6 +214,12 @@
                     <td style="border: none; text-align: right; padding-right: 20px;"><strong>Parts Total:</strong></td>
                     <td style="border: none; text-align: right;">Php
                         {{ number_format($service->details ? $service->details->parts_total_charge : 0, 2) }}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="border: none; text-align: right; padding-right: 20px;"><strong>Misc. Cost:</strong></td>
+                    <td style="border: none; text-align: right;">Php
+                        {{ number_format($service->details ? $service->details->miscellaneous_cost : 0, 2) }}
                     </td>
                 </tr>
                 <tr>

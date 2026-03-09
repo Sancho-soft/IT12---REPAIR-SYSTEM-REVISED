@@ -228,7 +228,7 @@
         </div>
 
         <!-- Appliance Information Card -->
-        <div class="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm overflow-hidden mt-6">
+        <div x-data="{ editModal: false, editAppId: null }" class="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm overflow-hidden mt-6">
             <div class="p-6">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Customer Appliances</h3>
                 
@@ -275,17 +275,80 @@
                                             @endif
                                         </td>
                                         <td class="px-4 py-3 text-right text-sm">
-                                            <form action="{{ route('appliances.destroy', $app) }}" method="POST" onsubmit="return confirm('Remove this appliance?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="text-red-600 hover:text-red-900">Remove</button>
-                                            </form>
+                                            <div class="flex justify-end space-x-3">
+                                                <button type="button" @click="editAppId = {{ $app->id }}; editModal = true" class="text-blue-600 hover:text-blue-900 font-medium">Edit</button>
+                                                <form action="{{ route('appliances.destroy', $app) }}" method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="text-red-600 hover:text-red-900 font-medium">Remove</button>
+                                                </form>
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
                     </div>
+                    
+                    <!-- Edit Modals -->
+                    @foreach($customer->appliances as $app)
+                        <div x-show="editModal && editAppId === {{ $app->id }}" class="fixed inset-0 z-[110] overflow-y-auto" style="display:none;" x-transition>
+                            <div class="flex min-h-screen items-center justify-center px-4">
+                                <div class="fixed inset-0 bg-black/40" @click="editModal = false"></div>
+                                <div class="relative bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-2xl z-10 p-6">
+                                    <div class="flex justify-between items-center mb-4 border-b border-gray-100 dark:border-gray-700 pb-3">
+                                        <h3 class="text-lg font-bold text-gray-900 dark:text-white">Edit Appliance</h3>
+                                        <button type="button" @click="editModal = false" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                        </button>
+                                    </div>
+                                    <form action="{{ route('appliances.update', $app) }}" method="POST">
+                                        @csrf
+                                        @method('PUT')
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                            <div>
+                                                <label class="block text-xs font-medium text-gray-700 dark:text-slate-200">Appliance Type</label>
+                                                <input type="text" name="product" value="{{ old('product', $app->product) }}" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-medium text-gray-700 dark:text-slate-200">Brand</label>
+                                                <input type="text" name="brand" value="{{ old('brand', $app->brand) }}" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-medium text-gray-700 dark:text-slate-200">Category</label>
+                                                <input type="text" name="category" value="{{ old('category', $app->category) }}" class="mt-1 block w-full rounded-md border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-medium text-gray-700 dark:text-slate-200">Model No.</label>
+                                                <input type="text" name="model_no" value="{{ old('model_no', $app->model_no) }}" class="mt-1 block w-full rounded-md border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-medium text-gray-700 dark:text-slate-200">Serial No.</label>
+                                                <input type="text" name="serial_no" value="{{ old('serial_no', $app->serial_no) }}" class="mt-1 block w-full rounded-md border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-medium text-gray-700 dark:text-slate-200">Appliance Size</label>
+                                                <select name="appliance_size" class="mt-1 block w-full rounded-md border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                                    <option value="">Select Size</option>
+                                                    <option value="Small" {{ old('appliance_size', $app->appliance_size) == 'Small' ? 'selected' : '' }}>Small (1mo Warranty)</option>
+                                                    <option value="Medium" {{ old('appliance_size', $app->appliance_size) == 'Medium' ? 'selected' : '' }}>Medium (3mo Warranty)</option>
+                                                    <option value="Large" {{ old('appliance_size', $app->appliance_size) == 'Large' ? 'selected' : '' }}>Large (6mo Warranty)</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-medium text-gray-700 dark:text-slate-200">Date Received</label>
+                                                <input type="date" name="date_in" value="{{ old('date_in', $app->date_in ? \Carbon\Carbon::parse($app->date_in)->format('Y-m-d') : '') }}" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                            </div>
+                                        </div>
+                                        <div class="flex justify-end gap-3 mt-4">
+                                            <button type="button" @click="editModal = false" class="px-4 py-2 border border-gray-300 dark:border-slate-500 rounded-lg text-sm text-gray-700 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 focus:outline-none transition-colors">Cancel</button>
+                                            <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">Save Changes</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
                 @else
                     <p class="text-sm text-gray-500 dark:text-slate-400 mb-6 italic">No appliances linked to this customer yet.</p>
                 @endif
@@ -299,42 +362,49 @@
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                             <div>
                                 <label class="block text-xs font-medium text-gray-700 dark:text-slate-200">Appliance Type</label>
-                                <input type="text" name="product" placeholder="e.g. Refrigerator" required
+                                <input type="text" name="product" placeholder="e.g. Refrigerator" required value="{{ old('product') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                @error('product')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-gray-700 dark:text-slate-200">Brand</label>
-                                <input type="text" name="brand" placeholder="e.g. Panasonic" required
+                                <input type="text" name="brand" placeholder="e.g. Panasonic" required value="{{ old('brand') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                @error('brand')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-gray-700 dark:text-slate-200">Category</label>
-                                <input type="text" name="category" placeholder="e.g. Cooling System"
+                                <input type="text" name="category" placeholder="e.g. Cooling System" value="{{ old('category') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                @error('category')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-gray-700 dark:text-slate-200">Model No.</label>
-                                <input type="text" name="model_no" placeholder="Optional"
+                                <input type="text" name="model_no" placeholder="Optional" value="{{ old('model_no') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                @error('model_no')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-gray-700 dark:text-slate-200">Serial No.</label>
-                                <input type="text" name="serial_no" placeholder="Optional"
+                                <input type="text" name="serial_no" placeholder="Optional" value="{{ old('serial_no') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                @error('serial_no')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-gray-700 dark:text-slate-200">Appliance Size</label>
                                 <select name="appliance_size" class="mt-1 block w-full rounded-md border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
                                     <option value="">Select Size</option>
-                                    <option value="Small">Small (1mo Warranty)</option>
-                                    <option value="Medium">Medium (3mo Warranty)</option>
-                                    <option value="Large">Large (6mo Warranty)</option>
+                                    <option value="Small" {{ old('appliance_size') == 'Small' ? 'selected' : '' }}>Small (1mo Warranty)</option>
+                                    <option value="Medium" {{ old('appliance_size') == 'Medium' ? 'selected' : '' }}>Medium (3mo Warranty)</option>
+                                    <option value="Large" {{ old('appliance_size') == 'Large' ? 'selected' : '' }}>Large (6mo Warranty)</option>
                                 </select>
+                                @error('appliance_size')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-gray-700 dark:text-slate-200">Date Received</label>
-                                <input type="date" name="date_in" value="{{ date('Y-m-d') }}" required
+                                <input type="date" name="date_in" value="{{ old('date_in', date('Y-m-d')) }}" required
                                     class="mt-1 block w-full rounded-md border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                @error('date_in')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
                             </div>
                         </div>
                         

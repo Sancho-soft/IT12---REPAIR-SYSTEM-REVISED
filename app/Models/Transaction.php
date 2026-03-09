@@ -53,7 +53,10 @@ class Transaction extends Model
         'parts_total',
         'labor_total',
         'total_amount',
+        'partial_payment_amount',
         'payment_status',
+        'payment_method',
+        'reference_no',
         'payment_date',
         'received_by',
         'paymongo_link_id',
@@ -64,6 +67,6 @@ class Transaction extends Model
 
     public function report()
     {
-        return $this->belongsTo(ServiceReport::class, 'report_id');
+        return $this->belongsTo(ServiceReport::class , 'report_id');
     }
 }

@@ -162,18 +162,18 @@
                                     {{ substr($service->customer_name ?? 'U', 0, 1) }}
                                 </div>
                                 <div class="ml-4 flex-1">
-                                    <div class="flex justify-between items-center text-center">
-                                        <h4 class="text-sm font-semibold text-gray-900 dark:text-white">{{ $service->customer_name }}</h4>
+                                    <div class="flex flex-col items-center justify-center text-center">
+                                        <h4 class="text-base font-bold text-gray-900 dark:text-white mb-2">{{ $service->customer_name }}</h4>
                                         <span
-                                            class="px-2 py-0.5 text-xs rounded-full text-center
-                                                {{ $service->status === 'Completed' ? 'bg-green-100 text-green-800' :
-                                                ($service->status === 'Pending' ? 'bg-yellow-100 text-yellow-800' : 
-                                                ($service->status === 'Cancelled' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800')) }}">
+                                            class="px-4 py-1.5 text-xs rounded-full text-center font-bold tracking-wide shadow-sm w-28 uppercase
+                                                {{ $service->status === 'Completed' ? 'bg-green-500 text-white dark:bg-green-600' :
+                                                ($service->status === 'Pending' ? 'bg-yellow-500 text-white dark:bg-yellow-600' : 
+                                                ($service->status === 'Cancelled' ? 'bg-red-500 text-white dark:bg-red-600' : 'bg-blue-500 text-white dark:bg-blue-600')) }}">
                                             {{ $service->status }}
                                         </span>
                                     </div>
-                                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ $service->appliance_name }}</p>
-                                    <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">{{ $service->created_at->diffForHumans() }}</p>
+                                    <p class="text-sm text-gray-600 dark:text-gray-300 text-center mt-2">{{ $service->appliance_name }}</p>
+                                    <p class="text-xs text-gray-400 dark:text-gray-500 mt-1 text-center">{{ $service->created_at->diffForHumans() }}</p>
                                 </div>
                             </a>
                     @endforeach

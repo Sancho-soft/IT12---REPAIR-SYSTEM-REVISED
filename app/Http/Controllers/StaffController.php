@@ -12,12 +12,17 @@ class StaffController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // Fetch all users
-        $staff = User::all();
-
-        return view('staff.index', compact('staff'));
+        $search = $request->input('search');
+        $staff = User::when($search, fn($q) => $q->where('first_name', 'like', "%$search%")
+        ->orWhere('last_name', 'like', "%$search%")
+        ->orWhere('username', 'like', "%$search%")
+        ->orWhere('email', 'like', "%$search%"))
+            ->latest()
+            ->paginate(25)
+            ->withQueryString();
+        return view('staff.index', compact('staff', 'search'));
     }
 
     /**
@@ -110,6 +115,8 @@ class StaffController extends Controller
             return back()->with('error', 'You cannot delete your own account.');
         }
 
+        // Track who deleted this
+        $staff->update(['deleted_by' => auth()->id()]);
         $staff->delete();
 
         return redirect()->route('staff.index')->with('success', 'Staff member deleted successfully.');

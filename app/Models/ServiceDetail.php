@@ -57,6 +57,7 @@ class ServiceDetail extends Model
         'labor',
         'pullout_delivery',
         'parts_total_charge',
+        'miscellaneous_cost',
         'total_amount',
         'receptionist',
         'manager',
@@ -72,6 +73,6 @@ class ServiceDetail extends Model
 
     public function report()
     {
-        return $this->belongsTo(ServiceReport::class, 'report_id');
+        return $this->belongsTo(ServiceReport::class , 'report_id');
     }
 }

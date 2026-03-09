@@ -38,11 +38,16 @@ class TransactionController extends Controller
         }
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $this->checkTransactionAccess();
-        $transactions = \App\Models\Transaction::with('report')->latest()->get();
-        return view('transactions.index', compact('transactions'));
+        $search = $request->input('search');
+        $transactions = \App\Models\Transaction::with('report')
+            ->when($search, fn($q) => $q->where('id', 'like', "%$search%"))
+            ->latest()
+            ->paginate(25)
+            ->withQueryString();
+        return view('transactions.index', compact('transactions', 'search'));
     }
 
     public function create()
@@ -50,6 +55,9 @@ class TransactionController extends Controller
         $this->checkTransactionAccess();
         $reports = \App\Models\ServiceReport::with(['customer', 'appliance', 'details'])
             ->where('status', 'Completed')
+            ->whereDoesntHave('transactions', function ($query) {
+            $query->where('payment_status', 'Paid');
+        })
             ->latest()
             ->get();
 
@@ -63,11 +71,14 @@ class TransactionController extends Controller
             'report_id' => 'required|exists:service_reports,id',
             'labor' => 'required|numeric|min:300',
             'materials' => 'required|numeric|min:0',
-            'delivery' => 'required|numeric|min:300',
+            'delivery' => 'nullable|numeric|min:0',
             'payment_status' => 'required|string|in:Paid,Unpaid,Partial',
+            'payment_method' => 'nullable|string',
+            'partial_payment_amount' => 'required_if:payment_status,Partial|nullable|numeric|min:0',
+            'reference_no' => 'nullable|string',
+            'received_by' => 'nullable|string',
         ], [
             'labor.min' => 'Labor cost must be at least ₱300.',
-            'delivery.min' => 'Delivery cost must be at least ₱300.',
         ]);
 
         $report = \App\Models\ServiceReport::find($validated['report_id']);
@@ -75,7 +86,7 @@ class TransactionController extends Controller
             return back()->withInput()->with('error', 'Only Completed service reports can be paid.');
         }
 
-        $totalAmount = $validated['labor'] + $validated['materials'] + $validated['delivery'];
+        $totalAmount = $validated['labor'] + $validated['materials'] + ($validated['delivery'] ?? 0);
 
         // Update ServiceDetail
         \App\Models\ServiceDetail::updateOrCreate(
@@ -83,7 +94,7 @@ class TransactionController extends Controller
         [
             'labor' => $validated['labor'],
             'parts_total_charge' => $validated['materials'],
-            'pullout_delivery' => $validated['delivery'],
+            'pullout_delivery' => $validated['delivery'] ?? 0,
             'total_amount' => $totalAmount,
         ]
         );
@@ -95,8 +106,11 @@ class TransactionController extends Controller
             'labor_total' => $validated['labor'],
             'total_amount' => $totalAmount,
             'payment_status' => $validated['payment_status'],
+            'payment_method' => $validated['payment_method'] ?? null,
+            'partial_payment_amount' => $validated['payment_status'] === 'Partial' ? $validated['partial_payment_amount'] : null,
+            'reference_no' => $validated['reference_no'] ?? null,
             'payment_date' => $validated['payment_status'] == 'Paid' ? now() : null,
-            'received_by' => auth()->user() ? auth()->user()->first_name . ' ' . auth()->user()->last_name : 'System',
+            'received_by' => $validated['received_by'] ?? (auth()->user() ? auth()->user()->first_name . ' ' . auth()->user()->last_name : 'System'),
         ]);
 
         // Create PayMongo Payment Link if total >= 100 and not Paid
@@ -186,12 +200,19 @@ class TransactionController extends Controller
         $this->checkTransactionAccess();
         $validated = $request->validate([
             'total_amount' => 'numeric',
-            'payment_status' => 'string',
+            'payment_status' => 'string|in:Paid,Unpaid,Partial',
+            'payment_method' => 'nullable|string',
+            'partial_payment_amount' => 'required_if:payment_status,Partial|nullable|numeric|min:0',
+            'reference_no' => 'nullable|string',
+            'received_by' => 'nullable|string',
         ]);
 
         $transaction->update($validated);
 
         if (isset($validated['payment_status'])) {
+            if ($validated['payment_status'] !== 'Partial') {
+                $validated['partial_payment_amount'] = null; // Reset partial amount if not partial
+            }
             if ($validated['payment_status'] === 'Paid' && !$transaction->payment_date) {
                 $transaction->update(['payment_date' => now()]);
             }

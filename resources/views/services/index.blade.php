@@ -11,30 +11,32 @@
                 <svg class="w-5 h-5 mr-2 -ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                 </svg>
-                New Service
+                Add
             </a>
             @endif
         </div>
 
         <!-- Search & Filter -->
         <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm flex flex-col sm:flex-row gap-4">
-            <div class="relative flex-1">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                    </svg>
+            <form method="GET" action="{{ route('services.index') }}" id="filterForm" class="flex flex-col sm:flex-row gap-4 w-full">
+                <div class="relative flex-1">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                    <input type="text" name="search" value="{{ $search ?? '' }}" class="block w-full pl-10 pr-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg leading-5 bg-white dark:bg-slate-800 placeholder-gray-400 focus:outline-none focus:placeholder-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out" placeholder="Search services..." oninput="this.form.submit()">
                 </div>
-                <input type="text" id="searchInput" class="block w-full pl-10 pr-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg leading-5 bg-white dark:bg-slate-800 placeholder-gray-400 focus:outline-none focus:placeholder-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out" placeholder="Search services...">
-            </div>
-            <div class="w-full sm:w-48">
-                <select id="statusFilter" class="block w-full pl-3 pr-10 py-2 text-base border-gray-200 dark:border-slate-600 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg">
-                    <option value="">All Status</option>
-                    <option value="In Progress">In Progress</option>
-                    <option value="Completed">Completed</option>
-                    <option value="Pending">Pending</option>
-                    <option value="Cancelled">Cancelled</option>
-                </select>
-            </div>
+                <div class="w-full sm:w-48">
+                    <select name="status" onchange="this.form.submit()" class="block w-full pl-3 pr-10 py-2 text-base border-gray-200 dark:border-slate-600 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg">
+                        <option value="">All Status</option>
+                        <option value="In Progress" {{ ($status ?? '') == 'In Progress' ? 'selected' : '' }}>In Progress</option>
+                        <option value="Completed" {{ ($status ?? '') == 'Completed' ? 'selected' : '' }}>Completed</option>
+                        <option value="Pending" {{ ($status ?? '') == 'Pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="Cancelled" {{ ($status ?? '') == 'Cancelled' ? 'selected' : '' }}>Cancelled</option>
+                    </select>
+                </div>
+            </form>
         </div>
 
         <!-- Table -->
@@ -112,24 +114,6 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                                             </svg>
                                         </a>
-                                        @if(auth()->user()->role === 'Admin' || auth()->user()->role === 'Secretary')
-                                            <a href="{{ route('services.edit', $service) }}" class="text-blue-600 dark:text-blue-400 hover:text-blue-900 transition-colors" title="Edit">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                                </svg>
-                                            </a>
-                                        @endif
-                                        @if(auth()->user()->role === 'Admin')
-                                            <form action="{{ route('services.destroy', $service) }}" method="POST" class="inline-block" onsubmit="return confirm('Delete this service report?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="text-red-500 hover:text-red-700 transition-colors" title="Delete">
-                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                                    </svg>
-                                                </button>
-                                            </form>
-                                        @endif
                                     </div>
                                 </td>
                             </tr>
@@ -150,44 +134,16 @@
                 </table>
             </div>
             
-             <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 dark:bg-slate-700/50 flex items-center justify-between">
-                 <div class="text-sm text-gray-500 dark:text-slate-400">
-                    Showing <span class="font-medium">{{ $services->count() }}</span> entries
-                 </div>
+            <!-- Pagination -->
+            <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 dark:bg-slate-700/50 flex items-center justify-between">
+                <div class="text-sm text-gray-500 dark:text-slate-400">
+                    Showing <span class="font-medium">{{ $services->firstItem() }}</span> to
+                    <span class="font-medium">{{ $services->lastItem() }}</span> of
+                    <span class="font-medium">{{ $services->total() }}</span> entries
+                </div>
+                <div>{{ $services->links() }}</div>
             </div>
         </div>
     </div>
-    
-    <!-- Client-side Search & Filter Script -->
-    <script>
-        const searchInput = document.getElementById('searchInput');
-        const statusFilter = document.getElementById('statusFilter');
-        const tableBody = document.getElementById('servicesTableBody');
-        const rows = tableBody.querySelectorAll('tr');
-
-        function filterTable() {
-            const searchTerm = searchInput.value.toLowerCase();
-            const statusTerm = statusFilter.value;
-
-            rows.forEach(row => {
-                // Skip filtering for 'No results' row if it exists
-                if(row.cells.length === 1) return; 
-
-                const text = row.textContent.toLowerCase();
-                const status = row.getAttribute('data-status');
-                
-                const matchesSearch = text.includes(searchTerm);
-                const matchesStatus = statusTerm === '' || status === statusTerm;
-
-                if (matchesSearch && matchesStatus) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        }
-
-        searchInput.addEventListener('keyup', filterTable);
-        statusFilter.addEventListener('change', filterTable);
-    </script>
+</x-app-layout>
 </x-app-layout>

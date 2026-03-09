@@ -55,6 +55,10 @@
                         class="px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ $type == 'users' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300 hover:bg-gray-200' }}">
                         Users
                     </a>
+                    <a href="{{ route('archive.index', ['type' => 'transactions', 'search' => $search]) }}"
+                        class="px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ $type == 'transactions' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300 hover:bg-gray-200' }}">
+                        Transactions
+                    </a>
                     @endcan
                 </div>
             </form>
@@ -118,7 +122,7 @@
                                         {{ $item->deleted_at->format('M d, Y H:i') }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-slate-400">
-                                        {{ $item->deleted_by ?? 'Unknown' }}
+                                        {{ $item->deleted_by_name ?? $item->deleted_by ?? 'Unknown' }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <div class="flex justify-end space-x-3">

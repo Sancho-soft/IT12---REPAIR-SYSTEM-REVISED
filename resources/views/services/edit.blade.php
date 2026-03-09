@@ -399,18 +399,29 @@
                             <label class="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-1">Attachments & Files <span class="text-gray-400 text-xs font-normal">Optional (Max 5 files)</span></label>
                             
                             @if (!empty($service->attachments))
-                                <div class="mb-3 p-3 bg-gray-50 dark:bg-slate-700/50 border border-gray-200 dark:border-slate-600 rounded-lg flex flex-wrap gap-3">
+                                <div x-data="{ removedExisting: [] }" class="mb-3 p-3 bg-gray-50 dark:bg-slate-700/50 border border-gray-200 dark:border-slate-600 rounded-lg flex flex-col gap-3">
                                     <p class="w-full text-xs font-semibold text-gray-600 dark:text-slate-300 mb-1 uppercase tracking-wider">Existing Attachments</p>
-                                    @foreach($service->attachments as $attachment)
-                                        <a href="{{ $attachment['url'] }}" target="_blank" class="flex items-center space-x-2 text-sm text-blue-600 hover:text-blue-800 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 px-3 py-1.5 rounded-md hover:shadow-sm transition-shadow">
-                                            @if(isset($attachment['resource_type']) && $attachment['resource_type'] === 'image')
-                                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L28 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                            @else
-                                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
-                                            @endif
-                                            <span class="truncate max-w-[150px]">{{ $attachment['original_name'] ?? 'View File' }}</span>
-                                        </a>
-                                    @endforeach
+                                    <div class="flex flex-wrap gap-3">
+                                        @foreach($service->attachments as $attachment)
+                                            <div class="flex items-center space-x-2 text-sm bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 px-3 py-1.5 rounded-md hover:shadow-sm"
+                                                 x-show="!removedExisting.includes('{{ isset($attachment['path']) ? $attachment['path'] : (isset($attachment['url']) ? $attachment['url'] : '') }}')">
+                                                <a href="{{ $attachment['url'] ?? '#' }}" target="_blank" class="flex items-center space-x-2 text-blue-600 hover:text-blue-800">
+                                                    @if(isset($attachment['resource_type']) && $attachment['resource_type'] === 'image')
+                                                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L28 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                                    @else
+                                                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
+                                                    @endif
+                                                    <span class="truncate max-w-[150px]">{{ $attachment['original_name'] ?? 'View File' }}</span>
+                                                </a>
+                                                <button type="button" @click="removedExisting.push('{{ isset($attachment['path']) ? $attachment['path'] : (isset($attachment['url']) ? $attachment['url'] : '') }}')" class="ml-2 text-gray-400 hover:text-red-500 focus:outline-none transition-colors border-l pl-2 border-gray-200 dark:border-slate-600" {{ $secDisabled }}>
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                                </button>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    <template x-for="path in removedExisting" :key="path">
+                                        <input type="hidden" name="remove_attachments[]" :value="path">
+                                    </template>
                                 </div>
                             @endif
 

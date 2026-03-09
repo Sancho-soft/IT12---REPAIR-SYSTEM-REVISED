@@ -6,10 +6,15 @@ use Illuminate\Http\Request;
 
 class InventoryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $parts = \App\Models\Part::all();
-        return view('inventory.index', compact('parts'));
+        $search = $request->input('search');
+        $parts = \App\Models\Part::when($search, fn($q) => $q->where('name', 'like', "%$search%")
+        ->orWhere('part_no', 'like', "%$search%"))
+            ->latest()
+            ->paginate(25)
+            ->withQueryString();
+        return view('inventory.index', compact('parts', 'search'));
     }
 
     public function create()
@@ -81,6 +86,7 @@ class InventoryController extends Controller
                 ->with('error', "Cannot delete \"{$part->name}\" because it still has {$part->quantity_stock} unit(s) in stock. Please use up or adjust the stock first.");
         }
 
+        $part->update(['deleted_by' => auth()->id()]);
         $part->delete();
         return redirect()->route('inventory.index')->with('success', 'Part deleted successfully.');
     }

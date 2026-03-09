@@ -26,6 +26,9 @@
         @media screen and (max-width: 1024px) {
             html { zoom: 1; } /* Reset for tablets/mobile, where Tailwind flex wrap handles it normally */
         }
+        html.text-sm-size { font-size: 14px; }
+        html.text-md-size { font-size: 16px; }
+        html.text-lg-size { font-size: 18px; }
     </style>
 
     <!-- Scripts & Styles (Offline TailWind via Vite) -->
@@ -36,6 +39,16 @@
             document.documentElement.classList.add('dark');
         } else {
             document.documentElement.classList.remove('dark');
+        }
+
+        // Apply font size preference
+        const savedSize = localStorage.getItem('font-size') || 'md';
+        document.documentElement.classList.add('text-' + savedSize + '-size');
+
+        function changeFontSize(size) {
+            document.documentElement.classList.remove('text-sm-size', 'text-md-size', 'text-lg-size');
+            document.documentElement.classList.add('text-' + size + '-size');
+            localStorage.setItem('font-size', size);
         }
     </script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -190,6 +203,63 @@
                 }
             });
         }
+
+        // Global Interceptor for Back, Save, Edit, Remove actions
+        document.addEventListener('DOMContentLoaded', () => {
+            // Intercept form submissions for Save / Remove / Delete
+            document.querySelectorAll('form').forEach(form => {
+                // Ignore search forms, login, logout, and modals that handle their own states
+                if (form.action.includes('login') || form.action.includes('logout') || form.method.toUpperCase() === 'GET') return;
+                
+                form.addEventListener('submit', function(e) {
+                    if (this.dataset.confirmed === 'true') return;
+                    e.preventDefault();
+
+                    const methodInput = this.querySelector('input[name="_method"]');
+                    const isDelete = methodInput && methodInput.value.toUpperCase() === 'DELETE';
+                    const message = isDelete ? 'Are you sure you want to remove this item?' : 'Are you sure you want to save these changes?';
+
+                    window.dispatchEvent(new CustomEvent('open-confirm', {
+                        detail: {
+                            message: message,
+                            action: () => {
+                                this.dataset.confirmed = 'true';
+                                this.submit();
+                            }
+                        }
+                    }));
+                });
+            });
+
+            // Intercept links for Edit / Back
+            document.querySelectorAll('a').forEach(a => {
+                const text = a.textContent.trim().toLowerCase();
+                const isBack = text === 'back' || text.includes('back to') || text.includes('back');
+                const isEdit = text === 'edit' || a.href.includes('/edit');
+
+                // Skip tabs, empty links, or profile pages
+                if (!a.href || a.href === '#' || a.href.includes('profile')) return;
+
+                if (isBack || isEdit) {
+                    a.addEventListener('click', function(e) {
+                        if (this.dataset.confirmed === 'true') return;
+                        e.preventDefault();
+                        const href = this.href;
+                        const message = isBack ? 'Are you sure you want to go back?' : 'Are you sure you want to edit this item?';
+
+                        window.dispatchEvent(new CustomEvent('open-confirm', {
+                            detail: {
+                                message: message,
+                                action: () => { 
+                                    this.dataset.confirmed = 'true';
+                                    window.location.href = href; 
+                                }
+                            }
+                        }));
+                    });
+                }
+            });
+        });
     </script>
 </body>
 
