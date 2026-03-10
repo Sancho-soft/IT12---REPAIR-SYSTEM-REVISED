@@ -6,7 +6,7 @@
                 <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Service Reports</h2>
                 <p class="mt-1 text-sm text-gray-500 dark:text-slate-400">Track and manage all service requests</p>
             </div>
-            @if(in_array(auth()->user()->role, ['Admin', 'Secretary']))
+            @if(in_array(auth()->user()->role, ['Administrator', 'Admin', 'Secretary']))
             <a href="{{ route('services.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 dark:bg-blue-900 dark:hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
                 <svg class="w-5 h-5 mr-2 -ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>

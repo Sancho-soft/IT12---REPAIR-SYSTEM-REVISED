@@ -101,6 +101,7 @@ class ServiceReportController extends Controller
             'service_types' => 'nullable|array',
             'used_parts' => 'nullable|string',
             'parts' => 'nullable|array',
+            'miscellaneous_cost' => 'nullable|numeric',
         ]);
 
         $customer = \App\Models\Customer::find($validated['customer_id']);
@@ -127,13 +128,15 @@ class ServiceReportController extends Controller
         // Create initial Service Detail
         $techs = isset($validated['technicians']) ? implode(', ', $validated['technicians']) : null;
         $labor = $request->labor_cost ?? 0;
-        $totalAmount = $labor + $partsTotalCost;
+        $miscCost = $request->miscellaneous_cost ?? 0;
+        $totalAmount = $labor + $partsTotalCost + $miscCost;
 
         \App\Models\ServiceDetail::create([
             'report_id' => $report->id,
             'service_types' => $validated['service_types'] ?? [],
             'labor' => $labor,
             'parts_total_charge' => $partsTotalCost,
+            'miscellaneous_cost' => $miscCost,
             'total_amount' => $totalAmount,
             'complaint' => $request->problem_desc,
             'technician' => $techs,
@@ -183,6 +186,7 @@ class ServiceReportController extends Controller
             'service_types' => 'nullable|array',
             'used_parts' => 'nullable|string',
             'parts' => 'nullable|array',
+            'miscellaneous_cost' => 'nullable|numeric',
         ];
 
         if ($userRole === 'Technician') {
@@ -219,7 +223,8 @@ class ServiceReportController extends Controller
         // Update or Create ServiceDetail
         $techs = isset($validated['technicians']) ? implode(', ', $validated['technicians']) : null;
         $labor = $request->labor_cost ?? ($service->details ? $service->details->labor : 0);
-        $totalAmount = $labor + $partsTotalCost;
+        $miscCost = $request->miscellaneous_cost ?? ($service->details ? $service->details->miscellaneous_cost : 0);
+        $totalAmount = $labor + $partsTotalCost + $miscCost;
 
         \App\Models\ServiceDetail::updateOrCreate(
             ['report_id' => $service->id],
@@ -227,6 +232,7 @@ class ServiceReportController extends Controller
                 'complaint' => $request->problem_desc,
                 'labor' => $labor,
                 'parts_total_charge' => $partsTotalCost,
+                'miscellaneous_cost' => $miscCost,
                 'service_types' => $validated['service_types'] ?? [],
                 'total_amount' => $totalAmount,
                 'technician' => $techs,

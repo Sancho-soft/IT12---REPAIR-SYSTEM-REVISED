@@ -8,7 +8,7 @@
         selectedParts: [],
         selectedPartId: '',
         partQuantity: 1,
-        miscCost: {{ old('miscellaneous_cost', 0) }},
+        miscCost: {{ old('miscellaneous_cost', $service->details?->miscellaneous_cost ?? 0) }},
         checkedTypes: {{ Js::from(old('service_types', $service->details?->service_types ?? [])) }},
         techniciansList: {{ Js::from($technicians) }},
         searchTech: '',
