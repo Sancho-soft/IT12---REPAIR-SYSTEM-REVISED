@@ -81,8 +81,8 @@
                                         $statusLabel = 'Low Stock';
                                         $statusColor = 'text-yellow-700 dark:text-yellow-400';
                                         $bgBadge = 'bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800';
-                                        $barColor = 'bg-yellow-400';
-                                        $dotColor = 'bg-yellow-400';
+                                        $barColor = 'bg-yellow-500';
+                                        $dotColor = 'bg-yellow-500';
                                     } else {
                                         $statusLabel = 'In Stock';
                                         $statusColor = 'text-green-700 dark:text-green-400';
@@ -114,16 +114,16 @@
                                     </td>
 
                                     <!-- Enhanced Stock Indicator -->
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="flex flex-col gap-1.5 min-w-[155px]">
+                                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                                        <div class="flex flex-col gap-1.5 min-w-[155px] mx-auto w-max">
                                             <!-- Row: dot + qty + badge -->
-                                            <div class="flex items-center gap-2">
+                                            <div class="flex items-center justify-center gap-2">
                                                 <span class="inline-block w-2 h-2 rounded-full flex-shrink-0 {{ $dotColor }}"></span>
                                                 <span class="text-sm font-semibold text-gray-900 dark:text-white">
                                                     {{ $qty }}
                                                     <span class="font-normal text-xs text-gray-400 dark:text-slate-500">units</span>
                                                 </span>
-                                                <span class="ml-auto text-[11px] font-semibold px-2 py-0.5 rounded-full {{ $bgBadge }} {{ $statusColor }}">
+                                                <span class="ml-2 text-[11px] font-semibold px-2 py-0.5 rounded-full {{ $bgBadge }} {{ $statusColor }}">
                                                     {{ $statusLabel }}
                                                 </span>
                                             </div>

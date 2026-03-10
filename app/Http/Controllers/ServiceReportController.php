@@ -72,7 +72,6 @@ class ServiceReportController extends Controller
             ->withQueryString();
         return view('services.index', compact('services', 'search', 'status'));
     }
-    }
 
     public function create()
     {
