@@ -45,115 +45,115 @@
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50 dark:bg-slate-700/50">
                         <tr>
-                            <th scope="col" class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                 ID
                             </th>
-                            <th scope="col" class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                 Customer
                             </th>
-                            <th scope="col" class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                 Appliance
                             </th>
-                            <th scope="col" class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                 Date In
                             </th>
-                            <th scope="col" class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                 Status
                             </th>
-                            <th scope="col" class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
+                            <th scope="col" class="px-6 py-3 text-right text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                 Actions
                             </th>
                         </tr>
                     </thead>
                     <tbody class="bg-white dark:bg-slate-800 divide-y divide-gray-200" id="servicesTableBody">
                         @if(count($services) > 0)
-                            @foreach($services as $service)
-                            <tr class="hover:bg-gray-50 dark:bg-slate-700/50 transition-colors" data-status="{{ $service->status }}">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-slate-400">
-                                    #{{ $service->id }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex items-center">
-                                        <div class="flex-shrink-0 h-8 w-8">
-                                            <div class="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center text-green-600 font-bold text-xs">
-                                                {{ substr($service->customer_name, 0, 1) }}
-                                            </div>
-                                        </div>
-                                        <div class="ml-3">
-                                            <div class="text-sm font-medium text-gray-900 dark:text-white">
-                                                {{ $service->customer_name }}
-                                            </div>
+                        @foreach($services as $service)
+                        <tr class="hover:bg-gray-50 dark:bg-slate-700/50 transition-colors" data-status="{{ $service->status }}">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-slate-400">
+                                #{{ $service->id }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0 h-8 w-8">
+                                        <div class="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center text-green-600 font-bold text-xs">
+                                            {{ substr($service->customer_name, 0, 1) }}
                                         </div>
                                     </div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-slate-400">
-                                    {{ $service->appliance ? $service->appliance->product . ' - ' . $service->appliance->brand : 'N/A' }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-slate-400">
-                                    {{ $service->date_in ? $service->date_in->format('M d, Y') : '-' }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    @php
-                                        $statusClass = match($service->status) {
-                                            'Completed' => 'bg-green-100 text-green-800',
-                                            'Pending' => 'bg-yellow-100 text-yellow-800',
-                                            'In Progress' => 'bg-blue-100 text-blue-800',
-                                            'Cancelled' => 'bg-red-100 text-red-800',
-                                            default => 'bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-slate-100',
-                                        };
-                                    @endphp
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $statusClass }}">
-                                        {{ $service->status }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    <div class="flex justify-end items-center space-x-3">
-                                        <a href="{{ route('services.show', $service) }}" class="text-gray-400 hover:text-blue-600 dark:text-blue-400 transition-colors" title="View">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                            </svg>
-                                        </a>
-                                        @if(auth()->user()->role !== 'Cashier')
-                                        <a href="{{ route('services.edit', $service) }}" class="text-gray-400 hover:text-green-600 dark:text-green-400 transition-colors" title="Edit">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                            </svg>
-                                        </a>
-                                        @endif
-                                        @if(in_array(auth()->user()->role, ['Administrator', 'Secretary', 'Admin']))
-                                        <form action="{{ route('services.destroy', $service) }}" method="POST" class="inline-block m-0 p-0" id="del-service-{{ $service->id }}">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="button" 
-                                                @click="$dispatch('open-confirm', { message: 'Delete this service report? This cannot be undone.', action: () => document.getElementById('del-service-{{ $service->id }}').submit() })"
-                                                class="text-gray-400 hover:text-red-600 dark:text-red-400 transition-colors bg-transparent border-0 p-0 flex items-center" title="Delete">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                                </svg>
-                                            </button>
-                                        </form>
-                                        @endif
+                                    <div class="ml-3">
+                                        <div class="text-sm font-medium text-gray-900 dark:text-white">
+                                            {{ $service->customer_name }}
+                                        </div>
                                     </div>
-                                </td>
-                            </tr>
-                            @endforeach
-                        @else
-                            <tr>
-                                <td colspan="6" class="px-6 py-10 text-center text-gray-500 dark:text-slate-400">
-                                    <div class="flex flex-col items-center justify-center">
-                                        <svg class="w-12 h-12 text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-slate-400">
+                                {{ $service->appliance ? $service->appliance->product . ' - ' . $service->appliance->brand : 'N/A' }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-slate-400">
+                                {{ $service->date_in ? $service->date_in->format('M d, Y') : '-' }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                @php
+                                $statusClass = match($service->status) {
+                                'Completed' => 'bg-green-100 text-green-800',
+                                'Pending' => 'bg-yellow-100 text-yellow-800',
+                                'In Progress' => 'bg-blue-100 text-blue-800',
+                                'Cancelled' => 'bg-red-100 text-red-800',
+                                default => 'bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-slate-100',
+                                };
+                                @endphp
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $statusClass }}">
+                                    {{ $service->status }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <div class="flex justify-end space-x-3">
+                                    <a href="{{ route('services.show', $service) }}" class="text-gray-400 hover:text-blue-600 dark:text-blue-400 transition-colors" title="View">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                                         </svg>
-                                        <p>No service reports found.</p>
-                                    </div>
-                                </td>
-                            </tr>
+                                    </a>
+                                    @if(auth()->user()->role !== 'Cashier')
+                                    <a href="{{ route('services.edit', $service) }}" class="text-blue-600 dark:text-blue-400 hover:text-blue-900 transition-colors" title="Edit">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                        </svg>
+                                    </a>
+                                    @endif
+                                    @if(in_array(auth()->user()->role, ['Administrator', 'Secretary', 'Admin']))
+                                    <form action="{{ route('services.destroy', $service) }}" method="POST" class="inline-block m-0 p-0" id="del-service-{{ $service->id }}">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button"
+                                            @click="$dispatch('open-confirm', { title: 'Delete Service Report', message: 'Delete this service report? This cannot be undone.', confirmText: 'Delete', cancelText: 'Cancel', variant: 'danger', action: () => document.getElementById('del-service-{{ $service->id }}').submit() })"
+                                            class="text-red-500 hover:text-red-700 transition-colors bg-transparent border-0 p-0 flex items-center" title="Delete">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                            </svg>
+                                        </button>
+                                    </form>
+                                    @endif
+                                </div>
+                            </td>
+                        </tr>
+                        @endforeach
+                        @else
+                        <tr>
+                            <td colspan="6" class="px-6 py-10 text-center text-gray-500 dark:text-slate-400">
+                                <div class="flex flex-col items-center justify-center">
+                                    <svg class="w-12 h-12 text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                    </svg>
+                                    <p>No service reports found.</p>
+                                </div>
+                            </td>
+                        </tr>
                         @endif
                     </tbody>
                 </table>
             </div>
-            
+
             <!-- Pagination -->
             <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 dark:bg-slate-700/50 flex items-center justify-between">
                 <div class="text-sm text-gray-500 dark:text-slate-400">

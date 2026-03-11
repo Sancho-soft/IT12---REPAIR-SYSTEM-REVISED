@@ -46,7 +46,7 @@
         get filteredTechnicians() {
             let filtered = this.techniciansList;
             if (this.filterTech !== '') {
-                filtered = filtered.filter(t => (t.status || '').toLowerCase() === this.filterTech.toLowerCase());
+                filtered = filtered.filter(t => (t.availability_status || '').toLowerCase() === this.filterTech.toLowerCase());
             }
             if (this.searchTech.trim() !== '') {
                 let s = this.searchTech.toLowerCase();
@@ -155,7 +155,7 @@
                                 </template>
                             </select>
                             @error('customer_id')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
 
@@ -166,7 +166,7 @@
                                 required
                                 class="mt-1 block w-full rounded-lg border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
                             @error('date_in')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
 
@@ -187,7 +187,7 @@
                                 class="text-xs text-red-500 mt-1">This customer has no appliances. Please add one in
                                 their profile first.</p>
                             @error('appliance_id')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
 
@@ -198,7 +198,7 @@
                                 class="mt-1 block w-full rounded-lg border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                                 placeholder="e.g. SM Appliance">
                             @error('dealer')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
 
@@ -208,7 +208,7 @@
                             <input type="date" name="dop" id="dop" value="{{ old('dop') }}"
                                 class="mt-1 block w-full rounded-lg border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
                             @error('dop')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
 
@@ -218,14 +218,16 @@
                                 <label class="block text-sm font-medium text-gray-700 dark:text-slate-200">
                                     Assigned Technicians (<span x-text="selectedTechs.length"></span>/3)
                                 </label>
-                                
+
                                 <!-- Search & Filter Controls -->
                                 <div class="flex items-center gap-3">
                                     <div class="relative">
                                         <div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
-                                            <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                            <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                            </svg>
                                         </div>
-                                        <input type="text" x-model="searchTech" placeholder="Search technician..." 
+                                        <input type="text" x-model="searchTech" placeholder="Search technician..."
                                             class="block w-full pl-8 pr-3 py-1.5 border border-gray-300 dark:border-slate-500 rounded-md text-sm shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-700 dark:text-white placeholder-gray-400 dark:placeholder-slate-400">
                                     </div>
                                     <select x-model="filterTech" class="block pl-3 pr-8 py-1.5 border border-gray-300 dark:border-slate-500 rounded-md text-sm shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-700 dark:text-white">
@@ -236,20 +238,20 @@
                                     </select>
                                 </div>
                             </div>
-                            
+
                             <!-- Grid of Technicians -->
                             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-80 overflow-y-auto p-1">
                                 <template x-for="tech in filteredTechnicians" :key="tech.id">
                                     <label class="relative flex items-start p-4 rounded-xl border cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors"
                                         :class="selectedTechs.includes((tech.first_name + ' ' + (tech.last_name || '')).trim()) ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-800'">
-                                        
+
                                         <!-- Hidden Input Array for Form Submission and Interaction -->
                                         <input type="checkbox" name="technicians[]" :value="(tech.first_name + ' ' + (tech.last_name || '')).trim()"
                                             class="hidden"
                                             :checked="selectedTechs.includes((tech.first_name + ' ' + (tech.last_name || '')).trim())"
                                             @click.prevent="toggleTech((tech.first_name + ' ' + (tech.last_name || '')).trim())"
                                             :disabled="!selectedTechs.includes((tech.first_name + ' ' + (tech.last_name || '')).trim()) && selectedTechs.length >= 3" />
-                                            
+
                                         <!-- Tech Info Profile -->
                                         <div class="ml-3 flex-1 flex flex-col justify-center">
                                             <div class="flex items-center gap-3">
@@ -260,15 +262,15 @@
                                                     <div class="text-sm font-semibold text-gray-900 dark:text-white" x-text="(tech.first_name + ' ' + (tech.last_name || '')).trim()"></div>
                                                     <div class="flex items-center gap-2 mt-0.5">
                                                         <span class="text-xs text-gray-500 dark:text-slate-400" x-text="tech.role_title || 'Technician'"></span>
-                                                        
+
                                                         <!-- Status Badges -->
-                                                        <span x-show="(tech.status || '').toLowerCase() === 'available'" class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 border border-green-200 dark:border-green-800/50">
+                                                        <span x-show="(tech.availability_status || '').toLowerCase() === 'available'" class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 border border-green-200 dark:border-green-800/50">
                                                             Available
                                                         </span>
-                                                        <span x-show="(tech.status || '').toLowerCase() === 'busy'" class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-800/50">
+                                                        <span x-show="(tech.availability_status || '').toLowerCase() === 'busy'" class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-800/50">
                                                             Busy
                                                         </span>
-                                                        <span x-show="(tech.status || '').toLowerCase() === 'off-duty'" class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-800 dark:bg-gray-700/50 dark:text-gray-300 border border-gray-200 dark:border-gray-600">
+                                                        <span x-show="(tech.availability_status || '').toLowerCase() === 'off-duty'" class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-800 dark:bg-gray-700/50 dark:text-gray-300 border border-gray-200 dark:border-gray-600">
                                                             Off-Duty
                                                         </span>
                                                     </div>
@@ -282,9 +284,9 @@
                             <div x-show="filteredTechnicians.length === 0" class="py-4 text-center text-sm text-gray-500 dark:text-slate-400 italic">
                                 No technicians match your search filters.
                             </div>
-                            
+
                             @error('technicians')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
 
@@ -294,31 +296,31 @@
                             <p class="text-xs text-gray-500 dark:text-slate-400 mb-2">Each checked service type adds its configured price to the labor cost.</p>
                             <div class="flex flex-wrap gap-4">
                                 @foreach($servicePrices as $sp)
-                                    <label class="inline-flex items-center cursor-pointer select-none">
-                                        <input type="checkbox" name="service_types[]" value="{{ $sp->service_name }}"
-                                            class="rounded border-gray-300 dark:border-slate-500 text-blue-600 dark:text-blue-400 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                                            {{ collect(old('service_types'))->contains($sp->service_name) ? 'checked' : '' }}
-                                            @change="toggleServiceType('{{ $sp->service_name }}')">
-                                        <span class="ml-2 text-sm text-gray-700 dark:text-slate-200">{{ $sp->service_name }}</span>
-                                        <span class="ml-1 text-xs text-green-700 font-medium">(+₱{{ number_format($sp->service_price, 2) }})</span>
-                                    </label>
+                                <label class="inline-flex items-center cursor-pointer select-none">
+                                    <input type="checkbox" name="service_types[]" value="{{ $sp->service_name }}"
+                                        class="rounded border-gray-300 dark:border-slate-500 text-blue-600 dark:text-blue-400 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                                        {{ collect(old('service_types'))->contains($sp->service_name) ? 'checked' : '' }}
+                                        @change="toggleServiceType('{{ $sp->service_name }}')">
+                                    <span class="ml-2 text-sm text-gray-700 dark:text-slate-200">{{ $sp->service_name }}</span>
+                                    <span class="ml-1 text-xs text-green-700 font-medium">(+₱{{ number_format($sp->service_price, 2) }})</span>
+                                </label>
                                 @endforeach
                                 @if($servicePrices->isEmpty())
-                                    <p class="text-sm text-gray-400 italic">No service prices configured yet. <a href="{{ route('prices.create') }}" class="text-blue-600 dark:text-blue-400 underline">Add service prices</a>.</p>
+                                <p class="text-sm text-gray-400 italic">No service prices configured yet. <a href="{{ route('prices.create') }}" class="text-blue-600 dark:text-blue-400 underline">Add service prices</a>.</p>
                                 @endif
                             </div>
                             @error('service_types')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <!-- Problem Description (Complaint - Required) -->
+                        <!-- Problem Description -->
                         <div class="md:col-span-2">
-                            <label for="problem_desc" class="block text-sm font-medium text-gray-700 dark:text-slate-200">Problem Description (Complaint) <span class="text-red-500">*</span></label>
+                            <label for="problem_desc" class="block text-sm font-medium text-gray-700 dark:text-slate-200">Problem Description<span class="text-red-500">*</span></label>
                             <textarea id="problem_desc" name="problem_desc" rows="3" required
                                 class="mt-1 block w-full rounded-lg border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">{{ old('problem_desc') }}</textarea>
                             @error('problem_desc')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
 
@@ -328,7 +330,7 @@
                             <textarea id="findings" name="findings" rows="3" required
                                 class="mt-1 block w-full rounded-lg border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">{{ old('findings') }}</textarea>
                             @error('findings')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
 
@@ -338,7 +340,7 @@
                             <textarea id="remarks" name="remarks" rows="2" required
                                 class="mt-1 block w-full rounded-lg border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">{{ old('remarks') }}</textarea>
                             @error('remarks')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
 
@@ -370,13 +372,15 @@
                             }
                         }">
                             <label class="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-1">Attachments <span class="text-gray-400 text-xs font-normal">Optional (Max 5 files)</span></label>
-                            
+
                             <div>
                                 <label for="attachments" class="inline-flex items-center px-4 py-2 bg-blue-50 border border-blue-200 rounded-lg text-sm font-medium text-blue-700 hover:bg-blue-100 cursor-pointer transition-colors cursor-pointer">
-                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                    </svg>
                                     Choose Files
                                 </label>
-                                <input type="file" name="attachments[]" id="attachments" multiple accept="image/*,.pdf,.doc,.docx" class="hidden" 
+                                <input type="file" name="attachments[]" id="attachments" multiple accept="image/*,.pdf,.doc,.docx" class="hidden"
                                     @change="
                                         let selected = Array.from($event.target.files);
                                         if (selected.length > 5) {
@@ -388,22 +392,26 @@
                                         }
                                     ">
                             </div>
-                            
+
                             <div x-show="files.length > 0" class="mt-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                                 <template x-for="(file, index) in files" :key="index">
                                     <div class="flex items-center justify-between text-sm text-gray-600 bg-gray-50 p-2 rounded border border-gray-100 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-300 shadow-sm">
                                         <div class="flex items-center truncate">
-                                            <svg class="flex-shrink-0 w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
+                                            <svg class="flex-shrink-0 w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
+                                            </svg>
                                             <span x-text="file" class="truncate"></span>
                                         </div>
                                         <button type="button" @click="removeFile(index)" class="ml-2 text-gray-400 hover:text-red-500 focus:outline-none transition-colors">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                            </svg>
                                         </button>
                                     </div>
                                 </template>
                             </div>
                             @error('attachments.*')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
 
@@ -505,7 +513,7 @@
                                                 Total:</td>
                                             <td class="px-4 py-3 text-right text-sm text-blue-700 dark:blue-600"
                                                 x-text="'₱' + totalPartsCost.toFixed(2)"></td>
-                                            <td></td>
+                                            <td colspan="2" class="px-4 py-3"></td>
                                         </tr>
                                     </tfoot>
                                 </table>
@@ -529,11 +537,11 @@
                                             class="focus:ring-blue-500 focus:border-blue-500 block w-full pl-7 sm:text-sm border-gray-300 dark:border-slate-500 rounded-lg" placeholder="0.00">
                                     </div>
                                     @error('miscellaneous_cost')
-                                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                    <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>
                             </div>
-                            
+
                             <div class="mt-4 p-3 bg-blue-50 dark:bg-slate-700/50 rounded-lg border border-blue-100 dark:border-slate-600 flex justify-between items-center text-sm font-medium text-gray-900 dark:text-white mb-1">
                                 <span>Total Labor Material Cost (Parts + Misc):</span>
                                 <span class="text-lg text-blue-700 dark:text-blue-400 font-bold" x-text="'₱' + (totalPartsCost + (Number(miscCost) || 0)).toFixed(2)"></span>
@@ -557,7 +565,7 @@
                             </div>
                             <p class="text-xs text-gray-500 dark:text-slate-400 mt-1">Calculated from selected service types.</p>
                             @error('labor_cost')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
 
@@ -579,7 +587,7 @@
                                 </option>
                             </select>
                             @error('status')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
                     </div>

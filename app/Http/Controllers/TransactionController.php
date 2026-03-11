@@ -225,6 +225,8 @@ class TransactionController extends Controller
     public function destroy(\App\Models\Transaction $transaction)
     {
         $this->checkTransactionAccess();
+        // Bypass $fillable: deleted_by should not be user-input controlled.
+        $transaction->forceFill(['deleted_by' => auth()->id()])->save();
         $transaction->delete();
         return redirect()->route('transactions.index')->with('success', 'Transaction deleted successfully.');
     }

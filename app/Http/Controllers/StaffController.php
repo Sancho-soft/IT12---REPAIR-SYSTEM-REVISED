@@ -116,7 +116,8 @@ class StaffController extends Controller
         }
 
         // Track who deleted this
-        $staff->update(['deleted_by' => auth()->id()]);
+        // Bypass $fillable: deleted_by should not be user-input controlled.
+        $staff->forceFill(['deleted_by' => auth()->id()])->save();
         $staff->delete();
 
         return redirect()->route('staff.index')->with('success', 'Staff member deleted successfully.');

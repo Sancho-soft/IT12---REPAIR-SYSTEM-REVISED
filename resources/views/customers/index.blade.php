@@ -39,19 +39,19 @@
                     <thead class="bg-gray-50 dark:bg-slate-700/50">
                         <tr>
                             <th scope="col"
-                                class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
+                                class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                 ID
                             </th>
                             <th scope="col"
-                                class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
+                                class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                 Customer
                             </th>
                             <th scope="col"
-                                class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
+                                class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                 Contact
                             </th>
                             <th scope="col"
-                                class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
+                                class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                 Address
                             </th>
                             <th scope="col"
@@ -59,7 +59,7 @@
                                 Appliances
                             </th>
                             <th scope="col"
-                                class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
+                                class="px-6 py-3 text-right text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                 Actions
                             </th>
                         </tr>
@@ -131,7 +131,7 @@
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="button"
-                                                    @click="$dispatch('open-confirm', { message: 'Delete customer {{ addslashes($customer->first_name . ' ' . $customer->last_name) }}? This cannot be undone.', action: () => document.getElementById('del-cust-{{ $customer->id }}').submit() })"
+                                                    @click="$dispatch('open-confirm', { title: 'Delete Customer', message: 'Delete customer {{ addslashes($customer->first_name . ' ' . $customer->last_name) }}? This cannot be undone.', confirmText: 'Delete', cancelText: 'Cancel', variant: 'danger', action: () => document.getElementById('del-cust-{{ $customer->id }}').submit() })"
                                                     class="text-red-500 hover:text-red-700 p-1 hover:bg-red-50 rounded transition-colors">
                                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -148,7 +148,7 @@
                             @endforeach
                         @else
                             <tr>
-                                <td colspan="5" class="px-6 py-10 text-center text-gray-500 dark:text-slate-400">
+                                <td colspan="6" class="px-6 py-10 text-center text-gray-500 dark:text-slate-400">
                                     <div class="flex flex-col items-center justify-center">
                                         <svg class="w-12 h-12 text-gray-300 mb-3" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">

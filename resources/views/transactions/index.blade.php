@@ -72,31 +72,31 @@
                         <thead class="bg-gray-50 dark:bg-slate-700/50">
                             <tr>
                                 <th scope="col"
-                                    class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
+                                    class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                     ID
                                 </th>
                                 <th scope="col"
-                                    class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
+                                    class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                     Report ID
                                 </th>
                                 <th scope="col"
-                                    class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
+                                    class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                     Customer
                                 </th>
                                 <th scope="col"
-                                    class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
+                                    class="px-6 py-3 text-right text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                     Amount
                                 </th>
                                 <th scope="col"
-                                    class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
+                                    class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                     Status
                                 </th>
                                 <th scope="col"
-                                    class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
+                                    class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                     Date
                                 </th>
                                 <th scope="col"
-                                    class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider print:hidden">
+                                    class="px-6 py-3 text-right text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider print:hidden">
                                     Actions
                                 </th>
                             </tr>
@@ -119,7 +119,7 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                                         {{ $transaction->report->customer_name ?? 'N/A' }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                                    <td class="px-6 py-4 whitespace-nowrap text-right tabular-nums text-sm font-medium text-gray-900 dark:text-white">
                                         ₱{{ number_format($transaction->total_amount, 2) }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
@@ -172,7 +172,7 @@
                                                 </svg>
                                             </a>
                                             <form action="{{ route('transactions.destroy', $transaction) }}" method="POST"
-                                                class="inline-block" onsubmit="return confirm('Delete this transaction?');">
+                                                class="inline-block">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="text-red-500 hover:text-red-700 transition-colors"

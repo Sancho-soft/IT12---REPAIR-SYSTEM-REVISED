@@ -59,19 +59,53 @@
 <body class="bg-[#f8f9fa] dark:bg-gray-900 text-gray-900 dark:text-gray-100 antialiased"
     x-data="{
         confirmModal: false,
+        confirmTitle: 'Confirm Action',
         confirmMessage: '',
         confirmAction: null,
-        askConfirm(message, action) {
+        confirmVariant: 'danger', // danger | warning | info | success
+        confirmConfirmText: 'Confirm',
+        confirmCancelText: 'Cancel',
+        askConfirm(message, action, options = {}) {
             this.confirmMessage = message;
             this.confirmAction = action;
+            this.confirmTitle = options.title || 'Confirm Action';
+            this.confirmVariant = options.variant || 'danger';
+            this.confirmConfirmText = options.confirmText || 'Confirm';
+            this.confirmCancelText = options.cancelText || 'Cancel';
             this.confirmModal = true;
         },
         doConfirm() {
             if(this.confirmAction) this.confirmAction();
             this.confirmModal = false;
+            this.confirmAction = null;
+        },
+        variantTheme() {
+            const theme = {
+                danger: {
+                    iconBg: 'bg-red-100 dark:bg-red-900/30',
+                    iconText: 'text-red-600 dark:text-red-400',
+                    confirmBtn: 'bg-red-600 hover:bg-red-700 focus:ring-red-500',
+                },
+                warning: {
+                    iconBg: 'bg-amber-100 dark:bg-amber-900/30',
+                    iconText: 'text-amber-700 dark:text-amber-400',
+                    confirmBtn: 'bg-amber-600 hover:bg-amber-700 focus:ring-amber-500',
+                },
+                info: {
+                    iconBg: 'bg-blue-100 dark:bg-blue-900/30',
+                    iconText: 'text-blue-600 dark:text-blue-400',
+                    confirmBtn: 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500',
+                },
+                success: {
+                    iconBg: 'bg-green-100 dark:bg-green-900/30',
+                    iconText: 'text-green-600 dark:text-green-400',
+                    confirmBtn: 'bg-green-600 hover:bg-green-700 focus:ring-green-500',
+                },
+            };
+            return theme[this.confirmVariant] || theme.danger;
         }
     }"
-    @open-confirm.window="askConfirm($event.detail.message, $event.detail.action)">
+    @open-confirm.window="askConfirm($event.detail.message, $event.detail.action, $event.detail)">
 
     <div class="flex h-screen overflow-hidden">
         <!-- Sidebar -->
@@ -130,35 +164,49 @@
 
     <!-- Global Confirmation Modal -->
     <div x-show="confirmModal"
-        class="fixed inset-0 z-[100] overflow-y-auto" style="display:none;"
+        class="fixed inset-0 z-[999] overflow-y-auto" style="display:none;"
         x-transition:enter="ease-out duration-200" x-transition:enter-start="opacity-0"
         x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-150"
-        x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+        x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+        @keydown.escape.window="confirmModal = false">
         <div class="flex min-h-screen items-center justify-center px-4">
             <!-- Backdrop -->
             <div class="fixed inset-0 bg-black/40" @click="confirmModal = false"></div>
             <!-- Modal Card -->
-            <div class="relative bg-white rounded-2xl shadow-2xl px-6 py-6 max-w-md w-full z-10">
+            <div class="relative bg-white dark:bg-slate-800 rounded-2xl shadow-2xl px-6 py-6 max-w-md w-full z-10">
                 <div class="flex items-center gap-4 mb-4">
-                    <div class="h-12 w-12 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
-                        <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                        </svg>
+                    <div class="h-12 w-12 rounded-full flex items-center justify-center flex-shrink-0"
+                        :class="variantTheme().iconBg">
+                        <template x-if="confirmVariant === 'success'">
+                            <svg class="h-6 w-6" :class="variantTheme().iconText" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </template>
+                        <template x-if="confirmVariant === 'info'">
+                            <svg class="h-6 w-6" :class="variantTheme().iconText" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
+                            </svg>
+                        </template>
+                        <template x-if="confirmVariant !== 'success' && confirmVariant !== 'info'">
+                            <svg class="h-6 w-6" :class="variantTheme().iconText" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                        </template>
                     </div>
                     <div>
-                        <h3 class="text-lg font-semibold text-gray-900">Confirm Action</h3>
-                        <p class="text-sm text-gray-500 mt-0.5" x-text="confirmMessage"></p>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white" x-text="confirmTitle"></h3>
+                        <p class="text-sm text-gray-500 dark:text-slate-300 mt-0.5" x-text="confirmMessage"></p>
                     </div>
                 </div>
                 <div class="flex justify-end gap-3 pt-2">
                     <button @click="confirmModal = false"
-                        class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                        Cancel
+                        class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-slate-200 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
+                        x-text="confirmCancelText">
                     </button>
                     <button @click="doConfirm()"
-                        class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors">
-                        Confirm
+                        class="px-4 py-2 text-sm font-medium text-white rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-slate-800"
+                        :class="variantTheme().confirmBtn"
+                        x-text="confirmConfirmText">
                     </button>
                 </div>
             </div>
@@ -204,58 +252,122 @@
             });
         }
 
-        // Global Interceptor for Back, Save, Edit, Remove actions
+        // Global Interceptor for Back, Cancel, Save, Edit, Remove, Restore actions
         document.addEventListener('DOMContentLoaded', () => {
-            // Intercept form submissions for Save / Remove / Delete
+            const dispatchConfirm = (detail) => {
+                window.dispatchEvent(new CustomEvent('open-confirm', { detail }));
+            };
+
+            // Intercept form submissions for Save / Remove / Restore (skip auth, GET, and forms that already provide their own confirmation modal)
             document.querySelectorAll('form').forEach(form => {
-                // Ignore search forms, login, logout, and modals that handle their own states
-                if (form.action.includes('login') || form.action.includes('logout') || form.method.toUpperCase() === 'GET') return;
-                
+                const isGet = form.method.toUpperCase() === 'GET';
+                const isAuth = (form.action || '').includes('login') || (form.action || '').includes('logout');
+                const skipByAttr = form.hasAttribute('data-confirm-skip') || form.dataset.confirmSkip === 'true';
+                const insideAppModal = !!form.closest('[x-on\\:open-modal\\.window]'); // x-modal component wrapper
+
+                if (isGet || isAuth || skipByAttr || insideAppModal) return;
+
                 form.addEventListener('submit', function(e) {
                     if (this.dataset.confirmed === 'true') return;
                     e.preventDefault();
 
-                    const methodInput = this.querySelector('input[name="_method"]');
-                    const isDelete = methodInput && methodInput.value.toUpperCase() === 'DELETE';
-                    const message = isDelete ? 'Are you sure you want to remove this item?' : 'Are you sure you want to save these changes?';
+                    const submitter = e.submitter;
+                    const submitterLabel = submitter ? (submitter.dataset.confirmConfirmText || (submitter.textContent || '').trim()) : '';
 
-                    window.dispatchEvent(new CustomEvent('open-confirm', {
-                        detail: {
-                            message: message,
-                            action: () => {
-                                this.dataset.confirmed = 'true';
+                    const methodInput = this.querySelector('input[name="_method"]');
+                    const methodOverride = methodInput ? (methodInput.value || '').toUpperCase() : '';
+
+                    const actionUrl = this.action || '';
+                    const isDelete = methodOverride === 'DELETE';
+                    const isRestore = /\/restore\b/i.test(actionUrl);
+
+                    const title =
+                        this.dataset.confirmTitle ||
+                        (isRestore ? 'Restore Item' : isDelete ? 'Remove Item' : 'Save Changes');
+
+                    const message =
+                        this.dataset.confirmMessage ||
+                        (isRestore
+                            ? 'Restore this item and make it active again?'
+                            : isDelete
+                                ? 'Are you sure you want to remove this item?'
+                                : 'Are you sure you want to save these changes?');
+
+                    const variant =
+                        this.dataset.confirmVariant ||
+                        (isRestore ? 'success' : isDelete ? 'danger' : 'info');
+
+                    const confirmText =
+                        this.dataset.confirmConfirmText ||
+                        (submitterLabel ? submitterLabel : (isRestore ? 'Restore' : isDelete ? 'Remove' : 'Save'));
+
+                    const cancelText = this.dataset.confirmCancelText || 'Cancel';
+
+                    dispatchConfirm({
+                        title,
+                        message,
+                        variant,
+                        confirmText,
+                        cancelText,
+                        action: () => {
+                            this.dataset.confirmed = 'true';
+                            // Prefer requestSubmit so validation + submitter semantics stay correct.
+                            if (typeof this.requestSubmit === 'function') {
+                                if (submitter) this.requestSubmit(submitter);
+                                else this.requestSubmit();
+                            } else {
                                 this.submit();
                             }
                         }
-                    }));
+                    });
                 });
             });
 
-            // Intercept links for Edit / Back
+            // Intercept links for Edit / Back / Cancel
             document.querySelectorAll('a').forEach(a => {
                 const text = a.textContent.trim().toLowerCase();
                 const isBack = text === 'back' || text.includes('back to') || text.includes('back');
-                const isEdit = text === 'edit' || a.href.includes('/edit');
+                const isCancel = text === 'cancel';
+                const isEdit = text === 'edit' || /\/edit\b/i.test(a.href);
 
                 // Skip tabs, empty links, or profile pages
                 if (!a.href || a.href === '#' || a.href.includes('profile')) return;
 
-                if (isBack || isEdit) {
+                if (isBack || isCancel || isEdit) {
                     a.addEventListener('click', function(e) {
                         if (this.dataset.confirmed === 'true') return;
                         e.preventDefault();
                         const href = this.href;
-                        const message = isBack ? 'Are you sure you want to go back?' : 'Are you sure you want to edit this item?';
 
-                        window.dispatchEvent(new CustomEvent('open-confirm', {
-                            detail: {
-                                message: message,
-                                action: () => { 
-                                    this.dataset.confirmed = 'true';
-                                    window.location.href = href; 
-                                }
+                        const title = this.dataset.confirmTitle ||
+                            (isCancel ? 'Cancel Changes' : isBack ? 'Go Back' : 'Edit Item');
+
+                        const message = this.dataset.confirmMessage ||
+                            (isCancel
+                                ? 'Are you sure you want to cancel? Unsaved changes will be lost.'
+                                : isBack
+                                    ? 'Are you sure you want to go back? Unsaved changes will be lost.'
+                                    : 'Are you sure you want to edit this item?');
+
+                        const variant = this.dataset.confirmVariant ||
+                            (isCancel || isBack ? 'warning' : 'info');
+
+                        const confirmText = this.dataset.confirmConfirmText ||
+                            (isCancel ? 'Leave' : isBack ? 'Go back' : 'Edit');
+
+                        const cancelText = this.dataset.confirmCancelText || 'Stay';
+
+                        dispatchConfirm({
+                            title,
+                            message,
+                            variant,
+                            confirmText,
+                            cancelText,
+                            action: () => {
+                                this.dataset.confirmed = 'true';
+                                window.location.href = href;
                             }
-                        }));
+                        });
                     });
                 }
             });

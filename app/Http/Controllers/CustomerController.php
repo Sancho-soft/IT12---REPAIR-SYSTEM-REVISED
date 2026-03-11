@@ -87,7 +87,8 @@ class CustomerController extends Controller
     public function destroy(\App\Models\Customer $customer)
     {
         $this->checkCustomerAccess();
-        $customer->update(['deleted_by' => auth()->id()]);
+        // Bypass $fillable: deleted_by should not be user-input controlled.
+        $customer->forceFill(['deleted_by' => auth()->id()])->save();
         $customer->delete();
         return redirect()->route('customers.index')->with('success', 'Customer deleted successfully.');
     }

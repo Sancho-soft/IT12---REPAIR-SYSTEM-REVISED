@@ -4,12 +4,55 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\ServiceDetail;
 use App\Notifications\ServiceReportCreated;
 use App\Notifications\ServiceReportUpdated;
 use Illuminate\Support\Facades\Notification;
 
 class ServiceReportController extends Controller
 {
+    private function getTechniciansWithAvailability()
+    {
+        $technicians = User::where('role', 'Technician')->get();
+
+        // Mark technicians with any non-closed service as "Busy". Use account status "Inactive" as "Off-Duty".
+        $busyNames = ServiceDetail::query()
+            ->whereNotNull('technician')
+            ->where('technician', '<>', '')
+            ->whereHas('report', function ($q) {
+                $q->whereNotIn('status', ['Completed', 'Cancelled', 'Canceled']);
+            })
+            ->pluck('technician')
+            ->flatMap(function ($list) {
+                return collect(explode(',', (string) $list))
+                    ->map(fn($name) => trim($name))
+                    ->filter();
+            })
+            ->map(fn($name) => strtolower($name))
+            ->unique()
+            ->values()
+            ->all();
+
+        $busyLookup = array_fill_keys($busyNames, true);
+
+        foreach ($technicians as $tech) {
+            $fullName = trim(($tech->first_name ?? '') . ' ' . ($tech->last_name ?? ''));
+            $fullNameKey = strtolower($fullName);
+
+            if (strtolower((string) $tech->status) === 'inactive') {
+                $availability = 'Off-Duty';
+            } elseif ($fullName !== '' && isset($busyLookup[$fullNameKey])) {
+                $availability = 'Busy';
+            } else {
+                $availability = 'Available';
+            }
+
+            $tech->setAttribute('availability_status', $availability);
+        }
+
+        return $technicians;
+    }
+
     private function checkServiceCreationAccess()
     {
         if (auth()->check() && !in_array(auth()->user()->role, ['Administrator', 'Secretary'])) {
@@ -77,7 +120,7 @@ class ServiceReportController extends Controller
     {
         $this->checkServiceCreationAccess();
         $customers = \App\Models\Customer::with('appliances')->get();
-        $technicians = User::where('role', 'Technician')->get();
+        $technicians = $this->getTechniciansWithAvailability();
         $parts = \App\Models\Part::all();
         $servicePrices = \App\Models\ServicePrice::all();
         return view('services.create', compact('customers', 'technicians', 'parts', 'servicePrices'));
@@ -148,7 +191,13 @@ class ServiceReportController extends Controller
     public function show(\App\Models\ServiceReport $service)
     {
         $service->load(['comments.user', 'transactions']);
-        return view('services.show', compact('service'));
+        $technicians = $this->getTechniciansWithAvailability();
+        $techStatusMap = $technicians->mapWithKeys(function (User $tech) {
+            $name = strtolower(trim(($tech->first_name ?? '') . ' ' . ($tech->last_name ?? '')));
+            return [$name => $tech->availability_status];
+        });
+
+        return view('services.show', compact('service', 'techStatusMap'));
     }
 
     public function edit(\App\Models\ServiceReport $service)
@@ -157,7 +206,7 @@ class ServiceReportController extends Controller
             abort(403, 'Cashiers cannot edit Service Reports.');
         }
         $customers = \App\Models\Customer::with('appliances')->get();
-        $technicians = User::where('role', 'Technician')->get();
+        $technicians = $this->getTechniciansWithAvailability();
         $parts = \App\Models\Part::all();
         $servicePrices = \App\Models\ServicePrice::all();
         $service->load('parts');
@@ -249,6 +298,8 @@ class ServiceReportController extends Controller
     public function destroy(\App\Models\ServiceReport $service)
     {
         $this->checkServiceCreationAccess();
+        // Bypass $fillable: deleted_by should not be user-input controlled.
+        $service->forceFill(['deleted_by' => auth()->id()])->save();
         $service->delete();
         return redirect()->route('services.index')->with('success', 'Service Report deleted successfully.');
     }
@@ -275,5 +326,3 @@ class ServiceReportController extends Controller
         return view('services.print', compact('service'));
     }
 }
-
-

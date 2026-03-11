@@ -171,7 +171,7 @@
                 <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
                 <div x-show="showDeleteModal" x-transition class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                    <form :action="deleteUrl" method="POST">
+                    <form :action="deleteUrl" method="POST" data-confirm-skip="true">
                         @csrf
                         @method('DELETE')
                         <div class="bg-white dark:bg-slate-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">

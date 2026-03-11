@@ -81,6 +81,9 @@ class ProfileController extends Controller
             CloudinaryService::delete($user->profile_picture_public_id);
         }
 
+        // Persist "who deleted" before logout; bypass $fillable.
+        $user->forceFill(['deleted_by' => $user->id])->save();
+
         Auth::logout();
         $user->delete();
 

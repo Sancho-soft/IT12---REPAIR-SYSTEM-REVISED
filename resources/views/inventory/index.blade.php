@@ -37,15 +37,15 @@
                     <thead class="bg-gray-50 dark:bg-slate-700/50">
                         <tr>
                             <th scope="col"
-                                class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
+                                class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                 Part No
                             </th>
                             <th scope="col"
-                                class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
+                                class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                 Part Name
                             </th>
                             <th scope="col"
-                                class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
+                                class="px-6 py-3 text-right text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                 Price
                             </th>
                             <th scope="col"
@@ -53,7 +53,7 @@
                                 Stock
                             </th>
                             <th scope="col"
-                                class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
+                                class="px-6 py-3 text-right text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                 Actions
                             </th>
                         </tr>
@@ -109,7 +109,7 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-slate-400">
                                         {{ $part->name }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-green-600">
+                                    <td class="px-6 py-4 whitespace-nowrap text-right tabular-nums text-sm font-bold text-green-600">
                                         ₱{{ number_format($part->price, 2) }}
                                     </td>
 
@@ -145,7 +145,7 @@
                                                 </svg>
                                             </a>
                                             <form action="{{ route('inventory.destroy', $part) }}" method="POST"
-                                                class="inline-block" onsubmit="return confirm('Delete this part?');">
+                                                class="inline-block">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="text-red-500 hover:text-red-700 transition-colors"

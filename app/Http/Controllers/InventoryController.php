@@ -86,7 +86,8 @@ class InventoryController extends Controller
                 ->with('error', "Cannot delete \"{$part->name}\" because it still has {$part->quantity_stock} unit(s) in stock. Please use up or adjust the stock first.");
         }
 
-        $part->update(['deleted_by' => auth()->id()]);
+        // Bypass $fillable: deleted_by should not be user-input controlled.
+        $part->forceFill(['deleted_by' => auth()->id()])->save();
         $part->delete();
         return redirect()->route('inventory.index')->with('success', 'Part deleted successfully.');
     }

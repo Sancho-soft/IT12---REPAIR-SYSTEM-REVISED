@@ -1,10 +1,5 @@
 <x-app-layout>
     <div class="space-y-6">
-        <!-- Header -->
-        <div>
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Dashboard Overview</h2>
-            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Welcome back! Here's what's happening with your repair service.</p>
-        </div>
 
         <!-- Stats Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -98,97 +93,97 @@
             </a>
         </div>
 
-    <!-- Charts & Activity Row -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- Popular Service Types (flip card) -->
-        <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm" x-data="{ flipped: false }">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white">Popular Service Types</h3>
-                <!-- Flip toggle button -->
-                <button @click="flipped = !flipped"
-                    class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-gray-200 dark:border-slate-600 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-700 hover:border-blue-300 transition-all"
-                    :title="flipped ? 'Switch to Donut Chart' : 'Switch to Line Chart'">
-                    <svg class="w-4 h-4 transition-transform duration-500" :class="flipped ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                    </svg>
-                    <span x-text="flipped ? 'Donut' : 'Line'"></span>
-                </button>
-            </div>
+        <!-- Charts & Activity Row -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Popular Service Types (flip card) -->
+            <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm" x-data="{ flipped: false }">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-white">Popular Service Types</h3>
+                    <!-- Flip toggle button -->
+                    <button @click="flipped = !flipped"
+                        class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-gray-200 dark:border-slate-600 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-700 hover:border-blue-300 transition-all"
+                        :title="flipped ? 'Switch to Donut Chart' : 'Switch to Line Chart'">
+                        <svg class="w-4 h-4 transition-transform duration-500" :class="flipped ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        <span x-text="flipped ? 'Donut' : 'Line'"></span>
+                    </button>
+                </div>
 
-            <!-- Flip card wrapper -->
-            <div class="relative" style="perspective: 1000px; height: 320px;">
-                <div class="w-full h-full absolute transition-all duration-700"
-                    :style="flipped ? 'transform: rotateY(180deg); transform-style: preserve-3d;' : 'transform: rotateY(0deg); transform-style: preserve-3d;'"
-                    style="transform-style: preserve-3d;">
+                <!-- Flip card wrapper -->
+                <div class="relative" style="perspective: 1000px; height: 320px;">
+                    <div class="w-full h-full absolute transition-all duration-700"
+                        :style="flipped ? 'transform: rotateY(180deg); transform-style: preserve-3d;' : 'transform: rotateY(0deg); transform-style: preserve-3d;'"
+                        style="transform-style: preserve-3d;">
 
-                    <!-- FRONT: Donut Chart -->
-                    <div class="absolute inset-0 flex flex-col" style="backface-visibility: hidden; -webkit-backface-visibility: hidden;">
-                        <div class="flex-1 flex items-center justify-center relative">
-                            <canvas id="serviceTypesChart"></canvas>
-                            <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                                <span class="text-3xl font-bold text-gray-900 dark:text-white" id="popularServicePercentage">50%</span>
-                                <span class="text-xs text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wider" id="popularServiceLabel">MAINTENANCE</span>
+                        <!-- FRONT: Donut Chart -->
+                        <div class="absolute inset-0 flex flex-col" style="backface-visibility: hidden; -webkit-backface-visibility: hidden;">
+                            <div class="flex-1 flex items-center justify-center relative">
+                                <canvas id="serviceTypesChart"></canvas>
+                                <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                                    <span class="text-3xl font-bold text-gray-900 dark:text-white" id="popularServicePercentage">50%</span>
+                                    <span class="text-xs text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wider" id="popularServiceLabel">MAINTENANCE</span>
+                                </div>
+                            </div>
+                            <div class="mt-2 flex justify-center space-x-6">
+                                <div class="flex items-center"><span class="w-3 h-3 rounded-full bg-orange-500 mr-2"></span><span class="text-sm text-gray-500 dark:text-gray-400">Installation</span></div>
+                                <div class="flex items-center"><span class="w-3 h-3 rounded-full bg-green-500 mr-2"></span><span class="text-sm text-gray-500 dark:text-gray-400">Maintenance</span></div>
+                                <div class="flex items-center"><span class="w-3 h-3 rounded-full bg-blue-500 mr-2"></span><span class="text-sm text-gray-500 dark:text-gray-400">Repair</span></div>
                             </div>
                         </div>
-                        <div class="mt-2 flex justify-center space-x-6">
-                            <div class="flex items-center"><span class="w-3 h-3 rounded-full bg-orange-500 mr-2"></span><span class="text-sm text-gray-500 dark:text-gray-400">Installation</span></div>
-                            <div class="flex items-center"><span class="w-3 h-3 rounded-full bg-green-500 mr-2"></span><span class="text-sm text-gray-500 dark:text-gray-400">Maintenance</span></div>
-                            <div class="flex items-center"><span class="w-3 h-3 rounded-full bg-blue-500 mr-2"></span><span class="text-sm text-gray-500 dark:text-gray-400">Repair</span></div>
-                        </div>
-                    </div>
 
-                    <!-- BACK: Line Chart -->
-                    <div class="absolute inset-0 flex flex-col"
-                        style="backface-visibility: hidden; -webkit-backface-visibility: hidden; transform: rotateY(180deg);">
-                        <div class="flex-1 flex items-center justify-center">
-                            <canvas id="serviceTypesLineChart"></canvas>
+                        <!-- BACK: Line Chart -->
+                        <div class="absolute inset-0 flex flex-col"
+                            style="backface-visibility: hidden; -webkit-backface-visibility: hidden; transform: rotateY(180deg);">
+                            <div class="flex-1 flex items-center justify-center">
+                                <canvas id="serviceTypesLineChart"></canvas>
+                            </div>
+                            <p class="text-center text-xs text-gray-400 dark:text-gray-500 mt-1">Service type trends over the last 6 months</p>
                         </div>
-                        <p class="text-center text-xs text-gray-400 dark:text-gray-500 mt-1">Service type trends over the last 6 months</p>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Recent Activity -->
-        <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm">
-            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Recent Activity</h3>
-            <div class="space-y-4">
-                @if(count($recentServices) > 0)
+            <!-- Recent Activity -->
+            <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Recent Activity</h3>
+                <div class="space-y-4">
+                    @if(count($recentServices) > 0)
                     @foreach($recentServices as $service)
-                            <a href="{{ route('services.show', $service->id) }}"
-                                class="flex items-center p-3 hover:bg-gray-50 dark:hover:bg-slate-700 rounded-lg transition-colors border border-transparent hover:border-gray-100 dark:hover:border-slate-600">
-                                <div
-                                    class="h-10 w-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm shrink-0">
-                                    {{ substr($service->customer_name ?? 'U', 0, 1) }}
-                                </div>
-                                <div class="ml-4 flex-1">
-                                    <div class="flex flex-col items-center justify-center text-center">
-                                        <h4 class="text-base font-bold text-gray-900 dark:text-white mb-2">{{ $service->customer_name }}</h4>
-                                        <span
-                                            class="px-4 py-1.5 text-xs rounded-full text-center font-bold tracking-wide shadow-sm w-28 uppercase
+                    <a href="{{ route('services.show', $service->id) }}"
+                        class="flex items-center p-3 hover:bg-gray-50 dark:hover:bg-slate-700 rounded-lg transition-colors border border-transparent hover:border-gray-100 dark:hover:border-slate-600">
+                        <div
+                            class="h-10 w-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm shrink-0">
+                            {{ substr($service->customer_name ?? 'U', 0, 1) }}
+                        </div>
+                        <div class="ml-4 flex-1">
+                            <div class="flex flex-col items-center justify-center text-center">
+                                <h4 class="text-base font-bold text-gray-900 dark:text-white mb-2">{{ $service->customer_name }}</h4>
+                                <span
+                                    class="px-4 py-1.5 text-xs rounded-full text-center font-bold tracking-wide shadow-sm w-28 uppercase
                                                 {{ $service->status === 'Completed' ? 'bg-green-500 text-white dark:bg-green-600' :
                                                 ($service->status === 'Pending' ? 'bg-yellow-500 text-white dark:bg-yellow-600' : 
                                                 ($service->status === 'Cancelled' ? 'bg-red-500 text-white dark:bg-red-600' : 'bg-blue-500 text-white dark:bg-blue-600')) }}">
-                                            {{ $service->status }}
-                                        </span>
-                                    </div>
-                                    <p class="text-sm text-gray-600 dark:text-gray-300 text-center mt-2">{{ $service->appliance_name }}</p>
-                                    <p class="text-xs text-gray-400 dark:text-gray-500 mt-1 text-center">{{ $service->created_at->diffForHumans() }}</p>
-                                </div>
-                            </a>
+                                    {{ $service->status }}
+                                </span>
+                            </div>
+                            <p class="text-sm text-gray-600 dark:text-gray-300 text-center mt-2">{{ $service->appliance_name }}</p>
+                            <p class="text-xs text-gray-400 dark:text-gray-500 mt-1 text-center">{{ $service->created_at->diffForHumans() }}</p>
+                        </div>
+                    </a>
                     @endforeach
-                @else
+                    @else
                     <div class="text-center py-4 text-gray-500 dark:text-gray-400 text-sm">No recent activity</div>
-                @endif
+                    @endif
+                </div>
             </div>
         </div>
-    </div>
     </div>
 
     <!-- Chart.js Script -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             // --- DONUT CHART ---
             const ctx = document.getElementById('serviceTypesChart');
             if (ctx) {
@@ -207,17 +202,19 @@
                         responsive: true,
                         maintainAspectRatio: false,
                         plugins: {
-                            legend: { display: false },
+                            legend: {
+                                display: false
+                            },
                             tooltip: {
                                 callbacks: {
-                                    label: function (context) {
+                                    label: function(context) {
                                         return context.label + ': ' + context.raw + '%';
                                     }
                                 }
                             }
                         },
                         cutout: '75%',
-                        onHover: function (event, activeElements) {
+                        onHover: function(event, activeElements) {
                             if (activeElements.length > 0) {
                                 const index = activeElements[0].index;
                                 const data = this.data.datasets[0].data[index];
@@ -237,8 +234,7 @@
                     type: 'line',
                     data: {
                         labels: ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'],
-                        datasets: [
-                            {
+                        datasets: [{
                                 label: 'Installation',
                                 data: [12, 19, 15, 22, 18, 30],
                                 borderColor: '#F97316',
@@ -277,18 +273,35 @@
                             legend: {
                                 display: true,
                                 position: 'bottom',
-                                labels: { boxWidth: 10, font: { size: 11 } }
+                                labels: {
+                                    boxWidth: 10,
+                                    font: {
+                                        size: 11
+                                    }
+                                }
                             }
                         },
                         scales: {
                             y: {
                                 beginAtZero: true,
-                                grid: { color: 'rgba(0,0,0,0.04)' },
-                                ticks: { font: { size: 11 } }
+                                grid: {
+                                    color: 'rgba(0,0,0,0.04)'
+                                },
+                                ticks: {
+                                    font: {
+                                        size: 11
+                                    }
+                                }
                             },
                             x: {
-                                grid: { display: false },
-                                ticks: { font: { size: 11 } }
+                                grid: {
+                                    display: false
+                                },
+                                ticks: {
+                                    font: {
+                                        size: 11
+                                    }
+                                }
                             }
                         }
                     }

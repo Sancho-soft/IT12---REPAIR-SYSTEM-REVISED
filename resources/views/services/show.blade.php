@@ -149,7 +149,38 @@
                         <div class="sm:col-span-2">
                             <dt class="text-sm font-medium text-gray-500 dark:text-slate-400">Assigned Technician(s)</dt>
                             <dd class="mt-1 text-sm text-gray-900 dark:text-white">
-                                {{ !empty($service->details->technician) ? $service->details->technician : 'No Assigned Technician' }}
+                                @php
+                                    $assignedTechs = [];
+                                    if ($service->details && !empty($service->details->technician)) {
+                                        $assignedTechs = array_values(array_filter(array_map('trim', explode(',', $service->details->technician))));
+                                    }
+                                @endphp
+
+                                @if(empty($assignedTechs))
+                                    No Assigned Technician
+                                @else
+                                    <div class="flex flex-wrap gap-2">
+                                        @foreach($assignedTechs as $techName)
+                                            @php
+                                                $status = $techStatusMap[strtolower($techName)] ?? 'Unknown';
+                                                $statusKey = strtolower($status);
+                                                $badgeClass = match ($statusKey) {
+                                                    'available' => 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 border border-green-200 dark:border-green-800/50',
+                                                    'busy' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-800/50',
+                                                    'off-duty' => 'bg-gray-100 text-gray-800 dark:bg-gray-700/50 dark:text-gray-300 border border-gray-200 dark:border-gray-600',
+                                                    default => 'bg-gray-100 text-gray-800 dark:bg-gray-700/50 dark:text-gray-300 border border-gray-200 dark:border-gray-600',
+                                                };
+                                            @endphp
+
+                                            <span class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-gray-50 dark:bg-slate-700/50 border border-gray-200 dark:border-slate-600">
+                                                <span class="font-medium">{{ $techName }}</span>
+                                                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-semibold {{ $badgeClass }}">
+                                                    {{ $status }}
+                                                </span>
+                                            </span>
+                                        @endforeach
+                                    </div>
+                                @endif
                             </dd>
                         </div>
                         <div class="sm:col-span-2">

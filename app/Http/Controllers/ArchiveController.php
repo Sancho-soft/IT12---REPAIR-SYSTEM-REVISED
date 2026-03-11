@@ -132,6 +132,9 @@ class ArchiveController extends Controller
             case 'User':
                 $item = User::onlyTrashed()->find($id);
                 break;
+            case 'Transaction':
+                $item = Transaction::onlyTrashed()->find($id);
+                break;
             default:
                 return back()->with('error', 'Invalid type');
         }
@@ -158,6 +161,9 @@ class ArchiveController extends Controller
                 break;
             case 'User':
                 $item = User::onlyTrashed()->find($id);
+                break;
+            case 'Transaction':
+                $item = Transaction::onlyTrashed()->find($id);
                 break;
             default:
                 return back()->with('error', 'Invalid type');
