@@ -23,7 +23,7 @@ class DashboardController extends Controller
             ->get();
 
         // Recent Services for activity feed
-        $recentServices = \App\Models\ServiceReport::with('customer')
+        $recentServices = \App\Models\ServiceReport::with(['customer', 'appliance'])
             ->latest()
             ->limit(5)
             ->get();

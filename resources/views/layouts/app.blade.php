@@ -350,7 +350,7 @@
                                     : 'Are you sure you want to edit this item?');
 
                         const variant = this.dataset.confirmVariant ||
-                            (isCancel || isBack ? 'warning' : 'info');
+                            (isCancel || isBack ? 'danger' : 'info');
 
                         const confirmText = this.dataset.confirmConfirmText ||
                             (isCancel ? 'Leave' : isBack ? 'Go back' : 'Edit');

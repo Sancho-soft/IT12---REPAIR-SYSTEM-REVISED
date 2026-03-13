@@ -58,12 +58,16 @@ class Transaction extends Model
         'payment_method',
         'reference_no',
         'payment_date',
+        'payment_due',
         'received_by',
         'paymongo_link_id',
         'payment_url'
     ];
 
-    protected $casts = ['payment_date' => 'date'];
+    protected $casts = [
+        'payment_date' => 'date',
+        'payment_due' => 'date',
+    ];
 
     public function report()
     {

@@ -93,7 +93,15 @@
                                 </th>
                                 <th scope="col"
                                     class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
-                                    Date
+                                    Payment Date
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
+                                    Payment Due
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
+                                    Received By
                                 </th>
                                 <th scope="col"
                                     class="px-6 py-3 text-right text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider print:hidden">
@@ -137,7 +145,13 @@
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-slate-400">
-                                        {{ $transaction->created_at->format('M d, Y') }}
+                                        {{ $transaction->payment_date ? \Carbon\Carbon::parse($transaction->payment_date)->format('M d, Y') : '—' }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-slate-400">
+                                        {{ $transaction->payment_due ? \Carbon\Carbon::parse($transaction->payment_due)->format('M d, Y') : '—' }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                        {{ $transaction->received_by ?? 'System' }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium print:hidden">
                                         <div class="flex justify-end space-x-3">

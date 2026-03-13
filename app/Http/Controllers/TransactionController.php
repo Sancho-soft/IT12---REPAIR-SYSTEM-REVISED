@@ -77,6 +77,8 @@ class TransactionController extends Controller
             'partial_payment_amount' => 'required_if:payment_status,Partial|nullable|numeric|min:0',
             'reference_no' => 'nullable|string',
             'received_by' => 'nullable|string',
+            'payment_date' => 'nullable|date',
+            'payment_due' => 'nullable|date',
         ], [
             'labor.min' => 'Labor cost must be at least ₱300.',
         ]);
@@ -99,6 +101,11 @@ class TransactionController extends Controller
         ]
         );
 
+        $paymentDate = $validated['payment_date'] ?? null;
+        if ($validated['payment_status'] === 'Paid') {
+            $paymentDate = $paymentDate ? \Carbon\Carbon::parse($paymentDate) : now();
+        }
+
         // Create transaction
         $transaction = \App\Models\Transaction::create([
             'report_id' => $report->id,
@@ -109,14 +116,16 @@ class TransactionController extends Controller
             'payment_method' => $validated['payment_method'] ?? null,
             'partial_payment_amount' => $validated['payment_status'] === 'Partial' ? $validated['partial_payment_amount'] : null,
             'reference_no' => $validated['reference_no'] ?? null,
-            'payment_date' => $validated['payment_status'] == 'Paid' ? now() : null,
+            'payment_date' => $paymentDate,
+            'payment_due' => $validated['payment_due'] ?? null,
             'received_by' => $validated['received_by'] ?? (auth()->user() ? auth()->user()->first_name . ' ' . auth()->user()->last_name : 'System'),
         ]);
 
-        // Create PayMongo Payment Link if total >= 100 and not Paid
-        if ($validated['payment_status'] !== 'Paid' && $totalAmount >= 100) {
+        // Create PayMongo Payment Link if total >= 100 and not Paid (requires secret key)
+        $paymongoSecret = env('PAYMONGO_SECRET_KEY');
+        if ($validated['payment_status'] !== 'Paid' && $totalAmount >= 100 && !empty($paymongoSecret)) {
             try {
-                $response = Http::withBasicAuth(env('PAYMONGO_SECRET_KEY'), '')
+                $response = Http::withBasicAuth($paymongoSecret, '')
                     ->withHeaders([
                     'accept' => 'application/json',
                     'content-type' => 'application/json',
@@ -205,6 +214,8 @@ class TransactionController extends Controller
             'partial_payment_amount' => 'required_if:payment_status,Partial|nullable|numeric|min:0',
             'reference_no' => 'nullable|string',
             'received_by' => 'nullable|string',
+            'payment_date' => 'nullable|date',
+            'payment_due' => 'nullable|date',
         ]);
 
         $transaction->update($validated);

@@ -145,35 +145,62 @@
             </div>
 
             <!-- Recent Activity -->
-            <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm">
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Recent Activity</h3>
-                <div class="space-y-4">
+            <div class="bg-white rounded-[14px] shadow-[0px_10px_15px_0px_rgba(0,0,0,0.1),0px_4px_6px_0px_rgba(0,0,0,0.1)] p-[24px] flex flex-col gap-[48px]">
+                <div class="h-[48px] flex items-center justify-between">
+                    <div class="flex flex-col gap-[4px]">
+                        <h3 class="text-[18px] leading-[28px] font-bold text-[#101828]">Recent Activity</h3>
+                        <p class="text-[12px] leading-[16px] text-[#6a7282]">Latest service updates</p>
+                    </div>
+                    <a href="{{ route('services.index') }}"
+                        class="inline-flex items-center gap-[8px] text-[12px] leading-[16px] font-semibold text-[#155dfc]">
+                        View All
+                        <img class="w-[16px] h-[16px]" alt="" src="{{ asset('assets/icons/arrow-right-blue.svg') }}" />
+                    </a>
+                </div>
+
+                <div class="flex flex-col gap-[16px]">
                     @if(count($recentServices) > 0)
                     @foreach($recentServices as $service)
-                    <a href="{{ route('services.show', $service->id) }}"
-                        class="flex items-center p-3 hover:bg-gray-50 dark:hover:bg-slate-700 rounded-lg transition-colors border border-transparent hover:border-gray-100 dark:hover:border-slate-600">
-                        <div
-                            class="h-10 w-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm shrink-0">
-                            {{ substr($service->customer_name ?? 'U', 0, 1) }}
-                        </div>
-                        <div class="ml-4 flex-1">
-                            <div class="flex flex-col items-center justify-center text-center">
-                                <h4 class="text-base font-bold text-gray-900 dark:text-white mb-2">{{ $service->customer_name }}</h4>
-                                <span
-                                    class="px-4 py-1.5 text-xs rounded-full text-center font-bold tracking-wide shadow-sm w-28 uppercase
-                                                {{ $service->status === 'Completed' ? 'bg-green-500 text-white dark:bg-green-600' :
-                                                ($service->status === 'Pending' ? 'bg-yellow-500 text-white dark:bg-yellow-600' : 
-                                                ($service->status === 'Cancelled' ? 'bg-red-500 text-white dark:bg-red-600' : 'bg-blue-500 text-white dark:bg-blue-600')) }}">
-                                    {{ $service->status }}
-                                </span>
+                    @php
+                        $status = strtolower($service->status ?? '');
+                        if (str_contains($status, 'complete')) {
+                            $pillBg = 'bg-[#dcfce7]';
+                            $pillText = 'text-[#008236]';
+                        } elseif (str_contains($status, 'wait')) {
+                            $pillBg = 'bg-[#fef3c6]';
+                            $pillText = 'text-[#bb4d00]';
+                        } else {
+                            $pillBg = 'bg-[#dbeafe]';
+                            $pillText = 'text-[#1447e6]';
+                        }
+                        $titleCustomer = $service->customer_name ?: 'Unknown Customer';
+                        $titleAppliance = $service->appliance_name ?? optional($service->appliance)->name ?? 'Service';
+                    @endphp
+                    <div class="relative h-[68px]">
+                        <div class="relative h-full {{ $loop->last ? '' : 'border-l-2 border-[#e5e7eb]' }}">
+                            <div class="absolute left-[28px] top-0 h-[52px] flex flex-col gap-[8px]">
+                                <div class="h-[20px]">
+                                    <p class="text-[14px] leading-[20px] font-semibold text-[#101828] truncate">
+                                        {{ $titleCustomer }} - {{ $titleAppliance }}
+                                    </p>
+                                </div>
+                                <div class="h-[24px] flex items-center gap-[8px]">
+                                    <span class="h-[24px] px-[10px] py-[4px] rounded-[14px] inline-flex items-center justify-center {{ $pillBg }}">
+                                        <span class="text-[12px] leading-[16px] font-semibold {{ $pillText }}">
+                                            {{ $service->status ?? 'Unknown' }}
+                                        </span>
+                                    </span>
+                                    <span class="text-[12px] leading-[16px] font-medium text-[#6a7282]">
+                                        {{ optional($service->created_at)->diffForHumans() }}
+                                    </span>
+                                </div>
                             </div>
-                            <p class="text-sm text-gray-600 dark:text-gray-300 text-center mt-2">{{ $service->appliance_name }}</p>
-                            <p class="text-xs text-gray-400 dark:text-gray-500 mt-1 text-center">{{ $service->created_at->diffForHumans() }}</p>
+                            <span class="absolute left-[-9px] top-0 w-[16px] h-[16px] rounded-full bg-[#2b7fff] border-[4px] border-white"></span>
                         </div>
-                    </a>
+                    </div>
                     @endforeach
                     @else
-                    <div class="text-center py-4 text-gray-500 dark:text-gray-400 text-sm">No recent activity</div>
+                    <div class="text-[12px] leading-[16px] text-[#6a7282]">No recent activity.</div>
                     @endif
                 </div>
             </div>

@@ -64,6 +64,28 @@
                                 @enderror
                             </div>
 
+                            <!-- Payment Date -->
+                            <div>
+                                <label for="payment_date" class="block text-sm font-medium text-gray-700 dark:text-slate-200">Payment Date</label>
+                                <input type="date" name="payment_date" id="payment_date"
+                                    class="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 dark:border-slate-500 rounded-lg"
+                                    value="{{ old('payment_date', optional($transaction->payment_date)->format('Y-m-d')) }}">
+                                @error('payment_date')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Payment Due -->
+                            <div>
+                                <label for="payment_due" class="block text-sm font-medium text-gray-700 dark:text-slate-200">Payment Due</label>
+                                <input type="date" name="payment_due" id="payment_due"
+                                    class="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 dark:border-slate-500 rounded-lg"
+                                    value="{{ old('payment_due', optional($transaction->payment_due)->format('Y-m-d')) }}">
+                                @error('payment_due')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+
                             <!-- Partial Amount -->
                             <div x-show="payment_status === 'Partial'" x-cloak>
                                 <label for="partial_payment_amount" class="block text-sm font-medium text-gray-700 dark:text-slate-200">Partial Amount Paid</label>
