@@ -106,14 +106,26 @@ class ServiceReportController extends Controller
     {
         $search = $request->input('search');
         $status = $request->input('status');
+        $date = $request->input('date');
+
         $services = \App\Models\ServiceReport::with(['customer', 'appliance', 'details'])
-            ->when($search, fn($q) => $q->where('customer_name', 'like', "%$search%")
-                ->orWhere('id', 'like', "%$search%"))
-            ->when($status, fn($q) => $q->where('status', $status))
+            ->when($search, function ($q) use ($search) {
+                $q->where(function ($query) use ($search) {
+                    $query->where('customer_name', 'like', "%$search%")
+                          ->orWhere('id', 'like', "%$search%");
+                });
+            })
+            ->when($status, function ($q) use ($status) {
+                $q->where('status', $status);
+            })
+            ->when($date, function ($q) use ($date) {
+                $q->whereDate('date_in', $date);
+            })
             ->latest()
             ->paginate(25)
             ->withQueryString();
-        return view('services.index', compact('services', 'search', 'status'));
+
+        return view('services.index', compact('services', 'search', 'status', 'date'));
     }
 
     public function create()

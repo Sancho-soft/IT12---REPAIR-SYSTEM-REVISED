@@ -16,25 +16,55 @@
             @endif
         </div>
 
-        <!-- Search & Filter -->
-        <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm flex flex-col sm:flex-row gap-4">
-            <form method="GET" action="{{ route('services.index') }}" id="filterForm" class="flex flex-col sm:flex-row gap-4 w-full">
+        <!-- Filters & Search -->
+        <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm print:hidden">
+            <form method="GET" action="{{ route('services.index') }}" class="flex flex-col md:flex-row gap-4" id="filterForm">
+                
+                <!-- Search -->
                 <div class="relative flex-1">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
                     </div>
-                    <input type="text" name="search" value="{{ $search ?? '' }}" class="block w-full pl-10 pr-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg leading-5 bg-white dark:bg-slate-800 placeholder-gray-400 focus:outline-none focus:placeholder-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out" placeholder="Search services..." oninput="this.form.submit()">
+                    <input type="text" name="search" value="{{ request('search') }}"
+                        class="block w-full pl-10 pr-10 py-2 border border-gray-200 dark:border-slate-600 rounded-lg leading-5 bg-white dark:bg-slate-800 placeholder-gray-400 focus:outline-none focus:placeholder-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out"
+                        placeholder="Search by customer name or ID..." oninput="this.form.submit()">
+                    
+                    @if(request('search'))
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                            <button type="button" onclick="document.querySelector('input[name=search]').value=''; document.getElementById('filterForm').submit();" class="text-gray-400 hover:text-red-500 focus:outline-none transition-colors" title="Clear Search">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
+                        </div>
+                    @endif
                 </div>
-                <div class="w-full sm:w-48">
-                    <select name="status" onchange="this.form.submit()" class="block w-full pl-3 pr-10 py-2 text-base border-gray-200 dark:border-slate-600 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg">
-                        <option value="">All Status</option>
-                        <option value="In Progress" {{ ($status ?? '') == 'In Progress' ? 'selected' : '' }}>In Progress</option>
-                        <option value="Completed" {{ ($status ?? '') == 'Completed' ? 'selected' : '' }}>Completed</option>
-                        <option value="Pending" {{ ($status ?? '') == 'Pending' ? 'selected' : '' }}>Pending</option>
-                        <option value="Cancelled" {{ ($status ?? '') == 'Cancelled' ? 'selected' : '' }}>Cancelled</option>
+
+                <!-- Filters -->
+                <div class="flex flex-col xl:flex-row gap-4">
+                    <!-- Date Filter -->
+                    <input type="date" name="date" value="{{ request('date') }}"
+                        onchange="this.form.submit()"
+                        class="block w-full xl:w-auto py-2 px-3 border border-gray-200 dark:border-slate-600 rounded-lg leading-5 bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out"
+                        title="Filter by Entry Date">
+
+                    <!-- Status Filter -->
+                    <select name="status" onchange="this.form.submit()"
+                        class="block w-full xl:w-auto py-2 pl-3 pr-8 border border-gray-200 dark:border-slate-600 rounded-lg leading-5 bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out">
+                        <option value="">All Statuses</option>
+                        <option value="In Progress" {{ request('status') === 'In Progress' ? 'selected' : '' }}>In Progress</option>
+                        <option value="Completed" {{ request('status') === 'Completed' ? 'selected' : '' }}>Completed</option>
+                        <option value="Pending" {{ request('status') === 'Pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="Cancelled" {{ request('status') === 'Cancelled' ? 'selected' : '' }}>Cancelled</option>
                     </select>
+
+                    <!-- Clear All Filters -->
+                    @if(request('search') || request('date') || request('status'))
+                        <a href="{{ route('services.index') }}" 
+                            class="inline-flex items-center justify-center px-4 py-2 border border-gray-200 dark:border-slate-600 rounded-lg shadow-sm text-sm font-medium text-red-600 bg-white dark:bg-slate-800 hover:bg-red-50 dark:hover:bg-slate-700/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors whitespace-nowrap">
+                            Clear All
+                        </a>
+                    @endif
                 </div>
             </form>
         </div>
@@ -66,8 +96,7 @@
                         </tr>
                     </thead>
                     <tbody class="bg-white dark:bg-slate-800 divide-y divide-gray-200" id="servicesTableBody">
-                        @if(count($services) > 0)
-                        @foreach($services as $service)
+                        @forelse($services as $service)
                         <tr class="hover:bg-gray-50 dark:bg-slate-700/50 transition-colors" data-status="{{ $service->status }}">
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-slate-400">
                                 #{{ $service->id }}
@@ -137,19 +166,25 @@
                                 </div>
                             </td>
                         </tr>
-                        @endforeach
-                        @else
+                        @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-10 text-center text-gray-500 dark:text-slate-400">
+                            <td colspan="6" class="px-6 py-16 text-center align-middle">
                                 <div class="flex flex-col items-center justify-center">
-                                    <svg class="w-12 h-12 text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                                    </svg>
-                                    <p>No service reports found.</p>
+                                    @if(request('search') || request('status') || request('date'))
+                                        <svg class="w-12 h-12 text-slate-300 dark:text-slate-600 mb-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                        </svg>
+                                        <p class="text-sm text-slate-500 dark:text-slate-400 font-medium">No service reports found matching your filters.</p>
+                                    @else
+                                        <svg class="w-12 h-12 text-slate-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                        </svg>
+                                        <p class="text-sm text-slate-500 dark:text-slate-400 font-medium">No service reports found.</p>
+                                    @endif
                                 </div>
                             </td>
                         </tr>
-                        @endif
+                        @endforelse
                     </tbody>
                 </table>
             </div>
@@ -157,8 +192,8 @@
             <!-- Pagination -->
             <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 dark:bg-slate-700/50 flex items-center justify-between">
                 <div class="text-sm text-gray-500 dark:text-slate-400">
-                    Showing <span class="font-medium">{{ $services->firstItem() }}</span> to
-                    <span class="font-medium">{{ $services->lastItem() }}</span> of
+                    Showing <span class="font-medium">{{ $services->firstItem() ?: 0 }}</span> to
+                    <span class="font-medium">{{ $services->lastItem() ?: 0 }}</span> of
                     <span class="font-medium">{{ $services->total() }}</span> entries
                 </div>
                 <div>{{ $services->links() }}</div>

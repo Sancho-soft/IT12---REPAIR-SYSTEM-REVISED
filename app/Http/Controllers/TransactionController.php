@@ -41,13 +41,58 @@ class TransactionController extends Controller
     public function index(Request $request)
     {
         $this->checkTransactionAccess();
+        
         $search = $request->input('search');
+        $date = $request->input('date');
+        $status = $request->input('status');
+        $receivedBy = $request->input('received_by');
+
         $transactions = \App\Models\Transaction::with('report')
-            ->when($search, fn($q) => $q->where('id', 'like', "%$search%"))
+            ->when($search, function ($q) use ($search) {
+                $q->where(function ($query) use ($search) {
+                    $query->where('id', 'like', "%$search%")
+                          ->orWhereDate('payment_date', 'like', "%$search%")
+                          ->orWhereDate('payment_due', 'like', "%$search%")
+                          ->orWhereHas('report', function ($subQuery) use ($search) {
+                              $subQuery->where('customer_name', 'like', "%$search%");
+                          });
+                });
+            })
+            ->when($date, function ($q) use ($date) {
+                $q->where(function ($query) use ($date) {
+                    $query->whereDate('payment_date', $date)
+                          ->orWhereDate('payment_due', $date);
+                });
+            })
+            ->when($status, function ($q) use ($status) {
+                $q->where('payment_status', $status);
+            })
+            ->when($receivedBy, function ($q) use ($receivedBy) {
+                if ($receivedBy === 'System') {
+                    $q->where(function($query) {
+                        $query->where('received_by', 'System')->orWhereNull('received_by');
+                    });
+                } elseif (in_array($receivedBy, ['Administrator', 'Secretary', 'Cashier'])) {
+                    $userNames = \App\Models\User::where('role', $receivedBy)
+                        ->get()
+                        ->map(fn($user) => trim($user->first_name . ' ' . $user->last_name))
+                        ->filter()
+                        ->toArray();
+                        
+                    if (!empty($userNames)) {
+                        $q->whereIn('received_by', $userNames);
+                    } else {
+                        $q->whereRaw('1 = 0');
+                    }
+                } else {
+                    $q->where('received_by', $receivedBy);
+                }
+            })
             ->latest()
             ->paginate(25)
             ->withQueryString();
-        return view('transactions.index', compact('transactions', 'search'));
+
+        return view('transactions.index', compact('transactions', 'search', 'date', 'status', 'receivedBy'));
     }
 
     public function create()

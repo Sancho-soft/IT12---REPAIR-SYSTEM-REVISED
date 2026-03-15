@@ -37,6 +37,7 @@
         @php
             $unreadNotifications = Auth::check() ? Auth::user()->unreadNotifications : collect();
             $unreadCount = $unreadNotifications->count();
+            $allNotifications = Auth::check() ? Auth::user()->notifications()->take(5)->get() : collect();
         @endphp
         <div class="relative flex items-center justify-center" x-data="{ notifyOpen: false }">
             <button @click="notifyOpen = !notifyOpen" @click.away="notifyOpen = false"
@@ -58,44 +59,53 @@
                 x-transition:leave="transition ease-in duration-75"
                 x-transition:leave-start="transform opacity-100 scale-100"
                 x-transition:leave-end="transform opacity-0 scale-95"
-                class="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-xl ring-1 ring-black ring-opacity-5 z-50 overflow-hidden"
+                class="absolute right-0 mt-3 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-2xl ring-1 ring-black ring-opacity-5 z-50 overflow-hidden flex flex-col max-h-[calc(100vh-5rem)]"
                 style="display: none;">
 
-                <div
-                    class="px-4 py-3 bg-gray-50 dark:bg-gray-700 border-b border-gray-100 dark:border-gray-600 flex justify-between items-center">
-                    <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Notifications</h3>
+                <div class="px-4 py-3 shrink-0 bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center z-10">
+                    <h3 class="text-sm font-bold text-gray-900 dark:text-white">Notifications</h3>
                     @if($unreadCount > 0)
-                        <form action="{{ route('notifications.markRead') }}" method="POST">
+                        <form action="{{ Route::has('notifications.markRead') ? route('notifications.markRead') : '#' }}" method="POST">
                             @csrf
-                            <button type="submit" class="text-xs text-blue-600 hover:text-blue-800 font-medium">Mark all
-                                read</button>
+                            <button type="submit" class="text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 font-medium">Mark all as read</button>
                         </form>
                     @endif
                 </div>
 
-                <div class="max-h-96 overflow-y-auto">
-                    @if($unreadCount > 0)
-                        @foreach($unreadNotifications as $notification)
+                <div class="flex-1 overflow-y-auto min-h-0">
+                    @if($allNotifications->count() > 0)
+                        @foreach($allNotifications as $notification)
+                            @php
+                                $isUnread = $notification->unread();
+                            @endphp
                             <a href="{{ $notification->data['url'] ?? '#' }}"
-                                class="block px-4 py-3 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
-                                <p class="text-sm text-gray-800 dark:text-gray-200">
-                                    {{ $notification->data['message'] ?? 'New notification received.' }}
-                                </p>
-                                <p class="text-xs text-gray-400 mt-1">{{ $notification->created_at->diffForHumans() }}</p>
+                                class="flex gap-3 px-4 py-3 border-b border-gray-100 dark:border-gray-700 hover:bg-[#fcfdfd] dark:hover:bg-gray-700 transition-colors {{ $isUnread ? 'bg-[#f8fbff] dark:bg-slate-800/50' : 'bg-white dark:bg-gray-800' }}">
+                                <div class="mt-1 w-2 shrink-0">
+                                   @if($isUnread)
+                                       <div class="h-2 w-2 rounded-full bg-blue-600"></div>
+                                   @endif
+                                </div>
+                                <div class="flex-1 flex flex-col gap-0.5">
+                                    <h4 class="text-sm font-semibold text-gray-900 dark:text-white">{{ $notification->data['title'] ?? 'Notification' }}</h4>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">{{ $notification->data['message'] ?? 'New notification received.' }}</p>
+                                    <span class="text-[11px] mt-0.5 {{ $isUnread ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500' }}">{{ $notification->created_at->diffForHumans() }}</span>
+                                </div>
                             </a>
                         @endforeach
                     @else
-                        <div class="p-4 text-center">
-                            <svg class="mx-auto h-8 w-8 text-gray-400 mb-2" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4">
-                                </path>
+                        <!-- Empty State -->
+                        <div class="p-6 text-center flex flex-col items-center justify-center bg-white dark:bg-gray-800">
+                            <svg class="h-10 w-10 text-gray-300 dark:text-gray-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
                             </svg>
-                            <p class="text-sm text-gray-500 dark:text-gray-400">You have no unread notifications at the
-                                moment.</p>
+                            <p class="text-sm font-medium text-gray-900 dark:text-white">No notifications</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">You're all caught up!</p>
                         </div>
                     @endif
+                </div>
+
+                <div class="shrink-0 py-3 px-4 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700 text-center z-10">
+                    <a href="{{ Route::has('notifications.index') ? route('notifications.index') : '#' }}" class="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 font-medium tracking-wide">View All Notifications</a>
                 </div>
             </div>
         </div>

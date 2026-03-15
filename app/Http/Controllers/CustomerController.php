@@ -16,14 +16,30 @@ class CustomerController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
+        $hasAppliances = $request->input('has_appliances');
+
         $customers = \App\Models\Customer::with('appliances')
-            ->when($search, fn($q) => $q->where('first_name', 'like', "%$search%")
-        ->orWhere('last_name', 'like', "%$search%")
-        ->orWhere('phone_no', 'like', "%$search%"))
+            ->when($search, function ($q) use ($search) {
+            $q->where(function ($query) use ($search) {
+                    $query->where('first_name', 'like', "%$search%")
+                        ->orWhere('last_name', 'like', "%$search%")
+                        ->orWhere('phone_no', 'like', "%$search%");
+                }
+                );
+            })
+            ->when($hasAppliances, function ($q) use ($hasAppliances) {
+            if ($hasAppliances === 'yes') {
+                $q->has('appliances');
+            }
+            elseif ($hasAppliances === 'no') {
+                $q->doesntHave('appliances');
+            }
+        })
             ->latest()
             ->paginate(25)
             ->withQueryString();
-        return view('customers.index', compact('customers', 'search'));
+
+        return view('customers.index', compact('customers', 'search', 'hasAppliances'));
     }
 
     public function create()

@@ -48,7 +48,7 @@
                                 <label for="price" class="block text-sm font-medium text-gray-700 dark:text-slate-200">Price</label>
                                 <div class="mt-1 relative rounded-md shadow-sm">
                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <span class="text-gray-500 dark:text-slate-400 sm:text-sm">₱</span>
+                                        <span class="text-gray-500 dark:text-slate-400 sm:text-sm">&#8369;</span>
                                     </div>
                                     <input type="number" name="price" id="price" step="0.01" min="0"
                                         value="{{ old('price', $part->price) }}" required
@@ -81,7 +81,7 @@
                             Cancel
                         </a>
                         <button type="submit"
-                            class="px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 dark:blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                            class="px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
                             Update Part
                         </button>
                     </div>

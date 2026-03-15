@@ -5,9 +5,9 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <!-- Weekly Customers -->
             <a href="{{ route('customers.index') }}"
-                class="block bg-blue-50/50 dark:bg-slate-800 p-6 rounded-xl border border-blue-100 dark:border-slate-700 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+                class="block bg-[#fafafa] dark:bg-slate-800 p-6 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm flex flex-col justify-between hover:shadow-md transition-all duration-300">
                 <div class="flex justify-between items-start">
-                    <div class="p-3 bg-blue-50 rounded-lg text-blue-600">
+                    <div class="p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
@@ -15,7 +15,7 @@
                         </svg>
                     </div>
                     <span
-                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
                         +12%
                     </span>
                 </div>
@@ -27,9 +27,9 @@
 
             <!-- Weekly Income -->
             <a href="{{ route('transactions.index') }}"
-                class="block bg-green-50/50 dark:bg-slate-800 p-6 rounded-xl border border-green-100 dark:border-slate-700 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+                class="block bg-[#fafafa] dark:bg-slate-800 p-6 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm flex flex-col justify-between hover:shadow-md transition-all duration-300">
                 <div class="flex justify-between items-start">
-                    <div class="p-3 bg-green-100 rounded-lg text-green-700">
+                    <div class="p-3 bg-green-100 dark:bg-green-900/30 rounded-lg text-green-700 dark:text-green-400">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
@@ -37,7 +37,7 @@
                         </svg>
                     </div>
                     <span
-                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
                         +8%
                     </span>
                 </div>
@@ -49,9 +49,9 @@
 
             <!-- Weekly Services -->
             <a href="{{ route('services.index') }}"
-                class="block bg-purple-50/50 dark:bg-slate-800 p-6 rounded-xl border border-purple-100 dark:border-slate-700 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+                class="block bg-[#fafafa] dark:bg-slate-800 p-6 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm flex flex-col justify-between hover:shadow-md transition-all duration-300">
                 <div class="flex justify-between items-start">
-                    <div class="p-3 bg-purple-100 rounded-lg text-purple-700">
+                    <div class="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-lg text-purple-700 dark:text-purple-400">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
@@ -61,7 +61,7 @@
                         </svg>
                     </div>
                     <span
-                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
                         +5%
                     </span>
                 </div>
@@ -73,16 +73,16 @@
 
             <!-- Growth Rate -->
             <a href="{{ route('transactions.index') }}"
-                class="block bg-orange-50/50 dark:bg-slate-800 p-6 rounded-xl border border-orange-100 dark:border-slate-700 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+                class="block bg-[#fafafa] dark:bg-slate-800 p-6 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm flex flex-col justify-between hover:shadow-md transition-all duration-300">
                 <div class="flex justify-between items-start">
-                    <div class="p-3 bg-orange-100 rounded-lg text-orange-700">
+                    <div class="p-3 bg-orange-100 dark:bg-orange-900/30 rounded-lg text-orange-700 dark:text-orange-400">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
                         </svg>
                     </div>
                     <span
-                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
                         +3%
                     </span>
                 </div>
@@ -96,7 +96,7 @@
         <!-- Charts & Activity Row -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <!-- Popular Service Types (flip card) -->
-            <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm" x-data="{ flipped: false }">
+            <div class="bg-[#fafafa] dark:bg-slate-800 p-6 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all duration-300" x-data="{ flipped: false }">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-lg font-bold text-gray-900 dark:text-white">Popular Service Types</h3>
                     <!-- Flip toggle button -->
@@ -145,16 +145,16 @@
             </div>
 
             <!-- Recent Activity -->
-            <div class="bg-white rounded-[14px] shadow-[0px_10px_15px_0px_rgba(0,0,0,0.1),0px_4px_6px_0px_rgba(0,0,0,0.1)] p-[24px] flex flex-col gap-[48px]">
+            <div class="bg-[#fafafa] dark:bg-slate-800 p-6 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col gap-6">
                 <div class="h-[48px] flex items-center justify-between">
                     <div class="flex flex-col gap-[4px]">
-                        <h3 class="text-[18px] leading-[28px] font-bold text-[#101828]">Recent Activity</h3>
-                        <p class="text-[12px] leading-[16px] text-[#6a7282]">Latest service updates</p>
+                        <h3 class="text-[18px] leading-[28px] font-bold text-[#101828] dark:text-white">Recent Activity</h3>
+                        <p class="text-[12px] leading-[16px] text-[#6a7282] dark:text-gray-400">Latest service updates</p>
                     </div>
                     <a href="{{ route('services.index') }}"
-                        class="inline-flex items-center gap-[8px] text-[12px] leading-[16px] font-semibold text-[#155dfc]">
+                        class="inline-flex items-center gap-[8px] text-[12px] leading-[16px] font-semibold text-[#155dfc] dark:text-blue-400">
                         View All
-                        <img class="w-[16px] h-[16px]" alt="" src="{{ asset('assets/icons/arrow-right-blue.svg') }}" />
+                        <img class="w-[16px] h-[16px] dark:invert dark:opacity-75" alt="" src="{{ asset('assets/icons/arrow-right-blue.svg') }}" />
                     </a>
                 </div>
 
@@ -164,23 +164,23 @@
                     @php
                         $status = strtolower($service->status ?? '');
                         if (str_contains($status, 'complete')) {
-                            $pillBg = 'bg-[#dcfce7]';
-                            $pillText = 'text-[#008236]';
+                            $pillBg = 'bg-[#dcfce7] dark:bg-green-900/30';
+                            $pillText = 'text-[#008236] dark:text-green-400';
                         } elseif (str_contains($status, 'wait')) {
-                            $pillBg = 'bg-[#fef3c6]';
-                            $pillText = 'text-[#bb4d00]';
+                            $pillBg = 'bg-[#fef3c6] dark:bg-orange-900/30';
+                            $pillText = 'text-[#bb4d00] dark:text-orange-400';
                         } else {
-                            $pillBg = 'bg-[#dbeafe]';
-                            $pillText = 'text-[#1447e6]';
+                            $pillBg = 'bg-[#dbeafe] dark:bg-blue-900/30';
+                            $pillText = 'text-[#1447e6] dark:text-blue-400';
                         }
                         $titleCustomer = $service->customer_name ?: 'Unknown Customer';
                         $titleAppliance = $service->appliance_name ?? optional($service->appliance)->name ?? 'Service';
                     @endphp
                     <div class="relative h-[68px]">
-                        <div class="relative h-full {{ $loop->last ? '' : 'border-l-2 border-[#e5e7eb]' }}">
+                        <div class="relative h-full {{ $loop->last ? '' : 'border-l-2 border-[#e5e7eb] dark:border-slate-700' }}">
                             <div class="absolute left-[28px] top-0 h-[52px] flex flex-col gap-[8px]">
                                 <div class="h-[20px]">
-                                    <p class="text-[14px] leading-[20px] font-semibold text-[#101828] truncate">
+                                    <p class="text-[14px] leading-[20px] font-semibold text-[#101828] dark:text-white truncate">
                                         {{ $titleCustomer }} - {{ $titleAppliance }}
                                     </p>
                                 </div>
@@ -190,17 +190,17 @@
                                             {{ $service->status ?? 'Unknown' }}
                                         </span>
                                     </span>
-                                    <span class="text-[12px] leading-[16px] font-medium text-[#6a7282]">
+                                    <span class="text-[12px] leading-[16px] font-medium text-[#6a7282] dark:text-gray-400">
                                         {{ optional($service->created_at)->diffForHumans() }}
                                     </span>
                                 </div>
                             </div>
-                            <span class="absolute left-[-9px] top-0 w-[16px] h-[16px] rounded-full bg-[#2b7fff] border-[4px] border-white"></span>
+                            <span class="absolute left-[-9px] top-0 w-[16px] h-[16px] rounded-full bg-[#2b7fff] border-[4px] border-white dark:border-slate-800"></span>
                         </div>
                     </div>
                     @endforeach
                     @else
-                    <div class="text-[12px] leading-[16px] text-[#6a7282]">No recent activity.</div>
+                    <div class="text-[12px] leading-[16px] text-[#6a7282] dark:text-gray-400">No recent activity.</div>
                     @endif
                 </div>
             </div>

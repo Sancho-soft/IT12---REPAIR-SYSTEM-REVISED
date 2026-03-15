@@ -28,41 +28,67 @@
             </div>
         </div>
 
-        @if($transactions->isEmpty())
-            <!-- Empty State -->
-            <div class="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm p-12 text-center">
-                <div class="mx-auto w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-4">
-                    <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                    </svg>
-                </div>
-                <h3 class="text-lg font-medium text-gray-900 dark:text-white">No transactions found</h3>
-                <p class="mt-1 text-gray-500 dark:text-slate-400 max-w-sm mx-auto">Get started by creating your first transaction record.</p>
-                @if(in_array(auth()->user()->role, ['Administrator', 'Secretary']))
-                    <div class="mt-6">
-                        <a href="{{ route('transactions.create') }}"
-                            class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 dark:bg-blue-900 dark:hover:bg-blue-800 transition-colors">
-                            Create Transaction
-                        </a>
-                    </div>
-                @endif
-            </div>
-        @else
-            <!-- Search -->
-            <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm print:hidden">
-                <form method="GET" action="{{ route('transactions.index') }}" class="relative">
+        <!-- Filters & Search (Always Visible) -->
+        <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm print:hidden">
+            <form method="GET" action="{{ route('transactions.index') }}" class="flex flex-col md:flex-row gap-4" id="filterForm">
+                
+                <!-- Search -->
+                <div class="relative flex-1">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
                     </div>
-                    <input type="text" name="search" value="{{ $search ?? '' }}"
-                        class="block w-full pl-10 pr-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg leading-5 bg-white dark:bg-slate-800 placeholder-gray-400 focus:outline-none focus:placeholder-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out"
-                        placeholder="Search transactions..." oninput="this.form.submit()">
-                </form>
-            </div>
+                    <input type="text" name="search" value="{{ request('search') }}"
+                        class="block w-full pl-10 pr-10 py-2 border border-gray-200 dark:border-slate-600 rounded-lg leading-5 bg-white dark:bg-slate-800 placeholder-gray-400 focus:outline-none focus:placeholder-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out"
+                        placeholder="Search ID or Customer Name..." oninput="this.form.submit()">
+                    
+                    @if(request('search'))
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                            <button type="button" onclick="document.querySelector('input[name=search]').value=''; document.getElementById('filterForm').submit();" class="text-gray-400 hover:text-red-500 focus:outline-none transition-colors" title="Clear Search">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
+                        </div>
+                    @endif
+                </div>
+
+                <!-- Filters -->
+                <div class="flex flex-col xl:flex-row gap-4">
+                    <!-- Date Filter -->
+                    <input type="date" name="date" value="{{ request('date') }}"
+                        onchange="this.form.submit()"
+                        class="block w-full xl:w-auto py-2 px-3 border border-gray-200 dark:border-slate-600 rounded-lg leading-5 bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out"
+                        title="Filter by Payment or Due Date">
+
+                    <!-- Status Filter -->
+                    <select name="status" onchange="this.form.submit()"
+                        class="block w-full xl:w-auto py-2 pl-3 pr-8 border border-gray-200 dark:border-slate-600 rounded-lg leading-5 bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out">
+                        <option value="">All Statuses</option>
+                        <option value="Paid" {{ request('status') === 'Paid' ? 'selected' : '' }}>Paid</option>
+                        <option value="Unpaid" {{ request('status') === 'Unpaid' ? 'selected' : '' }}>Unpaid</option>
+                        <option value="Partial" {{ request('status') === 'Partial' ? 'selected' : '' }}>Partial</option>
+                    </select>
+
+                    <!-- Received By Filter -->
+                    <select name="received_by" onchange="this.form.submit()"
+                        class="block w-full xl:w-auto py-2 pl-3 pr-8 border border-gray-200 dark:border-slate-600 rounded-lg leading-5 bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out">
+                        <option value="">Any Receiver</option>
+                        <option value="System" {{ request('received_by') === 'System' ? 'selected' : '' }}>System</option>
+                        <option value="Administrator" {{ request('received_by') === 'Administrator' ? 'selected' : '' }}>Admin</option>
+                        <option value="Secretary" {{ request('received_by') === 'Secretary' ? 'selected' : '' }}>Secretary</option>
+                        <option value="Cashier" {{ request('received_by') === 'Cashier' ? 'selected' : '' }}>Cashier</option>
+                    </select>
+
+                    <!-- Clear All Filters -->
+                    @if(request('search') || request('date') || request('status') || request('received_by'))
+                        <a href="{{ route('transactions.index') }}" 
+                            class="inline-flex items-center justify-center px-4 py-2 border border-gray-200 dark:border-slate-600 rounded-lg shadow-sm text-sm font-medium text-red-600 bg-white dark:bg-slate-800 hover:bg-red-50 dark:hover:bg-slate-700/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors whitespace-nowrap">
+                            Clear All
+                        </a>
+                    @endif
+                </div>
+            </form>
+        </div>
 
             <!-- Table -->
             <div
@@ -110,7 +136,7 @@
                             </tr>
                         </thead>
                         <tbody class="bg-white dark:bg-slate-800 divide-y divide-gray-200" id="transactionsTableBody">
-                            @foreach($transactions as $transaction)
+                            @forelse($transactions as $transaction)
                                 <tr class="hover:bg-gray-50 dark:bg-slate-700/50 transition-colors">
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-slate-400">
                                         #{{ $transaction->id }}
@@ -201,22 +227,39 @@
                                         </div>
                                     </td>
                                 </tr>
-                            @endforeach
+                            @empty
+                                <tr>
+                                    <td colspan="9" class="px-6 py-16 text-center align-middle">
+                                        <div class="flex flex-col items-center justify-center">
+                                            @if(request('search') || request('date') || request('status') || request('received_by'))
+                                                <svg class="w-12 h-12 text-slate-300 dark:text-slate-600 mb-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                                </svg>
+                                                <p class="text-sm text-slate-500 dark:text-slate-400 font-medium">No transactions found matching your filters.</p>
+                                            @else
+                                                <svg class="w-12 h-12 text-slate-300 dark:text-slate-600 mb-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                                                </svg>
+                                                <p class="text-sm text-slate-500 dark:text-slate-400 font-medium">No transactions found.</p>
+                                            @endif
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
                 <!-- Pagination -->
                 <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 dark:bg-slate-700/50 flex items-center justify-between print:hidden">
                     <div class="text-sm text-gray-500 dark:text-slate-400">
-                        Showing <span class="font-medium">{{ $transactions->firstItem() }}</span> to
-                        <span class="font-medium">{{ $transactions->lastItem() }}</span> of
+                        Showing <span class="font-medium">{{ $transactions->firstItem() ?: 0 }}</span> to
+                        <span class="font-medium">{{ $transactions->lastItem() ?: 0 }}</span> of
                         <span class="font-medium">{{ $transactions->total() }}</span> entries
                     </div>
                     <div>{{ $transactions->links() }}</div>
                 </div>
             </div>
 
-        @endif
     </div>
 
     <!-- Print Styles -->

@@ -9,12 +9,30 @@ class InventoryController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
-        $parts = \App\Models\Part::when($search, fn($q) => $q->where('name', 'like', "%$search%")
-        ->orWhere('part_no', 'like', "%$search%"))
+        $status = $request->input('status');
+
+        $parts = \App\Models\Part::when($search, function ($q) use ($search) {
+                $q->where(function ($query) use ($search) {
+                    $query->where('name', 'like', "%$search%")
+                          ->orWhere('part_no', 'like', "%$search%");
+                });
+            })
+            ->when($status, function ($q) use ($status) {
+                if ($status === 'Out of Stock') {
+                    $q->where('quantity_stock', 0);
+                } elseif ($status === 'Critical') {
+                    $q->where('quantity_stock', '>', 0)->where('quantity_stock', '<', 5);
+                } elseif ($status === 'Low Stock') {
+                    $q->where('quantity_stock', '>=', 5)->where('quantity_stock', '<', 10);
+                } elseif ($status === 'In Stock') {
+                    $q->where('quantity_stock', '>=', 10);
+                }
+            })
             ->latest()
             ->paginate(25)
             ->withQueryString();
-        return view('inventory.index', compact('parts', 'search'));
+
+        return view('inventory.index', compact('parts', 'search', 'status'));
     }
 
     public function create()
