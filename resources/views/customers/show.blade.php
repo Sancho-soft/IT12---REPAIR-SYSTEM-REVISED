@@ -14,7 +14,7 @@
                     </svg>
                     Back to List
                 </a>
-                @if(in_array(auth()->user()->role, ['Administrator', 'Secretary']))
+                @if(auth()->user()->role === 'Administrator')
                     <a href="{{ route('customers.edit', $customer) }}"
                         class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 dark:blue-600 transition-colors">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

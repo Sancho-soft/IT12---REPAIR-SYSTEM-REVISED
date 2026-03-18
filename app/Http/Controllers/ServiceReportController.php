@@ -186,7 +186,7 @@ class ServiceReportController extends Controller
         $miscCost = $request->miscellaneous_cost ?? 0;
         $totalAmount = $labor + $partsTotalCost + $miscCost;
 
-        \App\Models\ServiceDetail::create([
+        ServiceDetail::create([
             'report_id' => $report->id,
             'service_types' => $validated['service_types'] ?? [],
             'labor' => $labor,
@@ -287,7 +287,7 @@ class ServiceReportController extends Controller
         $miscCost = $request->miscellaneous_cost ?? ($service->details ? $service->details->miscellaneous_cost : 0);
         $totalAmount = $labor + $partsTotalCost + $miscCost;
 
-        \App\Models\ServiceDetail::updateOrCreate(
+        ServiceDetail::updateOrCreate(
             ['report_id' => $service->id],
             [
                 'complaint' => $request->problem_desc,
@@ -335,6 +335,7 @@ class ServiceReportController extends Controller
 
     public function print(\App\Models\ServiceReport $service)
     {
+        $service->load(['details', 'appliance', 'parts', 'transactions']);
         return view('services.print', compact('service'));
     }
 }

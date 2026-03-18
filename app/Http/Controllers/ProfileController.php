@@ -45,17 +45,18 @@ class ProfileController extends Controller
 
         // Handle profile picture upload to Cloudinary
         if ($request->hasFile('profile_picture')) {
-            $request->validate([
-                'profile_picture' => ['image', 'max:5120'],
-            ]);
+            try {
+                $uploaded = CloudinaryService::uploadProfilePicture(
+                    $request->file('profile_picture'),
+                    $user->profile_picture_public_id
+                );
 
-            $uploaded = CloudinaryService::uploadProfilePicture(
-                $request->file('profile_picture'),
-                $user->profile_picture_public_id
-            );
-
-            $validated['profile_picture'] = $uploaded['url'];
-            $validated['profile_picture_public_id'] = $uploaded['public_id'];
+                $validated['profile_picture'] = $uploaded['url'];
+                $validated['profile_picture_public_id'] = $uploaded['public_id'];
+            } catch (\Exception $e) {
+                return Redirect::route('profile.edit')
+                    ->withErrors(['profile_picture' => 'Failed to upload profile picture. Please try again.']);
+            }
         }
 
         $user->fill($validated);

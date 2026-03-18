@@ -211,6 +211,7 @@
                                                     </path>
                                                 </svg>
                                             </a>
+                                            @if(auth()->user()->role === 'Administrator')
                                             <form action="{{ route('transactions.destroy', $transaction) }}" method="POST"
                                                 class="inline-block">
                                                 @csrf
@@ -224,6 +225,7 @@
                                                     </svg>
                                                 </button>
                                             </form>
+                                            @endif
                                         </div>
                                     </td>
                                 </tr>

@@ -143,11 +143,20 @@
                         {{ $service->appliance ? $service->appliance->brand : 'N/A' }} /
                         {{ $service->appliance ? $service->appliance->model_no : 'N/A' }}
                     </p>
-                    {{ $service->model ?? 'N/A' }}</p>
                 </div>
                 <div class="col">
-                    <p><span class="label">Serial No:</span> {{ $service->serial_no ?? 'N/A' }}</p>
-                    <p><span class="label">Warranty:</span> {{ $service->warranty_status ?? 'N/A' }}</p>
+                    <p><span class="label">Serial No:</span> {{ $service->appliance ? ($service->appliance->serial_no ?? 'N/A') : 'N/A' }}</p>
+                    <p><span class="label">Warranty:</span>
+                        @if($service->appliance && $service->appliance->warranty_end)
+                            @if(\Carbon\Carbon::parse($service->appliance->warranty_end)->isPast())
+                                Expired ({{ \Carbon\Carbon::parse($service->appliance->warranty_end)->format('M d, Y') }})
+                            @else
+                                Active until {{ \Carbon\Carbon::parse($service->appliance->warranty_end)->format('M d, Y') }}
+                            @endif
+                        @else
+                            No Warranty
+                        @endif
+                    </p>
                 </div>
             </div>
         </div>

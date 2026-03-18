@@ -6,7 +6,7 @@
                 <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Customer Management</h2>
                 <p class="mt-1 text-sm text-gray-500 dark:text-slate-400">Manage your customer information and records</p>
             </div>
-            @if(in_array(auth()->user()->role, ['Administrator', 'Secretary']))
+            @if(auth()->user()->role === 'Administrator')
                 <a href="{{ route('customers.create') }}"
                     class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 dark:bg-blue-900 dark:hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
                     <svg class="w-5 h-5 mr-2 -ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -147,7 +147,7 @@
                                                     d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                                             </svg>
                                         </a>
-                                        @if(in_array(auth()->user()->role, ['Administrator', 'Secretary']))
+                                        @if(auth()->user()->role === 'Administrator')
                                             <a href="{{ route('customers.edit', $customer) }}"
                                                 class="text-blue-600 dark:text-blue-400 hover:text-blue-900 p-1 hover:bg-blue-50 rounded transition-colors" title="Edit">
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

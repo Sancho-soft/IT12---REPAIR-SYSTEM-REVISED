@@ -6,7 +6,7 @@
                 <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Service Reports</h2>
                 <p class="mt-1 text-sm text-gray-500 dark:text-slate-400">Track and manage all service requests</p>
             </div>
-            @if(in_array(auth()->user()->role, ['Administrator', 'Admin', 'Secretary']))
+            @if(auth()->user()->role === 'Administrator')
             <a href="{{ route('services.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 dark:bg-blue-900 dark:hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
                 <svg class="w-5 h-5 mr-2 -ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
@@ -90,6 +90,9 @@
                             <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                 Status
                             </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
+                                Technician
+                            </th>
                             <th scope="col" class="px-6 py-3 text-right text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                 Actions
                             </th>
@@ -135,6 +138,9 @@
                                     {{ $service->status }}
                                 </span>
                             </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-slate-400">
+                                {{ $service->details && $service->details->technician ? $service->details->technician : 'No Assigned Technician' }}
+                            </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <div class="flex justify-end space-x-3">
                                     <a href="{{ route('services.show', $service) }}" class="text-gray-400 hover:text-blue-600 dark:text-blue-400 transition-colors" title="View">
@@ -143,14 +149,14 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                                         </svg>
                                     </a>
-                                    @if(auth()->user()->role !== 'Cashier')
+                                    @if(in_array(auth()->user()->role, ['Administrator', 'Technician']))
                                     <a href="{{ route('services.edit', $service) }}" class="text-blue-600 dark:text-blue-400 hover:text-blue-900 transition-colors" title="Edit">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                         </svg>
                                     </a>
                                     @endif
-                                    @if(in_array(auth()->user()->role, ['Administrator', 'Secretary', 'Admin']))
+                                    @if(auth()->user()->role === 'Administrator')
                                     <form action="{{ route('services.destroy', $service) }}" method="POST" class="inline-block m-0 p-0" id="del-service-{{ $service->id }}">
                                         @csrf
                                         @method('DELETE')
@@ -168,7 +174,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-16 text-center align-middle">
+                            <td colspan="7" class="px-6 py-16 text-center align-middle">
                                 <div class="flex flex-col items-center justify-center">
                                     @if(request('search') || request('status') || request('date'))
                                         <svg class="w-12 h-12 text-slate-300 dark:text-slate-600 mb-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
