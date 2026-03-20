@@ -65,7 +65,7 @@
         @endif
 
         <!-- Parts -->
-        @if(auth()->user()->role === 'Administrator')
+        @if(in_array(auth()->user()->role, ['Administrator', 'Secretary']))
             <a href="{{ route('inventory.index') }}"
                 class="flex items-center px-3 py-2.5 rounded-lg group {{ request()->routeIs('inventory.*') ? 'bg-blue-600 text-white shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
                 <svg class="w-5 h-5 mr-3 {{ request()->routeIs('inventory.*') ? 'text-white' : 'text-slate-400 group-hover:text-slate-300' }}"

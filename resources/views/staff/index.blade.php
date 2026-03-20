@@ -53,7 +53,7 @@
                                 Role
                             </th>
                             <th scope="col"
-                                class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
+                                class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                 Status
                             </th>
                             <th scope="col"

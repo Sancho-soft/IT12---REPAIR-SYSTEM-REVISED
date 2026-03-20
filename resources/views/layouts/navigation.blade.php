@@ -97,6 +97,40 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+            
+            @if(in_array(auth()->user()->role, ['Administrator', 'Secretary', 'Cashier']))
+                <x-responsive-nav-link :href="route('customers.index')" :active="request()->routeIs('customers.*')">
+                    {{ __('Customers') }}
+                </x-responsive-nav-link>
+            @endif
+
+            <x-responsive-nav-link :href="route('services.index')" :active="request()->routeIs('services.*')">
+                {{ __('Services') }}
+            </x-responsive-nav-link>
+
+            @if(in_array(auth()->user()->role, ['Administrator', 'Cashier']))
+                <x-responsive-nav-link :href="route('transactions.index')" :active="request()->routeIs('transactions.*')">
+                    {{ __('Transactions') }}
+                </x-responsive-nav-link>
+            @endif
+
+            @if(in_array(auth()->user()->role, ['Administrator', 'Secretary']))
+                <x-responsive-nav-link :href="route('inventory.index')" :active="request()->routeIs('inventory.*')">
+                    {{ __('Inventory') }}
+                </x-responsive-nav-link>
+            @endif
+
+            @if(auth()->user()->role === 'Administrator')
+                <x-responsive-nav-link :href="route('staff.index')" :active="request()->routeIs('staff.*')">
+                    {{ __('Users') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('prices.index')" :active="request()->routeIs('prices.*')">
+                    {{ __('Prices') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('archive.index')" :active="request()->routeIs('archive.*')">
+                    {{ __('Archive') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->
