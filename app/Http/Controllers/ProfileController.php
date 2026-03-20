@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
-use App\Services\CloudinaryService;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -43,16 +43,19 @@ class ProfileController extends Controller
         $user = $request->user();
         $validated = $request->validated();
 
-        // Handle profile picture upload to Cloudinary
+        // Handle profile picture upload to local storage
         if ($request->hasFile('profile_picture')) {
             try {
-                $uploaded = CloudinaryService::uploadProfilePicture(
-                    $request->file('profile_picture'),
-                    $user->profile_picture_public_id
-                );
-
-                $validated['profile_picture'] = $uploaded['url'];
-                $validated['profile_picture_public_id'] = $uploaded['public_id'];
+                if ($user->profile_picture) {
+                    $oldPath = str_replace(url('/storage') . '/', '', $user->profile_picture);
+                    if (Storage::disk('public')->exists($oldPath)) {
+                        Storage::disk('public')->delete($oldPath);
+                    }
+                }
+                $path = $request->file('profile_picture')->store('profile-pictures', 'public');
+                
+                $validated['profile_picture'] = url('/storage/' . $path);
+                $validated['profile_picture_public_id'] = null;
             } catch (\Exception $e) {
                 return Redirect::route('profile.edit')
                     ->withErrors(['profile_picture' => 'Failed to upload profile picture. Please try again.']);
@@ -78,8 +81,11 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
-        if ($user->profile_picture_public_id) {
-            CloudinaryService::delete($user->profile_picture_public_id);
+        if ($user->profile_picture) {
+            $oldPath = str_replace(url('/storage') . '/', '', $user->profile_picture);
+            if (Storage::disk('public')->exists($oldPath)) {
+                Storage::disk('public')->delete($oldPath);
+            }
         }
 
         // Persist "who deleted" before logout; bypass $fillable.

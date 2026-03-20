@@ -69,7 +69,7 @@
                         </div>
                         <div class="sm:col-span-2">
                             <dt class="text-sm font-medium text-gray-500 dark:text-slate-400">Problem Description</dt>
-                            <dd class="mt-1 text-sm text-gray-900 bg-gray-50 dark:bg-slate-700/50 p-3 rounded-lg border border-gray-100 dark:border-slate-700">
+                            <dd class="mt-1 text-sm text-gray-900 dark:text-white bg-gray-50 dark:bg-slate-700/50 p-3 rounded-lg border border-gray-100 dark:border-slate-700">
                                 {{ $service->problem_desc }}
                             </dd>
                         </div>
@@ -77,7 +77,7 @@
                             <div class="sm:col-span-2">
                                 <dt class="text-sm font-medium text-gray-500 dark:text-slate-400">Findings</dt>
                                 <dd
-                                    class="mt-1 text-sm text-gray-900 bg-gray-50 dark:bg-slate-700/50 p-3 rounded-lg border border-gray-100 dark:border-slate-700 whitespace-pre-line">
+                                    class="mt-1 text-sm text-gray-900 dark:text-white bg-gray-50 dark:bg-slate-700/50 p-3 rounded-lg border border-gray-100 dark:border-slate-700 whitespace-pre-line">
                                     {{ $service->findings }}
                                 </dd>
                             </div>
@@ -92,7 +92,7 @@
                             <div class="sm:col-span-2">
                                 <dt class="text-sm font-medium text-gray-500 dark:text-slate-400">Miscellaneous Notes (Not in Inventory)</dt>
                                 <dd
-                                    class="mt-1 text-sm text-gray-900 bg-gray-50 dark:bg-slate-700/50 p-3 rounded-lg border border-gray-100 dark:border-slate-700 whitespace-pre-line">
+                                    class="mt-1 text-sm text-gray-900 dark:text-white bg-gray-50 dark:bg-slate-700/50 p-3 rounded-lg border border-gray-100 dark:border-slate-700 whitespace-pre-line">
                                     {{ $service->used_parts }}
                                 </dd>
                             </div>
@@ -218,7 +218,7 @@
                         </div>
                         @endif
 
-                        <div class="sm:col-span-2 bg-blue-50 p-4 rounded-lg">
+                        <div class="sm:col-span-2 bg-blue-50 dark:bg-slate-700/50 p-4 rounded-lg border dark:border-slate-600">
                             <dt class="text-sm font-bold text-gray-700 dark:text-slate-200 mb-2">Cost Breakdown</dt>
                             <dd class="mt-1 grid grid-cols-1 sm:grid-cols-4 gap-4 text-sm">
                                 <div>

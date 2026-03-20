@@ -116,7 +116,11 @@ class ServiceReportController extends Controller
                 });
             })
             ->when($status, function ($q) use ($status) {
-                $q->where('status', $status);
+                if ($status === 'In Progress') {
+                    $q->whereIn('status', ['Waiting for Parts', 'Under Repair']);
+                } else {
+                    $q->where('status', $status);
+                }
             })
             ->when($date, function ($q) use ($date) {
                 $q->whereDate('date_in', $date);

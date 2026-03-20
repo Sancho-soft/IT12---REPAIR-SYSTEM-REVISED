@@ -15,8 +15,8 @@
                         </svg>
                     </div>
                     <span
-                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
-                        +12%
+                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $customerGrowth >= 0 ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' }}">
+                        {{ $customerGrowth >= 0 ? '+' : '' }}{{ $customerGrowth }}%
                     </span>
                 </div>
                 <div class="mt-4">
@@ -37,8 +37,8 @@
                         </svg>
                     </div>
                     <span
-                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
-                        +8%
+                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $incomeGrowth >= 0 ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' }}">
+                        {{ $incomeGrowth >= 0 ? '+' : '' }}{{ $incomeGrowth }}%
                     </span>
                 </div>
                 <div class="mt-4">
@@ -61,8 +61,8 @@
                         </svg>
                     </div>
                     <span
-                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
-                        +5%
+                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $serviceGrowth >= 0 ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' }}">
+                        {{ $serviceGrowth >= 0 ? '+' : '' }}{{ $serviceGrowth }}%
                     </span>
                 </div>
                 <div class="mt-4">
@@ -82,12 +82,12 @@
                         </svg>
                     </div>
                     <span
-                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
-                        +3%
+                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $overallGrowth >= 0 ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' }}">
+                        {{ $overallGrowth >= 0 ? '+' : '' }}{{ $overallGrowth }}%
                     </span>
                 </div>
                 <div class="mt-4">
-                    <h3 class="text-3xl font-bold text-gray-900 dark:text-white">+15%</h3>
+                    <h3 class="text-3xl font-bold text-gray-900 dark:text-white">{{ $overallGrowth >= 0 ? '+' : '' }}{{ $overallGrowth }}%</h3>
                     <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Growth Rate</p>
                 </div>
             </a>
@@ -121,14 +121,23 @@
                             <div class="flex-1 flex items-center justify-center relative">
                                 <canvas id="serviceTypesChart"></canvas>
                                 <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                                    <span class="text-3xl font-bold text-gray-900 dark:text-white" id="popularServicePercentage">50%</span>
-                                    <span class="text-xs text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wider" id="popularServiceLabel">MAINTENANCE</span>
+                                    <span class="text-3xl font-bold text-gray-900 dark:text-white" id="popularServicePercentage">
+                                        @if(array_sum($chartData['donutData']) > 0)
+                                            {{ round(($chartData['donutData'][0] / array_sum($chartData['donutData'])) * 100) }}%
+                                        @else
+                                            0%
+                                        @endif
+                                    </span>
+                                    <span class="text-xs text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wider" id="popularServiceLabel">
+                                        {{ strtoupper($chartData['donutLabels'][0] ?? 'N/A') }}
+                                    </span>
                                 </div>
                             </div>
                             <div class="mt-2 flex justify-center space-x-6">
-                                <div class="flex items-center"><span class="w-3 h-3 rounded-full bg-orange-500 mr-2"></span><span class="text-sm text-gray-500 dark:text-gray-400">Installation</span></div>
-                                <div class="flex items-center"><span class="w-3 h-3 rounded-full bg-green-500 mr-2"></span><span class="text-sm text-gray-500 dark:text-gray-400">Maintenance</span></div>
-                                <div class="flex items-center"><span class="w-3 h-3 rounded-full bg-blue-500 mr-2"></span><span class="text-sm text-gray-500 dark:text-gray-400">Repair</span></div>
+                                @php $chartColors = ['bg-orange-500', 'bg-green-500', 'bg-blue-500']; @endphp
+                                @foreach($chartData['donutLabels'] as $index => $label)
+                                    <div class="flex items-center"><span class="w-3 h-3 rounded-full {{ $chartColors[$index % 3] }} mr-2"></span><span class="text-sm text-gray-500 dark:text-gray-400">{{ $label }}</span></div>
+                                @endforeach
                             </div>
                         </div>
 
@@ -138,7 +147,7 @@
                             <div class="flex-1 flex items-center justify-center">
                                 <canvas id="serviceTypesLineChart"></canvas>
                             </div>
-                            <p class="text-center text-xs text-gray-400 dark:text-gray-500 mt-1">Service type trends over the last 6 months</p>
+                            <p class="text-center text-xs text-gray-400 dark:text-gray-500 pb-2 mt-1">Service type trends over the last 6 months</p>
                         </div>
                     </div>
                 </div>
@@ -205,6 +214,94 @@
                 </div>
             </div>
         </div>
+        </div>
+
+        <!-- Additional Dashboard Information -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+            <!-- Low Stock Parts -->
+            <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 p-6 flex flex-col gap-4 hover:shadow-md transition-all duration-300">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-white">Low Stock Alerts</h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Inventory items needing restock</p>
+                    </div>
+                    @if(Route::has('parts.index'))
+                    <a href="{{ route('parts.index') }}" class="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline">View Inventory</a>
+                    @endif
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-slate-700/50">
+                        <thead>
+                            <tr>
+                                <th class="text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider py-2">Part Name</th>
+                                <th class="text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider py-2">Stock</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 dark:divide-slate-700/50">
+                            @forelse($lowStockParts ?? collect() as $part)
+                            <tr>
+                                <td class="py-3 text-sm font-medium text-gray-900 dark:text-white">{{ $part->name }}</td>
+                                <td class="py-3 text-sm text-right text-red-600 font-bold">
+                                    {{ $part->quantity_stock }}
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="2" class="py-4 text-center text-sm text-gray-500 dark:text-gray-400">Inventory levels are healthy.</td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Recent Transactions -->
+            <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 p-6 flex flex-col gap-4 hover:shadow-md transition-all duration-300">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-white">Recent Transactions</h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Latest paid and unpaid invoices</p>
+                    </div>
+                    @if(Route::has('transactions.index'))
+                    <a href="{{ route('transactions.index') }}" class="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline">View All</a>
+                    @endif
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-slate-700/50">
+                        <thead>
+                            <tr>
+                                <th class="text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider py-2">Customer</th>
+                                <th class="text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider py-2">Amount</th>
+                                <th class="text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider py-2">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 dark:divide-slate-700/50">
+                            @forelse($recentTransactions ?? collect() as $transaction)
+                            <tr>
+                                <td class="py-3 text-sm font-medium text-gray-900 dark:text-white">{{ optional($transaction->report)->customer_name ?? 'Unknown' }}</td>
+                                <td class="py-3 text-sm text-gray-900 dark:text-gray-300">₱{{ number_format($transaction->total_amount, 2) }}</td>
+                                <td class="py-3 text-sm text-right">
+                                    @php
+                                        $statusClass = match ($transaction->payment_status) {
+                                            'Paid' => 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 border dark:border-green-800/50',
+                                            'Unpaid' => 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 border dark:border-red-800/50',
+                                            'Partial' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400 border dark:border-yellow-800/50',
+                                            default => 'bg-gray-100 text-gray-800 dark:bg-slate-700 dark:text-slate-300 border dark:border-slate-600',
+                                        };
+                                    @endphp
+                                    <span class="px-2 py-1 text-[10px] font-semibold rounded-full {{ $statusClass }}">{{ $transaction->payment_status }}</span>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="3" class="py-4 text-center text-sm text-gray-500 dark:text-gray-400">No recent transactions.</td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Chart.js Script -->
@@ -214,12 +311,14 @@
             // --- DONUT CHART ---
             const ctx = document.getElementById('serviceTypesChart');
             if (ctx) {
+                const donutLabels = @json($chartData['donutLabels']);
+                const donutData = @json($chartData['donutData']);
                 new Chart(ctx, {
                     type: 'doughnut',
                     data: {
-                        labels: ['Installation', 'Maintenance', 'Repair'],
+                        labels: donutLabels,
                         datasets: [{
-                            data: [30, 50, 20],
+                            data: donutData,
                             backgroundColor: ['#F97316', '#22C55E', '#3B82F6'],
                             borderWidth: 0,
                             hoverOffset: 4
@@ -244,10 +343,12 @@
                         onHover: function(event, activeElements) {
                             if (activeElements.length > 0) {
                                 const index = activeElements[0].index;
-                                const data = this.data.datasets[0].data[index];
+                                const value = this.data.datasets[0].data[index];
                                 const label = this.data.labels[index];
-                                document.getElementById('popularServicePercentage').textContent = data + '%';
-                                document.getElementById('popularServiceLabel').textContent = label.toUpperCase();
+                                const total = donutData.reduce((a, b) => a + b, 0);
+                                const percentage = total > 0 ? Math.round((value / total) * 100) : 0;
+                                document.getElementById('popularServicePercentage').textContent = percentage + '%';
+                                document.getElementById('popularServiceLabel').textContent = label ? label.toUpperCase() : '';
                             }
                         }
                     }
@@ -257,41 +358,13 @@
             // --- LINE CHART ---
             const ctxLine = document.getElementById('serviceTypesLineChart');
             if (ctxLine) {
+                const lineMonths = @json($chartData['lineMonths']);
+                const lineDatasets = @json($chartData['lineDatasets']);
                 new Chart(ctxLine, {
                     type: 'line',
                     data: {
-                        labels: ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'],
-                        datasets: [{
-                                label: 'Installation',
-                                data: [12, 19, 15, 22, 18, 30],
-                                borderColor: '#F97316',
-                                backgroundColor: 'rgba(249,115,22,0.08)',
-                                fill: true,
-                                tension: 0.4,
-                                pointRadius: 4,
-                                pointHoverRadius: 6,
-                            },
-                            {
-                                label: 'Maintenance',
-                                data: [28, 32, 45, 40, 48, 50],
-                                borderColor: '#22C55E',
-                                backgroundColor: 'rgba(34,197,94,0.08)',
-                                fill: true,
-                                tension: 0.4,
-                                pointRadius: 4,
-                                pointHoverRadius: 6,
-                            },
-                            {
-                                label: 'Repair',
-                                data: [10, 14, 18, 13, 20, 20],
-                                borderColor: '#3B82F6',
-                                backgroundColor: 'rgba(59,130,246,0.08)',
-                                fill: true,
-                                tension: 0.4,
-                                pointRadius: 4,
-                                pointHoverRadius: 6,
-                            }
-                        ]
+                        labels: lineMonths,
+                        datasets: lineDatasets
                     },
                     options: {
                         responsive: true,

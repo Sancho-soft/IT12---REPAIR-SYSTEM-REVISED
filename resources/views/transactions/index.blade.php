@@ -1,5 +1,13 @@
 <x-app-layout>
-    <div class="space-y-6">
+    <style>
+        @media print {
+            @page {
+                size: landscape;
+                margin: 0;
+            }
+        }
+    </style>
+    <div class="space-y-6 print:p-8">
         <!-- Header -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 print:hidden">
             <div>
@@ -8,7 +16,7 @@
             </div>
             <div class="flex space-x-3">
                 <button onclick="window.print()"
-                    class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-slate-500 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:bg-slate-700/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                    class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-slate-500 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-slate-200 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
                     <svg class="w-5 h-5 mr-2 -ml-1 text-gray-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z">
@@ -90,11 +98,18 @@
             </form>
         </div>
 
+            <!-- Print Header -->
+            <div class="hidden print:block text-center mb-8 pb-4 border-b border-gray-200">
+                <h1 class="text-3xl font-bold text-gray-900">101 Repair Service</h1>
+                <h2 class="text-xl text-gray-700 mt-1">Transactions Report</h2>
+                <p class="text-sm text-gray-500 mt-1">{{ date('M d, Y h:i A') }}</p>
+            </div>
+
             <!-- Table -->
             <div
-                class="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm overflow-hidden print:shadow-none print:border">
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
+                class="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm overflow-hidden print:shadow-none print:border-none print:rounded-none">
+                <div class="overflow-x-auto print:overflow-visible">
+                    <table class="min-w-full divide-y divide-gray-200 print:w-full">
                         <thead class="bg-gray-50 dark:bg-slate-700/50">
                             <tr>
                                 <th scope="col"
@@ -159,10 +174,10 @@
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         @php
                                             $statusClass = match ($transaction->payment_status) {
-                                                'Paid' => 'bg-green-100 text-green-800',
-                                                'Unpaid' => 'bg-red-100 text-red-800',
-                                                'Partial' => 'bg-yellow-100 text-yellow-800',
-                                                default => 'bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-slate-100',
+                                                'Paid' => 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 border dark:border-green-800/50',
+                                                'Unpaid' => 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 border dark:border-red-800/50',
+                                                'Partial' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400 border dark:border-yellow-800/50',
+                                                default => 'bg-gray-100 text-gray-800 dark:bg-slate-700 dark:text-slate-300 border dark:border-slate-600',
                                             };
                                         @endphp
                                         <span
@@ -183,7 +198,7 @@
                                         <div class="flex justify-end space-x-3">
                                             @if($transaction->payment_url && $transaction->payment_status !== 'Paid')
                                                 <a href="{{ $transaction->payment_url }}" target="_blank"
-                                                    class="text-green-500 hover:text-green-700 transition-colors"
+                                                    class="text-green-500 hover:text-green-700 dark:text-gray-400 dark:hover:text-white transition-colors"
                                                     title="Payment Link">
                                                     <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor"
                                                         viewBox="0 0 24 24">
@@ -194,7 +209,7 @@
                                                 </a>
                                             @endif
                                             <a href="{{ route('transactions.show', $transaction) }}"
-                                                class="text-gray-400 hover:text-blue-600 dark:text-blue-400 transition-colors" title="View">
+                                                class="text-gray-400 hover:text-blue-600 dark:hover:text-white transition-colors" title="View">
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                         d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -204,7 +219,7 @@
                                                 </svg>
                                             </a>
                                             <a href="{{ route('transactions.edit', $transaction) }}"
-                                                class="text-blue-600 dark:text-blue-400 hover:text-blue-900 transition-colors" title="Edit">
+                                                class="text-blue-600 hover:text-blue-900 dark:text-gray-400 dark:hover:text-white transition-colors" title="Edit">
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                         d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
@@ -216,11 +231,11 @@
                                                 class="inline-block">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="text-red-500 hover:text-red-700 transition-colors"
-                                                    title="Delete">
+                                                <button type="submit" class="text-red-500 hover:text-red-700 dark:text-gray-400 dark:hover:text-white transition-colors"
+                                                    title="Archive">
                                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                                            d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4">
                                                         </path>
                                                     </svg>
                                                 </button>

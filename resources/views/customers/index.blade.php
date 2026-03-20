@@ -69,19 +69,19 @@
                     <thead class="bg-gray-50 dark:bg-slate-700/50">
                         <tr>
                             <th scope="col"
-                                class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
+                                class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                 ID
                             </th>
                             <th scope="col"
-                                class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
+                                class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                 Customer
                             </th>
                             <th scope="col"
-                                class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
+                                class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                 Contact
                             </th>
                             <th scope="col"
-                                class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
+                                class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                 Address
                             </th>
                             <th scope="col"
@@ -104,8 +104,12 @@
                                     <div class="flex items-center">
                                         <div class="flex-shrink-0 h-10 w-10">
                                             <div
-                                                class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold text-sm">
-                                                {{ substr($customer->first_name, 0, 1) }}{{ substr($customer->last_name, 0, 1) }}
+                                                class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold text-sm overflow-hidden border border-gray-200 dark:border-slate-600">
+                                                @if($customer->profile_picture)
+                                                    <img src="{{ str_starts_with($customer->profile_picture, 'http') ? $customer->profile_picture : asset($customer->profile_picture) }}" alt="Profile" class="h-full w-full object-cover">
+                                                @else
+                                                    {{ substr($customer->first_name, 0, 1) }}{{ substr($customer->last_name, 0, 1) }}
+                                                @endif
                                             </div>
                                         </div>
                                         <div class="ml-4">
@@ -160,11 +164,11 @@
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="button"
-                                                    @click="$dispatch('open-confirm', { title: 'Delete Customer', message: 'Delete customer {{ addslashes($customer->first_name . ' ' . $customer->last_name) }}? This cannot be undone.', confirmText: 'Delete', cancelText: 'Cancel', variant: 'danger', action: () => document.getElementById('del-cust-{{ $customer->id }}').submit() })"
-                                                    class="text-red-500 hover:text-red-700 p-1 hover:bg-red-50 rounded transition-colors">
+                                                    @click="$dispatch('open-confirm', { title: 'Archive Customer', message: 'Archive customer {{ addslashes($customer->first_name . ' ' . $customer->last_name) }}? You can restore this later from the Archive.', confirmText: 'Archive', cancelText: 'Cancel', variant: 'danger', action: () => document.getElementById('del-cust-{{ $customer->id }}').submit() })"
+                                                    class="text-red-500 hover:text-red-700 p-1 hover:bg-red-50 rounded transition-colors" title="Archive">
                                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                            d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
                                                     </svg>
                                                 </button>
                                             </form>

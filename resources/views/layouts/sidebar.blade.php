@@ -1,6 +1,6 @@
 <aside class="w-64 bg-slate-900 border-r border-slate-800 flex flex-col h-screen fixed left-0 top-0 z-50">
     <!-- Logo -->
-    <div class="flex items-center justify-center px-6 py-6 border-b border-gray-200 dark:border-slate-800">
+    <div class="flex items-center justify-center px-6 py-6 border-b border-slate-800">
         <a href="{{ route('dashboard') }}" class="flex items-center justify-center w-full">
             <div class="p-2 w-full flex justify-center">
                 <!-- Light Mode Logo (Blue) -->

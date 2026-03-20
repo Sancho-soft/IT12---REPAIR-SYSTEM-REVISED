@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class CustomerController extends Controller
 {
@@ -53,16 +54,34 @@ class CustomerController extends Controller
         $this->checkCustomerAccess();
         $request->validate([
             'first_name' => 'nullable|string|max:255',
-            'last_name' => 'nullable|string|max:255',
+            'last_name' => [
+                'nullable', 'string', 'max:255',
+                function ($attribute, $value, $fail) use ($request) {
+                    $exists = \App\Models\Customer::where('first_name', $request->first_name)
+                        ->where('last_name', $value)
+                        ->exists();
+                    if ($exists) {
+                        $fail('A customer with the same first and last name already exists.');
+                    }
+                },
+            ],
             'address' => 'nullable|string',
             'phone_no' => 'required|numeric|digits_between:7,15',
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ], [
             'phone_no.required' => 'The phone number is required.',
             'phone_no.numeric' => 'The phone number must contain only numbers.',
             'phone_no.digits_between' => 'The phone number must be between 7 and 15 digits.',
         ]);
 
-        \App\Models\Customer::create($request->all());
+        $data = $request->except('profile_picture');
+
+        if ($request->hasFile('profile_picture')) {
+            $path = $request->file('profile_picture')->store('customer-profiles', 'public');
+            $data['profile_picture'] = 'storage/' . $path;
+        }
+
+        \App\Models\Customer::create($data);
 
         return redirect()->route('customers.index')->with('success', 'Customer created successfully.');
     }
@@ -86,16 +105,41 @@ class CustomerController extends Controller
         $this->checkCustomerAccess();
         $request->validate([
             'first_name' => 'nullable|string|max:255',
-            'last_name' => 'nullable|string|max:255',
+            'last_name' => [
+                'nullable', 'string', 'max:255',
+                function ($attribute, $value, $fail) use ($request, $customer) {
+                    $exists = \App\Models\Customer::where('first_name', $request->first_name)
+                        ->where('last_name', $value)
+                        ->where('id', '!=', $customer->id)
+                        ->exists();
+                    if ($exists) {
+                        $fail('A customer with the same first and last name already exists.');
+                    }
+                },
+            ],
             'address' => 'nullable|string',
             'phone_no' => 'required|numeric|digits_between:7,15',
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ], [
             'phone_no.required' => 'The phone number is required.',
             'phone_no.numeric' => 'The phone number must contain only numbers.',
             'phone_no.digits_between' => 'The phone number must be between 7 and 15 digits.',
         ]);
 
-        $customer->update($request->all());
+        $data = $request->except('profile_picture');
+
+        if ($request->hasFile('profile_picture')) {
+            if ($customer->profile_picture && !str_starts_with($customer->profile_picture, 'http')) {
+                $oldPath = str_replace('storage/', '', $customer->profile_picture);
+                if (\Illuminate\Support\Facades\Storage::disk('public')->exists($oldPath)) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete($oldPath);
+                }
+            }
+            $path = $request->file('profile_picture')->store('customer-profiles', 'public');
+            $data['profile_picture'] = 'storage/' . $path;
+        }
+
+        $customer->update($data);
 
         return redirect()->route('customers.index')->with('success', 'Customer updated successfully.');
     }

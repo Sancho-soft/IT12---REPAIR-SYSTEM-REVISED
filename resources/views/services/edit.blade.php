@@ -273,7 +273,7 @@
                                         ]">
 
                                         <!-- Hidden Input Array for Form Submission and Interaction -->
-                                        <input type="checkbox" name="technicians[]" :value="(tech.first_name + ' ' + (tech.last_name || '')).trim()"
+                                        <input type="checkbox" :value="(tech.first_name + ' ' + (tech.last_name || '')).trim()"
                                             class="hidden"
                                             :checked="selectedTechs.includes((tech.first_name + ' ' + (tech.last_name || '')).trim())"
                                             @click.prevent="if('{{ $techDisabled }}' !== 'disabled') toggleTech((tech.first_name + ' ' + (tech.last_name || '')).trim())"
@@ -312,6 +312,11 @@
                                 No technicians match your search filters.
                             </div>
 
+                            <!-- Native Form Submission explicit syncing -->
+                            <template x-for="t in selectedTechs">
+                                <input type="hidden" name="technicians[]" :value="t">
+                            </template>
+
                             @error('technicians')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -345,7 +350,7 @@
                         <div class="md:col-span-2">
                             <label for="problem_desc" class="block text-sm font-medium text-gray-700 dark:text-slate-200">Problem Description<span class="text-red-500">*</span></label>
                             <textarea id="problem_desc" name="problem_desc" rows="3" required {{ $techDisabled }}
-                                class="mt-1 block w-full rounded-lg border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm disabled:bg-gray-100 dark:bg-slate-700 disabled:cursor-not-allowed">{{ old('problem_desc', $service->details ? $service->details->complaint : '') }}</textarea>
+                                class="mt-1 block w-full rounded-lg border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm disabled:bg-gray-100 dark:bg-slate-700 dark:text-white disabled:cursor-not-allowed">{{ old('problem_desc', $service->details ? $service->details->complaint : '') }}</textarea>
                             @error('problem_desc')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -355,7 +360,7 @@
                         <div class="md:col-span-2">
                             <label for="findings" class="block text-sm font-medium text-gray-700 dark:text-slate-200">Findings <span class="text-red-500">*</span></label>
                             <textarea id="findings" name="findings" rows="3" required {{ $secDisabled }}
-                                class="mt-1 block w-full rounded-lg border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm disabled:bg-gray-100 dark:bg-slate-700 disabled:cursor-not-allowed">{{ old('findings', $service->findings) }}</textarea>
+                                class="mt-1 block w-full rounded-lg border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm disabled:bg-gray-100 dark:bg-slate-700 dark:text-white disabled:cursor-not-allowed">{{ old('findings', $service->findings) }}</textarea>
                             @error('findings')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -365,7 +370,7 @@
                         <div class="md:col-span-2">
                             <label for="remarks" class="block text-sm font-medium text-gray-700 dark:text-slate-200">Remarks <span class="text-red-500">*</span></label>
                             <textarea id="remarks" name="remarks" rows="2" required {{ $secDisabled }}
-                                class="mt-1 block w-full rounded-lg border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm disabled:bg-gray-100 dark:bg-slate-700 disabled:cursor-not-allowed">{{ old('remarks', $service->remarks) }}</textarea>
+                                class="mt-1 block w-full rounded-lg border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm disabled:bg-gray-100 dark:bg-slate-700 dark:text-white disabled:cursor-not-allowed">{{ old('remarks', $service->remarks) }}</textarea>
                             @error('remarks')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -557,7 +562,7 @@
                             <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label for="used_parts" class="block text-xs font-medium text-gray-700 dark:text-slate-200">Additional Notes / Miscellaneous Not In Inventory</label>
-                                    <textarea id="used_parts" name="used_parts" rows="2" {{ $secDisabled }} class="mt-1 block w-full rounded-md border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm disabled:bg-gray-100 dark:bg-slate-700 disabled:cursor-not-allowed" placeholder="Any screws, tapes, manual items used...">{{ old('used_parts', $service->used_parts) }}</textarea>
+                                    <textarea id="used_parts" name="used_parts" rows="2" {{ $secDisabled }} class="mt-1 block w-full rounded-md border-gray-300 dark:border-slate-500 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm disabled:bg-gray-100 dark:bg-slate-700 dark:text-white disabled:cursor-not-allowed" placeholder="Any screws, tapes, manual items used...">{{ old('used_parts', $service->used_parts) }}</textarea>
                                 </div>
                                 <div>
                                     <label for="miscellaneous_cost" class="block text-xs font-medium text-gray-700 dark:text-slate-200">Miscellaneous Cost</label>
@@ -611,7 +616,6 @@
                                 Pending</option>
                             <option value="Waiting for Parts" {{ old('status', $service->status) == 'Waiting for Parts' ? 'selected' : '' }}>Waiting for Parts</option>
                             <option value="Under Repair" {{ old('status', $service->status) == 'Under Repair' ? 'selected' : '' }}>Under Repair</option>
-                            <option value="Unrepairable" {{ old('status', $service->status) == 'Unrepairable' ? 'selected' : '' }}>Unrepairable</option>
                             <option value="Completed" {{ old('status', $service->status) == 'Completed' ? 'selected' : '' }}>Completed</option>
                             <option value="Cancelled" {{ old('status', $service->status) == 'Cancelled' ? 'selected' : '' }}>Cancelled</option>
                         </select>

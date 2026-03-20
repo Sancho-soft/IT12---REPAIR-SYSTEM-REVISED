@@ -12,8 +12,8 @@
         <!-- Header -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Archive & Deleted Records</h2>
-                <p class="mt-1 text-sm text-gray-500 dark:text-slate-400">View and restore archived or deleted items</p>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Archive Records</h2>
+                <p class="mt-1 text-sm text-gray-500 dark:text-slate-400">View and restore archived items</p>
             </div>
         </div>
 
@@ -109,11 +109,8 @@
                         <tbody class="bg-white dark:bg-slate-800 divide-y divide-gray-200">
                             @foreach($paginatedArchives as $item)
                                 <tr class="hover:bg-gray-50 dark:bg-slate-700/50 transition-colors">
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span
-                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-slate-100">
-                                            {{ $item->type }}
-                                        </span>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                        {{ $item->type }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                                         {{ $item->details }}

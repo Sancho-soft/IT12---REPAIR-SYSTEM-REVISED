@@ -16,7 +16,7 @@
         <!-- Form Card -->
         <div class="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm overflow-hidden">
             <div class="p-6">
-                <form action="{{ route('customers.store') }}" method="POST" class="space-y-6">
+                <form action="{{ route('customers.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                     @csrf
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -54,7 +54,7 @@
                         </div>
 
                         <!-- Email -->
-                        <div class="md:col-span-2">
+                        <div class="col-span-1">
                             <label for="email" class="block text-sm font-medium text-gray-700 dark:text-slate-200">Email Address
                                 (Optional)</label>
                             <input type="email" name="email" id="email" value="{{ old('email') }}"
@@ -65,6 +65,26 @@
                                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
+                        <!-- Profile Picture -->
+                        <div class="col-span-1">
+                            <label for="profile_picture" class="block text-sm font-medium text-gray-700 dark:text-slate-200">Profile Picture (Optional)</label>
+                            <input type="file" name="profile_picture" id="profile_picture" accept="image/*"
+                                class="mt-1 block w-full text-sm text-gray-500 dark:text-gray-400
+                                file:mr-4 file:py-2 file:px-4
+                                file:rounded-lg file:border-0
+                                file:text-sm file:font-semibold
+                                file:bg-blue-50 file:text-blue-700
+                                hover:file:bg-blue-100 dark:file:bg-slate-700 dark:file:text-slate-300 dark:hover:file:bg-slate-600">
+                            @error('profile_picture')
+                                <p class="mt-1 text-sm text-red-600 flex items-center">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                     </svg>
                                     {{ $message }}
                                 </p>

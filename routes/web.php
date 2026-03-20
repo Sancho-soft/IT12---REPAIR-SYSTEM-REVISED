@@ -52,6 +52,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class , 'destroy'])->name('profile.destroy');
 
     // Notifications Route
+    Route::get('/notifications', [NotificationController::class , 'index'])->name('notifications.index');
     Route::post('/notifications/mark-read', [NotificationController::class , 'markAllAsRead'])->name('notifications.markRead');
 });
 

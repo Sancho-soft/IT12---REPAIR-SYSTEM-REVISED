@@ -12,6 +12,7 @@
         selectedPartId: '',
         partQuantity: 1,
         miscCost: {{ old('miscellaneous_cost', 0) }},
+        selectedParts: [],
         laborBase: {{ old('labor_cost', 0) }},
         checkedTypes: {{ Js::from(old('service_types', [])) }},
         get currentCustomer() {
@@ -246,7 +247,7 @@
                                         :class="selectedTechs.includes((tech.first_name + ' ' + (tech.last_name || '')).trim()) ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-800'">
 
                                         <!-- Hidden Input Array for Form Submission and Interaction -->
-                                        <input type="checkbox" name="technicians[]" :value="(tech.first_name + ' ' + (tech.last_name || '')).trim()"
+                                        <input type="checkbox" :value="(tech.first_name + ' ' + (tech.last_name || '')).trim()"
                                             class="hidden"
                                             :checked="selectedTechs.includes((tech.first_name + ' ' + (tech.last_name || '')).trim())"
                                             @click.prevent="toggleTech((tech.first_name + ' ' + (tech.last_name || '')).trim())"
@@ -284,6 +285,11 @@
                             <div x-show="filteredTechnicians.length === 0" class="py-4 text-center text-sm text-gray-500 dark:text-slate-400 italic">
                                 No technicians match your search filters.
                             </div>
+
+                            <!-- Native Form Submission explicit syncing -->
+                            <template x-for="t in selectedTechs">
+                                <input type="hidden" name="technicians[]" :value="t">
+                            </template>
 
                             @error('technicians')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -579,8 +585,6 @@
                                 <option value="Waiting for Parts" {{ old('status') == 'Waiting for Parts' ? 'selected' : '' }}>Waiting for Parts</option>
                                 <option value="Under Repair" {{ old('status') == 'Under Repair' ? 'selected' : '' }}>Under
                                     Repair</option>
-                                <option value="Unrepairable" {{ old('status') == 'Unrepairable' ? 'selected' : '' }}>
-                                    Unrepairable</option>
                                 <option value="Completed" {{ old('status') == 'Completed' ? 'selected' : '' }}>Completed
                                 </option>
                                 <option value="Cancelled" {{ old('status') == 'Cancelled' ? 'selected' : '' }}>Cancelled
