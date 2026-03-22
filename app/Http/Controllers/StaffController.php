@@ -82,7 +82,6 @@ class StaffController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email,' . $staff->id],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
             'role' => ['required', 'string', 'in:Administrator,Secretary,Technician,Cashier'],
-            'status' => ['required', 'string', 'in:Active,Inactive'],
         ]);
 
         $data = [
@@ -91,7 +90,6 @@ class StaffController extends Controller
             'username' => $request->username,
             'email' => $request->email,
             'role' => $request->role,
-            'status' => $request->status,
         ];
 
         // Only update password if a new one was provided and the admin is editing their own profile
@@ -112,14 +110,12 @@ class StaffController extends Controller
     public function destroy(User $staff)
     {
         if ($staff->id === auth()->id()) {
-            return back()->with('error', 'You cannot delete your own account.');
+            return back()->with('error', 'You cannot deactivate your own account.');
         }
 
-        // Track who deleted this
-        // Bypass $fillable: deleted_by should not be user-input controlled.
-        $staff->forceFill(['deleted_by' => auth()->id()])->save();
-        $staff->delete();
+        $newStatus = $staff->status === 'Active' ? 'Inactive' : 'Active';
+        $staff->update(['status' => $newStatus]);
 
-        return redirect()->route('staff.index')->with('success', 'Staff member deleted successfully.');
+        return redirect()->route('staff.index')->with('success', "Staff member status updated to {$newStatus}.");
     }
 }

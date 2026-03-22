@@ -126,7 +126,11 @@
                                             </svg>
                                         </a>
                                         <form action="{{ route('staff.destroy', $member) }}" method="POST"
-                                            class="inline-block">
+                                            class="inline-block"
+                                            data-confirm-title="{{ $member->status == 'Active' ? 'Deactivate User' : 'Activate User' }}"
+                                            data-confirm-message="Are you sure you want to {{ $member->status == 'Active' ? 'deactivate' : 'activate' }} this user?"
+                                            data-confirm-variant="{{ $member->status == 'Active' ? 'warning' : 'success' }}"
+                                            data-confirm-confirm-text="{{ $member->status == 'Active' ? 'Deactivate' : 'Activate' }}">
                                             @csrf
                                             @method('DELETE')
                                             @if($member->status == 'Active')

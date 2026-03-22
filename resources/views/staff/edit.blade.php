@@ -122,20 +122,6 @@
                             @enderror
                         </div>
 
-                        <!-- Status -->
-                        <div>
-                            <label for="status" class="block text-sm font-medium text-gray-700 dark:text-slate-200">Account Status</label>
-                            <select id="status" name="status" required
-                                class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-slate-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg">
-                                <option value="Active" {{ old('status', $staff->status) == 'Active' ? 'selected' : '' }}>
-                                    Active
-                                </option>
-                                <option value="Inactive" {{ old('status', $staff->status) == 'Inactive' ? 'selected' : '' }}>
-                                    Inactive</option>
-                            </select>
-                            @error('status')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
                         </div>
 
                     </div>

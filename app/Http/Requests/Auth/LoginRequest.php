@@ -59,6 +59,14 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        if (Auth::user()->status === 'Inactive') {
+            Auth::guard('web')->logout();
+
+            throw ValidationException::withMessages([
+                'email' => __('You cannot login to this account. Please contact the administrator.'),
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 
